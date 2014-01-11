@@ -1,0 +1,11 @@
+﻿## Interface: 50400
+## Title: TBBase 
+## SavedVariablesPerCharacter: TBBaseData
+
+TBEvent.xml
+TBEvent.lua
+TBBase.xml
+TBBase.lua
+TBCasting.lua
+TBIndicator.lua
+

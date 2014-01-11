@@ -1,0 +1,7 @@
+﻿## Interface: 50400
+## Title: TBHelper 
+## Dependencies: TBBase
+## SavedVariablesPerCharacter: TBHelperData
+
+Frames.xml
+TBHelper.lua

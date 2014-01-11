@@ -1,0 +1,57 @@
+﻿<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Frame name="IndicatorFrame" parent="UIParent" FrameStrata="HIGH">
+	<Anchors>
+		<Anchor point="TOPLEFT"></Anchor>
+	</Anchors>
+		<Size>
+			<AbsDimension x="245" y="10" />
+		</Size>		
+		<Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTex" parentKey="Tex">	
+					<Anchors>
+                        <Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+                    <Color g="0" r="1" b="0"/>                    
+				</Texture>
+                </Layer>
+		</Layers>
+        
+		<Scripts>
+			<OnLoad>
+				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBOnPlayerLogin")
+				TBSubscribeEvent(self,"SPELLS_CHANGED", "TBCreateSpellMaps")
+				TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBClearControls")
+				
+				TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_START", "TBLastCastUpdate")
+				--TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_STOP", "TBLastCastUpdateFailed")
+				TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_UPDATE", "TBLastCastUpdate")
+				TBSubscribeEvent(self,"UNIT_SPELLCAST_DELAYED", "TBLastCastUpdate")
+				TBSubscribeEvent(self,"UNIT_SPELLCAST_INTERRUPTED", "TBLastCastUpdateFailed")
+				TBSubscribeEvent(self,"UNIT_SPELLCAST_START", "TBLastCastUpdate")
+				--TBSubscribeEvent(self,"UNIT_SPELLCAST_STOP", "TBLastCastUpdateFailed")
+				TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBLastCastUpdate")
+			</OnLoad>
+			<OnUpdate>
+				TBOnUpdate()
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+	
+	<Button name="AutomatonFrameTemplate" virtual="true" inherits="SecureActionButtonTemplate" FrameStrata="HIGH">
+        <Size>
+            <AbsDimension x="5" y="5"/>
+        </Size>
+		<Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTex" parentKey="Tex">
+					<Anchors>
+                        <Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+				</Texture>
+            </Layer>
+		</Layers>
+	</Button>
+</Ui>
