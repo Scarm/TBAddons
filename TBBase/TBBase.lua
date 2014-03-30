@@ -39,6 +39,9 @@ function TBOnPlayerLogin(self)
 end
 
 function TBAssignBot(self)
+	if IsLoggedIn() == nil then
+		return
+	end
 	-- бота чистим всегда, а устанавливаем - только если нашли подходящего
 	TBClearSpec()
 	
@@ -68,6 +71,10 @@ function TBClearSpec()
 	IndicatorFrame.ByName = {}
 	IndicatorFrame.ById = {}
 	IndicatorFrame.ByKey = {}
+	
+
+	IndicatorFrame.Enemies = {}
+	IndicatorFrame.EnemyCount = 0
     --self.Panel:RemoveAllButtons()    
 end
 
@@ -80,7 +87,7 @@ function TBSetSpec(spec)
 	
     for key,spell in pairs(IndicatorFrame.ById) do
         if spell.IsSpell then
-			TBRegisterSpell(spell)
+			TBRegisterSpell(spell.BaseName)
 		end
     end
 end
@@ -172,10 +179,12 @@ function TBOnUpdate()
 	
 	TBClearControls()
 
-	local spell,target = IndicatorFrame.Spec:OnUpdate()
-	if spell and spell.Type == "spell" then
-		TBCastSpell(spell)
+	local spell = IndicatorFrame.Spec:OnUpdate()
+	
+	if spell then
+		TBCommand(spell)
 	end
+
 end
 
 function TBLastCastUpdate(self, event,...)
@@ -205,4 +214,29 @@ function TBLastCastUpdateFailed(self, event,...)
 	--print(event, GetSpellInfo(spellId))
 end
 
+function TBCombatLog(self, event,timestamp, combatevent,...)
+	if combatevent == "UNIT_DIED" then
+		local guid = select(6,...)
+		IndicatorFrame.Enemies[guid] = nil
+		
+		IndicatorFrame.EnemyCount = 0
+		for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
+	end
+end
+
+function TBMouseOver()
+	local goodTarget = UnitIsDead("mouseover")==nil 
+		and UnitCanAttack("player", "mouseover") 
+		and IsSpellInRange("Удар воина Света", "mouseover") == 1 
+		and UnitAffectingCombat("mouseover")
+
+	if goodTarget then
+		IndicatorFrame.Enemies[UnitGUID("mouseover")] = GetUnitName("mouseover")
+	else
+		IndicatorFrame.Enemies[UnitGUID("mouseover")] = nil
+	end
+	
+	IndicatorFrame.EnemyCount = 0
+	for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
+end
 

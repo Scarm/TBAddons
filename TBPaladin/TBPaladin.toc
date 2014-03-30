@@ -1,6 +1,6 @@
 ﻿## Interface: 50400
-## Title: TB Druid 
+## Title: TB Paladin 
 ## Dependencies: TBBase
 
-Balance.lua
-Restor.lua
+Retri.lua
+Prot.lua

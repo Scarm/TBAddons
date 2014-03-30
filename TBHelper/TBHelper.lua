@@ -7,6 +7,24 @@ function SlashCmdList.TBHELPER(msg, editbox)
 	if msg == 'showspells' then
 		TBHelperFrame:Show()
 	end
+	
+	if msg == 'names' then
+		TBGroupNames()
+	end
+end
+
+
+
+function TBGroupNames()
+	print("party names:")
+	
+	for key,value in pairs(TBPartyList()) do
+		print(key," : ", value.x,value.y)
+	end
+end
+
+function TBCheckDistance(self)
+
 end
 
 function TBPrintEvent(self,event,...)
@@ -111,17 +129,25 @@ function TBHelperOnTalentChanged(self)
 end
 
 function TBFillValues(values)
-	
-	if IndicatorFrame.LastSpell then
-		values["LastSpell"] = IndicatorFrame.LastSpell.BaseName or "nil"
-	else
-		values["LastSpell"] =  "nil"
+	--[[
+	values["EnemyCount"] = IndicatorFrame.EnemyCount 
+	if IndicatorFrame.Enemies then
+		for key,value in pairs(IndicatorFrame.Enemies) do
+			values[key] = value
+		end	
 	end
-	
-	values["Стрела"] = TBLastCast("Стрела ледяного огня") or "nil"
-	values["Пламя Тьмы"] = TBDebuff("Пламя Тьмы",1,"target") or "nil"
-	--values["Высвободить чары стихий"] = TBCanUse("Высвободить чары стихий","target") or "nil"
-	
+	--]]
+	values["1"] = 1
+	--[[
+	local party = TBPartyList()
+	for key,value in pairs(party) do
+		value.HP = string.format("%d", 100 * UnitHealth(key) / UnitHealthMax(key))
+	end
+	local filtered = TBHasBuff("Омоложение",1,TBCanUse("Омоложение", party))
+	for key,value in pairs(filtered) do
+		values[key] = value.HP
+	end	
+	--]]
 end
 
 function TBHelperUpdateValues()

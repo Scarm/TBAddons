@@ -1,6 +1,5 @@
 ﻿## Interface: 50400
-## Title: TB Druid 
+## Title: TB Priest 
 ## Dependencies: TBBase
 
-Balance.lua
-Restor.lua
+Shadow.lua

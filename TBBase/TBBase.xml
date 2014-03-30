@@ -23,6 +23,7 @@
 				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBOnPlayerLogin")
 				TBSubscribeEvent(self,"SPELLS_CHANGED", "TBCreateSpellMaps")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBClearControls")
+				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBAssignBot")
 				
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_START", "TBLastCastUpdate")
 				--TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_STOP", "TBLastCastUpdateFailed")
@@ -32,6 +33,9 @@
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_START", "TBLastCastUpdate")
 				--TBSubscribeEvent(self,"UNIT_SPELLCAST_STOP", "TBLastCastUpdateFailed")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBLastCastUpdate")
+				
+				TBSubscribeEvent(self,"COMBAT_LOG_EVENT_UNFILTERED", "TBCombatLog")
+				TBSubscribeEvent(self,"UPDATE_MOUSEOVER_UNIT", "TBMouseOver")
 			</OnLoad>
 			<OnUpdate>
 				TBOnUpdate()

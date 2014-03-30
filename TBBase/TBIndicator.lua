@@ -35,10 +35,10 @@ function TBSetBindings()
 		-- не переписываем биндинги главной панели
 		--SetOverrideBindingClick(self.Frame, true,           bind, "TB3_Ind"..(i+36))
         -- вторая строка
-		SetOverrideBindingClick(IndicatorFrame, true, "ALT-CTRL-"      ..bind, "TBInd_"..(i+48))
-		SetOverrideBindingClick(IndicatorFrame, true, "CTRL-SHIFT-"    ..bind, "TBInd_"..(i+60))
-		SetOverrideBindingClick(IndicatorFrame, true, "ALT-SHIFT-"     ..bind, "TBInd_"..(i+72))
-		SetOverrideBindingClick(IndicatorFrame, true, "ALT-CTRL-SHIFT-"..bind, "TBInd_"..(i+82))			
+		SetOverrideBindingClick(IndicatorFrame, true, "ALT-CTRL-"      ..bind, "TBInd_"..(i+36))
+		SetOverrideBindingClick(IndicatorFrame, true, "CTRL-SHIFT-"    ..bind, "TBInd_"..(i+48))
+		SetOverrideBindingClick(IndicatorFrame, true, "ALT-SHIFT-"     ..bind, "TBInd_"..(i+60))
+		SetOverrideBindingClick(IndicatorFrame, true, "ALT-CTRL-SHIFT-"..bind, "TBInd_"..(i+72))			
     end
 end
 
@@ -48,13 +48,14 @@ function TBUnregisterAllSpells()
     -- очищаем карту индикаторов
     IndicatorFrame.Spells = {}
 	
-	for i=0,35,1 do
+	for i=0,23,1 do
 		IndicatorFrame.Frames[i]:SetAttribute("type","spell")
 		IndicatorFrame.Frames[i]:SetAttribute("spell",nil)
 		IndicatorFrame.Frames[i]:SetAttribute("unit","target")
 	end
 end
 
+-- вообще то сбрасывать спеллы не надо, тут мы просто при первом запуске устанавливаем все переменные
 function TBUnregisterAllTargets()
     -- сбрасываем счетчик Целей
     IndicatorFrame.TargetCount = 0
@@ -67,24 +68,26 @@ function TBUnregisterAllTargets()
 	end
 end
 
+
+
 function TBRegisterSpell(spell)
-	-- может быть забиндено только 36 спеллов
-    if IndicatorFrame.SpellCount==36 then
+	-- может быть забиндено только 24 спеллов
+    if IndicatorFrame.SpellCount==24 then
 		print("Ошибка регистрации спеллов!!!")
         return
     end
 
     -- биндим спелл
 	IndicatorFrame.Frames[IndicatorFrame.SpellCount]:SetAttribute("type","spell")
-	IndicatorFrame.Frames[IndicatorFrame.SpellCount]:SetAttribute("spell",spell.BaseName)
-    --IndicatorFrame.Frames[IndicatorFrame.SpellCount]:SetAttribute("unit","target")
+	IndicatorFrame.Frames[IndicatorFrame.SpellCount]:SetAttribute("spell",spell)
 
     -- прописываем в карте индикаторов, какой из них соответствует нашему спеллу
-    IndicatorFrame.Spells[spell.BaseId] = IndicatorFrame.SpellCount 
+    IndicatorFrame.Spells[spell] = IndicatorFrame.SpellCount 
     IndicatorFrame.SpellCount = IndicatorFrame.SpellCount + 1
 end
 
 
+-- Тут пока не ясно, надо ли вообще эту функцию показывать
 function TBRegisterTarget(name)
 
 	-- может быть забиндено только 40 целей
@@ -103,11 +106,14 @@ function TBRegisterTarget(name)
     IndicatorFrame.TargetCount = IndicatorFrame.TargetCount + 1
 end
 
-function TBCastSpell(spell)
+function TBCommand(name)
     TBClearControls()
-	IndicatorFrame.Frames[ IndicatorFrame.Spells[spell.BaseId] ].Tex:SetTexture(1.0, 1.0, 1.0, 1.0);
+	local id = IndicatorFrame.Spells[name] or IndicatorFrame.Targets[name]
+	IndicatorFrame.Frames[ id ].Tex:SetTexture(1.0, 1.0, 1.0, 1.0);
 end
 
+--[[
 function TBTarget(name)  
 	IndicatorFrame.Frames[ IndicatorFrame.Targets[name] ].Tex:SetTexture(1.0, 1.0, 1.0, 1.0);
 end
+--]]
