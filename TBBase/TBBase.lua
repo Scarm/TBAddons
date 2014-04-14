@@ -179,7 +179,7 @@ function TBOnUpdate()
 	
 	TBClearControls()
 
-	local spell = IndicatorFrame.Spec:OnUpdate()
+	local spell = IndicatorFrame.Spec:OnUpdate(TBGroups())
 	
 	if spell then
 		TBCommand(spell)

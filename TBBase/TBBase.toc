@@ -8,4 +8,5 @@ TBBase.xml
 TBBase.lua
 TBCasting.lua
 TBIndicator.lua
+TBGroups.lua
 

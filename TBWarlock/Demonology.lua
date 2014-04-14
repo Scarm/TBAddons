@@ -34,6 +34,12 @@ WarlockDem.FormChanged = GetTime()
 function WarlockDem:OnUpdate()
 	if IsMounted() then return end
 	
+	
+	if UnitIsUnit("target", "playerpet") == nil then
+		return "targetpet"
+	end
+	
+	
 	if TBBuff("Узы Тьмы", 1,"player")==nil and TBCanUse("Узы Тьмы","player") then
 		return TBCast("Узы Тьмы","player")
 	end

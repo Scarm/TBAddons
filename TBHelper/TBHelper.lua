@@ -18,9 +18,13 @@ end
 function TBGroupNames()
 	print("party names:")
 	
-	for key,value in pairs(TBPartyList()) do
-		print(key," : ", value.x,value.y)
+	player, party, focus, targets = TBGroups()
+	
+	print("party:")
+	for key,value in pairs(party:Aura("Омоложение", 1, nil, nil)) do
+		print(key)
 	end
+	
 end
 
 function TBCheckDistance(self)
@@ -129,15 +133,25 @@ function TBHelperOnTalentChanged(self)
 end
 
 function TBFillValues(values)
-	--[[
-	values["EnemyCount"] = IndicatorFrame.EnemyCount 
-	if IndicatorFrame.Enemies then
-		for key,value in pairs(IndicatorFrame.Enemies) do
-			values[key] = value
-		end	
-	end
-	--]]
+
 	values["1"] = 1
+	player, party, focus, targets = TBGroups()
+	--[[
+	local result = party:RangeHP(0,90):Aura("Омоложение", 1, nil, 1)
+	
+	
+	for key,value in pairs(result) do
+		values[key] = string.format("%d", 100 * UnitHealth(key) / UnitHealthMax(key))
+	end
+	
+	
+	values["minHP"] = "nil"
+	local target = result:MinHP()
+	if target then
+		values["minHP"] = target.value
+	end
+	--]]	
+	
 	--[[
 	local party = TBPartyList()
 	for key,value in pairs(party) do

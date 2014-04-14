@@ -248,17 +248,10 @@
 		<Scripts>
 			<OnLoad>
 				self:RegisterForDrag("RightButton")
-                --self:RegisterEvent("PLAYER_LOGIN")
-				
-                --self:RegisterEvent("LEARNED_SPELL_IN_TAB")
-                --self:RegisterEvent("SPELLS_CHANGED")
-				
-                --self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-				
+			
 				TBSubscribeEvent(self,"LEARNED_SPELL_IN_TAB", "TBPrintEvent")
 				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBHelperOnPlayerLogin")
 				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBHelperOnTalentChanged")
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBPrintEvent")
 				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBPrintEvent")
 				TBSubscribeEvent(self,"SPELLS_CHANGED", "TBPrintEvent")
 			</OnLoad> 
