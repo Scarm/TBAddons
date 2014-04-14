@@ -138,26 +138,6 @@ function TBRegisterSpell(spell)
     IndicatorFrame.SpellCount = IndicatorFrame.SpellCount + 1
 end
 
---[[
--- Тут пока не ясно, надо ли вообще эту функцию показывать
-function TBRegisterTarget(name)
-
-	-- может быть забиндено только 40 целей
-    if IndicatorFrame.TargetCount==40 then
-		print("Ошибка регистрации целей!!!")
-        return
-    end
-    print("зарегистрирован: ",name)
-
-    -- биндим цель
-	IndicatorFrame.Frames[IndicatorFrame.TargetCount+self.Rows]:SetAttribute("type","target")
-    IndicatorFrame.Frames[IndicatorFrame.TargetCount+self.Rows]:SetAttribute("unit",name)
-
-    -- прописываем в карте индикаторов, какой из них соответствует нашему спеллу
-    IndicatorFrame.Targets[name] = IndicatorFrame.TargetCount+self.Rows
-    IndicatorFrame.TargetCount = IndicatorFrame.TargetCount + 1
-end
---]]
 
 function TBCommand(name)
     TBClearControls()
@@ -166,9 +146,3 @@ function TBCommand(name)
 		IndicatorFrame.Frames[ id ].Tex:SetTexture(1.0, 1.0, 1.0, 1.0);
 	end
 end
-
---[[
-function TBTarget(name)  
-	IndicatorFrame.Frames[ IndicatorFrame.Targets[name] ].Tex:SetTexture(1.0, 1.0, 1.0, 1.0);
-end
---]]

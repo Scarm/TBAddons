@@ -173,18 +173,11 @@ function TBCreateSpellMaps()
 end
 
 function TBOnUpdate()
-	if IndicatorFrame.Spec == nil then
-		return
-	end
 	
-	TBClearControls()
-
-	local spell = IndicatorFrame.Spec:OnUpdate(TBGroups())
-	
-	if spell then
-		TBCommand(spell)
+	TBClearControls()	
+	if IndicatorFrame.Spec then
+		TBCommand(IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList()))
 	end
-
 end
 
 function TBLastCastUpdate(self, event,...)

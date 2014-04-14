@@ -33,7 +33,7 @@ function BaseGroup:BestForWG(maxUnits)
 		units = units + 1
 	end
 	
-	if units <= maxUnits then
+	if units < maxUnits then
 		return
 	end
 	
@@ -113,7 +113,7 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 	end	
 	
 	-- поднимаем просевшего танка
-	local target = focus:CanUse("Быстрое восстановление"):RangeHP(0,60):Aura("Омоложение", 1, nil, nil, 3):MinHP()
+	local target = focus:CanUse("Быстрое восстановление"):RangeHP(0,75):Aura("Омоложение", 1, nil, nil, 3):MinHP()
 	if target then
 		return Execute(CastKey("Быстрое восстановление",target))
 	end		
@@ -150,7 +150,7 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 		return Execute(CastKey("Сила Природы",target))
 	end	
 	
-		local target = party:CanUse("Быстрое восстановление"):RangeHP(0,50):Aura("Омоложение", 1, nil, nil, 3):MinHP()
+	local target = party:CanUse("Быстрое восстановление"):RangeHP(0,70):Aura("Омоложение", 1, nil, nil, 3):MinHP()
 	if target then
 		return Execute(CastKey("Быстрое восстановление",target))
 	end
