@@ -11,9 +11,11 @@
 				["Быстрое восстановление"] = 18562,
 				["Сила Природы"] = 106737,
 				["Озарение"] = 29166,
+				["Восстановление"] = 8936,
 			},
 			["Buffs"] = {
 				["Гармония"] = 100977,
+				["Ясность мысли"] = 16870,
 			},
 			["Class"] = "DRUID",
 		}
@@ -67,9 +69,9 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 		return Execute(CastKey("Озарение",target))
 	end	
 	
-	-- экстренный подъем целей	
+	-- экстренный подъем целей
 
-	local target = party:CanUse("Омоложение"):RangeHP(0,40):Aura("Омоложение", 1, nil, 1, 3):MinHP()
+	local target = party:CanUse("Омоложение"):RangeHP(0,40):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP()
 	if target then
 		return Execute(CastKey("Омоложение",target))
 	end
@@ -80,43 +82,62 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 	end	
 		
 		
-	local target = party:CanUse("Быстрое восстановление"):RangeHP(0,40):Aura("Омоложение", 1, nil, nil, 3):MinHP()
+	local target = party:CanUse("Быстрое восстановление"):RangeHP(0,40):Aura("Омоложение", "mine", nil, nil, 3):MinHP()
 	if target then
 		return Execute(CastKey("Быстрое восстановление",target))
 	end
 
+	local target = party:CanUse("Восстановление"):Aura("Ясность мысли", "mine", "self", nil, 2):RangeHP(0,40):MinHP()
+	if target then
+		return Execute(CastKey("Восстановление",target))
+	end	
+	
 	
 	-- по танку
 	
 	-- обязательно поддерживаем 3 стака
-	local target = focus:CanUse("Жизнецвет"):Aura("Жизнецвет", 1, nil, 1, 2, 3):MinHP()
+	local target = focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, 1, 2, 3):MinHP()
 	if target then
 		return Execute(CastKey("Жизнецвет",target))
 	end
 	
 	-- обновляем гармонию, ниже приоритером стаков, потому что каст бафнем стаки
-	local target = focus:CanUse("Покровительство Природы"):Aura("Гармония", 1, 1, 1, 2):MinHP()
+	local target = focus:CanUse("Покровительство Природы"):Aura("Гармония", "mine", "self", "inverse", 2):MinHP()
 	if target then
 		return Execute(CastKey("Покровительство Природы",target))
 	end
 
 	-- только если есть бафф - можно хотать дальше
-	local target = focus:CanUse("Омоложение"):RangeHP(0,90):Aura("Омоложение", 1, nil, 1, 3):MinHP()
+	local target = focus:CanUse("Омоложение"):RangeHP(0,90):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP()
 	if target then
 		return Execute(CastKey("Омоложение",target))
 	end
 	
+	
 	-- если ХП танка не полное - лучше обновить с прохилом
-	local target = focus:CanUse("Покровительство Природы"):RangeHP(0,90):Aura("Жизнецвет", 1, nil, 1, 5, 3):MinHP()
+	local target = focus:CanUse("Восстановление"):Aura("Ясность мысли", "mine", "self", nil, 2):RangeHP(0,75):Aura("Жизнецвет", "mine", nil, "inverse", 5, 3):MinHP()
+	if target then
+		return Execute(CastKey("Восстановление",target))
+	end		
+	
+	local target = focus:CanUse("Покровительство Природы"):RangeHP(0,90):Aura("Жизнецвет", "mine", nil, "inverse", 5, 3):MinHP()
 	if target then
 		return Execute(CastKey("Покровительство Природы",target))
 	end	
 	
+
+
 	-- поднимаем просевшего танка
-	local target = focus:CanUse("Быстрое восстановление"):RangeHP(0,75):Aura("Омоложение", 1, nil, nil, 3):MinHP()
+	local target = focus:CanUse("Быстрое восстановление"):RangeHP(0,75):Aura("Омоложение", "mine", nil, nil, 3):MinHP()
 	if target then
 		return Execute(CastKey("Быстрое восстановление",target))
 	end		
+	
+	
+	local target = focus:CanUse("Восстановление"):Aura("Ясность мысли", "mine", "self", nil, 2):RangeHP(0,60):MinHP()
+	if target then
+		return Execute(CastKey("Восстановление",target))
+	end	
 	
 	-- поднимаем просевшего танка
 	local target = focus:CanUse("Целительное прикосновение"):RangeHP(0,60):MinHP()
@@ -150,7 +171,7 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 		return Execute(CastKey("Сила Природы",target))
 	end	
 	
-	local target = party:CanUse("Быстрое восстановление"):RangeHP(0,70):Aura("Омоложение", 1, nil, nil, 3):MinHP()
+	local target = party:CanUse("Быстрое восстановление"):RangeHP(0,70):Aura("Омоложение", "mine", nil, nil, 3):MinHP()
 	if target then
 		return Execute(CastKey("Быстрое восстановление",target))
 	end
@@ -162,7 +183,7 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 	end	
 	
 	-- хотаем
-	local target = party:CanUse("Омоложение"):RangeHP(0,70):Aura("Омоложение", 1, nil, 1, 3):MinHP()
+	local target = party:CanUse("Омоложение"):RangeHP(0,70):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP()
 	if target then
 		return Execute(CastKey("Омоложение",target))
 	end
@@ -181,12 +202,12 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 	-- заглушка для спама
 	if 100 * UnitPower("player") / UnitPowerMax("player") > 30 then
 		-- спам по рейду, он важнее
-		local target = party:CanUse("Покровительство Природы"):RangeHP(0,60):Aura("Омоложение", 1, nil, nil, 3):MinHP()
+		local target = party:CanUse("Покровительство Природы"):RangeHP(0,60):Aura("Омоложение", "mine", nil, nil, 3):MinHP()
 		if target then
 			return Execute(CastKey("Покровительство Природы",target))
 		end	
 		-- спам по танку
-		local target = focus:CanUse("Покровительство Природы"):RangeHP(0,70):Aura("Омоложение", 1, nil, nil, 3):MinHP()
+		local target = focus:CanUse("Покровительство Природы"):RangeHP(0,70):Aura("Омоложение", "mine", nil, nil, 3):MinHP()
 		if target then
 			return Execute(CastKey("Покровительство Природы",target))
 		end

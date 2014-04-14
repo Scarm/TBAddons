@@ -19,6 +19,24 @@ function BaseGroup:RangeHP(minHP, maxHP)
 end
 
 
+-- метод отбирает просевшие цели в зависимости от количества маны у кастера
+-- этот метод - упрощение использования RangeHP для вариации маны
+function BaseGroup:HealingRange(minHP, maxHP)
+	local result = self:CreateDerived()
+	local mpp = UnitPower("player") / UnitPowerMax("player")
+	local limit = minHP + (maxHP - minHP) * mpp
+	
+	for key,value in pairs(self) do
+		local hp = 100 * UnitHealth(key) / UnitHealthMax(key)
+		if hp < limit then
+			result[key] = value
+		end
+	end
+	
+	return result	
+end
+
+
 
 function BaseGroup:Aura(spellKey, isMine, isSelf, inverseResult, timeLeft, stacks)
     local result = self:CreateDerived()
