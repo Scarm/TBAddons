@@ -12,6 +12,7 @@
 				["Сила Природы"] = 106737,
 				["Озарение"] = 29166,
 				["Восстановление"] = 8936,
+				["Природный целитель"] = 88423,
 			},
 			["Buffs"] = {
 				["Гармония"] = 100977,
@@ -69,6 +70,23 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 		return Execute(CastKey("Озарение",target))
 	end	
 	
+	-- 
+	local target = party:CanUse("Буйный рост"):RangeHP(0,85):BestForWG(5)
+	if target then
+		return Execute(CastKey("Буйный рост",target))
+	end	
+
+	local target = party:CanUse("Буйный рост"):RangeHP(0,80):BestForWG(4)
+	if target then
+		return Execute(CastKey("Буйный рост",target))
+	end
+
+	local target = party:CanUse("Буйный рост"):RangeHP(0,75):BestForWG(3)
+	if target then
+		return Execute(CastKey("Буйный рост",target))
+	end	
+	
+	
 	-- экстренный подъем целей
 
 	local target = party:CanUse("Омоложение"):RangeHP(0,40):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP()
@@ -91,6 +109,47 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 	if target then
 		return Execute(CastKey("Восстановление",target))
 	end	
+	
+	
+	--декурсинг
+	local target = party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP()
+	if target then
+		return Execute(CastKey("Природный целитель",target))
+	end	
+	
+	-- поднимаем цели, которые надо поднять до фулл хп
+	local target = party:CanUse("Омоложение"):NeedFullHeal():Aura("Омоложение", "mine", nil, "inverse", 3):MinHP()
+	if target then
+		return Execute(CastKey("Омоложение",target))
+	end
+	
+	local target = party:CanUse("Сила Природы"):RangeHP(0,80):NeedFullHeal():MinHP()
+	if target then
+		return Execute(CastKey("Сила Природы",target))
+	end	
+		
+	local target = party:CanUse("Быстрое восстановление"):NeedFullHeal():Aura("Омоложение", "mine", nil, nil, 3):MinHP()
+	if target then
+		return Execute(CastKey("Быстрое восстановление",target))
+	end
+
+	local target = party:CanUse("Восстановление"):Aura("Ясность мысли", "mine", "self", nil, 2):NeedFullHeal():MinHP()
+	if target then
+		return Execute(CastKey("Восстановление",target))
+	end		
+	
+	local target = party:CanUse("Целительное прикосновение"):RangeHP(0,80):NeedFullHeal():MinHP()
+	if target then
+		return Execute(CastKey("Целительное прикосновение",target))
+	end
+
+	local target = party:CanUse("Покровительство Природы"):NeedFullHeal():MinHP()
+	if target then
+		return Execute(CastKey("Покровительство Природы",target))
+	end	
+	
+	
+	
 	
 	
 	-- по танку
@@ -128,7 +187,7 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 
 
 	-- поднимаем просевшего танка
-	local target = focus:CanUse("Быстрое восстановление"):RangeHP(0,75):Aura("Омоложение", "mine", nil, nil, 3):MinHP()
+	local target = focus:CanUse("Быстрое восстановление"):RangeHP(0,70):Aura("Омоложение", "mine", nil, nil, 743):MinHP()
 	if target then
 		return Execute(CastKey("Быстрое восстановление",target))
 	end		
@@ -149,21 +208,7 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 	
 	-- по рейду
 	
-	-- 
-	local target = party:CanUse("Буйный рост"):RangeHP(0,85):BestForWG(5)
-	if target then
-		return Execute(CastKey("Буйный рост",target))
-	end	
 
-	local target = party:CanUse("Буйный рост"):RangeHP(0,80):BestForWG(4)
-	if target then
-		return Execute(CastKey("Буйный рост",target))
-	end
-
-	local target = party:CanUse("Буйный рост"):RangeHP(0,75):BestForWG(3)
-	if target then
-		return Execute(CastKey("Буйный рост",target))
-	end	
 	
 	-- поднимаем просевших
 	local target = party:CanUse("Сила Природы"):RangeHP(0,50):MinHP()

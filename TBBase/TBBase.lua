@@ -176,7 +176,8 @@ function TBOnUpdate()
 	
 	TBClearControls()	
 	if IndicatorFrame.Spec then
-		TBCommand(IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList()))
+		local player, party, focus, targets = TBGroups()
+		TBCommand(IndicatorFrame.Spec:OnUpdate(player, party, focus, targets, TBList()))
 	end
 end
 

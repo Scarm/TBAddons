@@ -1,7 +1,7 @@
 TBBaseList = {}
 
 function TBBaseList:Push(cmd)
-	if self.command then self end
+	if self.command then return self end
 	self.command = cmd
 	return self  
 end

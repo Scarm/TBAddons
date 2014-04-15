@@ -37,6 +37,46 @@ function BaseGroup:HealingRange(minHP, maxHP)
 end
 
 
+TBNeedFullHealList = {
+					["Чавканье"] = "Чавканье"
+		}
+
+
+function BaseGroup:NeedFullHeal()
+	local result = self:CreateDerived()
+	for key,value in pairs(self) do
+		local needHeal = nil
+		for spell,_ in pairs(TBNeedFullHealList) do
+			needHeal = needHeal or UnitAura(key, spell, nil, "HARMFUL")
+		end
+		if needHeal then
+			result[key] = value
+		end
+	end
+	
+	return result
+end
+
+function BaseGroup:NeedDecurse(...)
+	local result = self:CreateDerived()
+	for key,value in pairs(self) do
+		local needDecurse = nil
+		
+		local types = select("#", ...)
+		dispelType = select(5, UnitAura(key, 1, "HARMFUL"))
+		for i = 1,types,1 do
+			if dispelType == select(i, ...) then
+				needDecurse = 1
+			end			
+		end
+
+		if needDecurse then
+			result[key] = value
+		end
+	end
+	
+	return result
+end
 
 function BaseGroup:Aura(spellKey, isMine, isSelf, inverseResult, timeLeft, stacks)
     local result = self:CreateDerived()

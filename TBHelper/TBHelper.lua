@@ -136,15 +136,17 @@ function TBFillValues(values)
 
 	values["1"] = 1
 	player, party, focus, targets = TBGroups()
-	--[[
-	local result = party:RangeHP(0,90):Aura("Омоложение", 1, nil, 1)
+	
+
+	
+	local result = party:NeedFullHeal()
 	
 	
 	for key,value in pairs(result) do
 		values[key] = string.format("%d", 100 * UnitHealth(key) / UnitHealthMax(key))
 	end
 	
-	
+	--[[
 	values["minHP"] = "nil"
 	local target = result:MinHP()
 	if target then

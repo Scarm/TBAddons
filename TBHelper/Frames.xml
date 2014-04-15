@@ -253,7 +253,7 @@
 				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBHelperOnPlayerLogin")
 				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBHelperOnTalentChanged")
 				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBPrintEvent")
-				TBSubscribeEvent(self,"SPELLS_CHANGED", "TBPrintEvent")
+				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBPrintEvent")
 			</OnLoad> 
             <OnDragStart>
 				self:StartMoving()
