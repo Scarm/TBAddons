@@ -9,4 +9,5 @@ TBBase.lua
 TBCasting.lua
 TBIndicator.lua
 TBGroups.lua
+TBCommonFilters.lua
 TBList.lua

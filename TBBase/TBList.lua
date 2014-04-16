@@ -1,5 +1,19 @@
 TBBaseList = {}
 
+
+
+
+function TBBaseList:Cast(key, target)
+	if target then
+		local cmd = {
+				action = "spell",
+				value = key,
+				condition = target
+			}
+		self:Push(cmd)
+	end
+end
+
 function TBBaseList:Push(cmd)
 	if self.command then return self end
 	self.command = cmd

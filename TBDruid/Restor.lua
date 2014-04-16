@@ -13,6 +13,7 @@
 				["Озарение"] = 29166,
 				["Восстановление"] = 8936,
 				["Природный целитель"] = 88423,
+				["Гнев"] = 5176,
 			},
 			["Buffs"] = {
 				["Гармония"] = 100977,
@@ -60,62 +61,134 @@ function BaseGroup:BestForWG(maxUnits)
 
 	return result
 end
-	
-function DruidRestor:OnUpdate(player, party, focus, targets)
+
+function BaseGroup:Rejuvenation()
+	retrun self:CanUse("Омоложение"):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP()
+end
+
+function BaseGroup:FreeRegrowth()
+	return self:NotMoving():CanUse("Восстановление"):Aura("Ясность мысли", "mine", "self", nil, 2):MinHP()
+end
+
+function BaseGroup:ForceOfNature()
+	return self:CanUse("Сила Природы"):MinHP()
+end
+
+function BaseGroup:Swiftmend()
+	return self:CanUse("Быстрое восстановление"):Aura("Омоложение", "mine", nil, nil, 3):MinHP()
+end
+
+function BaseGroup:WildGrowth(units)
+	return self:CanUse("Буйный рост"):BestForWG(units)
+end
+
+function BaseGroup:Nourish()
+	return self:NotMoving():CanUse("Покровительство Природы"):MinHP()
+end
+
+function BaseGroup:HealingTouch()
+	return self:NotMoving():CanUse("Целительное прикосновение"):MinHP()
+end
+
+function DruidRestor:OnUpdate(player, party, focus, targets, list)
 	if IsMounted() or GetShapeshiftForm() == 6 or GetShapeshiftForm() == 4 or GetShapeshiftForm() == 2 then return end
 	
+	--[[
+	if 100 * UnitPower("player") / UnitPowerMax("player") < 80 then
+		list:Cast( "Озарение", player:CanUse("Озарение"):MinHP() )
+	end
+	
+	-- Изначально, при полной мане кастуем с оверхилом, затем критерии ужесточаются
+	list:Cast( "Буйный рост", party:HealingRange(60,95):WildGrowth(5) )
+	list:Cast( "Буйный рост", party:HealingRange(45,95):WildGrowth(4) )
+	list:Cast( "Буйный рост", party:HealingRange(30,95):WildGrowth(3) )
+	--]]
 	
 	local target = player:CanUse("Озарение"):MinHP()
 	if target and 100 * UnitPower("player") / UnitPowerMax("player") < 80 then
 		return Execute(CastKey("Озарение",target))
 	end	
 	
-	-- 
-	local target = party:CanUse("Буйный рост"):RangeHP(0,85):BestForWG(5)
+	-- Изначально, при полной мане кастуем с оверхилом, затем критерии ужесточаются
+	
+	local target = party:CanUse("Буйный рост"):RangeHP(0,85):BestForWG(5) --HealingRange(60,95)
 	if target then
 		return Execute(CastKey("Буйный рост",target))
 	end	
 
-	local target = party:CanUse("Буйный рост"):RangeHP(0,80):BestForWG(4)
+	local target = party:CanUse("Буйный рост"):RangeHP(0,80):BestForWG(4) --HealingRange(45,95)
 	if target then
 		return Execute(CastKey("Буйный рост",target))
 	end
 
-	local target = party:CanUse("Буйный рост"):RangeHP(0,75):BestForWG(3)
+	local target = party:CanUse("Буйный рост"):RangeHP(0,75):BestForWG(3) --HealingRange(30,95)
 	if target then
 		return Execute(CastKey("Буйный рост",target))
 	end	
 	
+
+	
+	
+	--[[
+	-- экстренный подъем целей
+	-- в этом блоке ужесточение требований должно быть минимальным
+	local gr = party:HealingRange(30,40)
+	list:Cast( "Омоложение",                gr:Rejuvenation() )
+	list:Cast( "Восстановление",            gr:FreeRegrowth() )
+	list:Cast( "Сила Природы",              gr:ForceOfNature() )
+	list:Cast( "Быстрое восстановление",    gr:Swiftmend() )
+	list:Cast( "Целительное прикосновение", gr:HealingTouch() )
+	---]]
 	
 	-- экстренный подъем целей
-
-	local target = party:CanUse("Омоложение"):RangeHP(0,40):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP()
+	-- в этом блоке ужесточение требований должно быть минимальным
+	local target = party:CanUse("Омоложение"):RangeHP(0,40):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() --HealingRange(30,40)
 	if target then
 		return Execute(CastKey("Омоложение",target))
 	end
 	
-	local target = party:CanUse("Сила Природы"):RangeHP(0,40):MinHP()
+	local target = party:CanUse("Сила Природы"):RangeHP(0,40):MinHP() --UnBlocked():HealingRange(30,40)
 	if target then
 		return Execute(CastKey("Сила Природы",target))
 	end	
 		
 		
-	local target = party:CanUse("Быстрое восстановление"):RangeHP(0,40):Aura("Омоложение", "mine", nil, nil, 3):MinHP()
+	local target = party:CanUse("Быстрое восстановление"):RangeHP(0,40):Aura("Омоложение", "mine", nil, nil, 3):MinHP() --HealingRange(30,40)
 	if target then
 		return Execute(CastKey("Быстрое восстановление",target))
 	end
 
-	local target = party:CanUse("Восстановление"):Aura("Ясность мысли", "mine", "self", nil, 2):RangeHP(0,40):MinHP()
+	local target = party:CanUse("Восстановление"):Aura("Ясность мысли", "mine", "self", nil, 2):RangeHP(0,40):MinHP() --HealingRange(30,40)
 	if target then
 		return Execute(CastKey("Восстановление",target))
 	end	
 	
+	
+	
+	
+	--[[
+	--декурсинг	
+	list:Cast( "Природный целитель", party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )
+	--]]
 	
 	--декурсинг
 	local target = party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP()
 	if target then
 		return Execute(CastKey("Природный целитель",target))
 	end	
+	
+	
+	
+	--[[
+	-- поднимаем цели, которые надо поднять до фулл хп
+	local gr = party:NeedFullHeal():UnBlocked()
+	list:Cast( "Омоложение",                gr:RangeHP(0,85):Rejuvenation() )
+	list:Cast( "Восстановление",            gr:RangeHP(0,85):FreeRegrowth() )
+	list:Cast( "Сила Природы",              gr:RangeHP(0,85):ForceOfNature() )
+	list:Cast( "Быстрое восстановление",    gr:RangeHP(0,85):Swiftmend() )
+	list:Cast( "Целительное прикосновение", gr:RangeHP(0,85):HealingTouch() )
+	list:Cast( "Покровительство Природы",   gr:Nourish() )	
+	--]]
 	
 	-- поднимаем цели, которые надо поднять до фулл хп
 	local target = party:CanUse("Омоложение"):NeedFullHeal():Aura("Омоложение", "mine", nil, "inverse", 3):MinHP()
@@ -150,12 +223,24 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 	
 	
 	
+	--[[
+	-- по танку
+	-- обязательно поддерживаем 3 стака
+	list:Cast( "Жизнецвет",   focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 3, 3):MinHP() )
+	
+	-- обновляем гармонию, ниже приоритером стаков, потому что каст бафнет стаки
+	list:Cast( "Покровительство Природы", focus:Aura("Гармония", "mine", "self", "inverse", 2):Nourish() )
+	
+	-- если ХП танка не полное - лучше обновить с прохилом
+	list:Cast( "Восстановление",          focus:HealingRange(50,85):UnBlocked():Aura("Жизнецвет", "mine", nil, "inverse", 5, 3):FreeRegrowth() )
+	list:Cast( "Покровительство Природы", focus:HealingRange(60,95):UnBlocked():Aura("Жизнецвет", "mine", nil, "inverse", 5, 3):Nourish() )	
+	--]]
 	
 	
 	-- по танку
 	
 	-- обязательно поддерживаем 3 стака
-	local target = focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, 1, 2, 3):MinHP()
+	local target = focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 3, 3):MinHP()
 	if target then
 		return Execute(CastKey("Жизнецвет",target))
 	end
@@ -185,7 +270,15 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 	end	
 	
 
-
+	--[[
+	-- поднимаем просевшего танка
+	local gr = focus:HealingRange(50,80)
+	list:Cast( "Омоложение",                gr:Rejuvenation() )
+	list:Cast( "Восстановление",            gr:FreeRegrowth() )
+	list:Cast( "Сила Природы",              gr:ForceOfNature() )
+	list:Cast( "Быстрое восстановление",    gr:Swiftmend() )
+	list:Cast( "Целительное прикосновение", gr:HealingTouch() )
+	--]]
 	-- поднимаем просевшего танка
 	local target = focus:CanUse("Быстрое восстановление"):RangeHP(0,70):Aura("Омоложение", "mine", nil, nil, 743):MinHP()
 	if target then
@@ -208,7 +301,15 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 	
 	-- по рейду
 	
-
+	--[[
+	-- поднимаем просевших
+	local gr = party:HealingRange(50,80)
+	list:Cast( "Омоложение",                gr:Rejuvenation() )
+	list:Cast( "Восстановление",            gr:FreeRegrowth() )
+	list:Cast( "Сила Природы",              gr:ForceOfNature() )
+	list:Cast( "Быстрое восстановление",    gr:Swiftmend() )
+	list:Cast( "Целительное прикосновение", gr:HealingTouch() )
+	--]]
 	
 	-- поднимаем просевших
 	local target = party:CanUse("Сила Природы"):RangeHP(0,50):MinHP()
@@ -241,7 +342,7 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 		
 		
 
-	
+	-- Считаем, что выгоды от заглушки нет и выкидываем её
 	
 	
 	-- заглушка для спама
@@ -258,6 +359,20 @@ function DruidRestor:OnUpdate(player, party, focus, targets)
 		end
 	end
 	
+	-- а вот сюда можно попробовать запихнуть простенькую ротацию дд
+	-- можно проверить, как будет работать талант Dream of Cenarius
+	-- принцип работы: до 70% маны - просто спам, в противном случае - только если есть члены групп с неполным хп
+	--[[
+	if 100 * UnitPower("player") / UnitPowerMax("player") > 70 then
+		list:Cast( "Гнев", targets:CanUse("Гнев"):MinHP() )
+	else
+		if party:RangeHP(0,90).MinHP() then
+			list:Cast( "Гнев", targets:CanUse("Гнев"):MinHP() )
+		end
+	end
+	--]]
+	
+	return list:Execute()
 
 end
 		
