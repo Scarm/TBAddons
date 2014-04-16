@@ -139,20 +139,22 @@ function TBFillValues(values)
 	
 
 	
-	local result = party:NeedFullHeal()
+	local result = targets:CanUse("Гнев")
 	
 	
 	for key,value in pairs(result) do
-		values[key] = string.format("%d", 100 * UnitHealth(key) / UnitHealthMax(key))
+		--values[key] = string.format("%d", 100 * UnitHealth(key) / UnitHealthMax(key))
+		values[key] = string.format("%d", 100 * UnitHealth(key))
 	end
 	
-	--[[
+	
 	values["minHP"] = "nil"
 	local target = result:MinHP()
 	if target then
 		values["minHP"] = target.value
 	end
-	--]]	
+	
+	values["LastCommand"] = IndicatorFrame.LastCommand or "nil"	
 	
 	--[[
 	local party = TBPartyList()

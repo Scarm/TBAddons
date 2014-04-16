@@ -22,7 +22,7 @@ end
 
 function TBBaseList:Execute()
 
-	function SuccessCondiotion(cmd)  
+	function InnerSuccessCondiotion(cmd)  
 		if cmd == nil then
 			return 1
 		end
@@ -42,16 +42,20 @@ function TBBaseList:Execute()
 	end	
 	
 	
-	function InnerExecute(cmd)	
-		if SuccessCondiotion(cmd.condition) then
-			return cmd.value
+	function InnerExecute(cmd)
+		if InnerSuccessCondiotion(cmd.condition) then
+			if cmd.action == "assist" then
+				return "assist"
+			else
+				return cmd.value
+			end
 		else
-			return Execute(cmd.condition)
+			return InnerExecute(cmd.condition)
 		end 
 	end
 	
 	if self.command then
-		InnerExecute(self.command)
+		return InnerExecute(self.command)
 	end
 end
 
