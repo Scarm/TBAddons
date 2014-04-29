@@ -1,0 +1,10 @@
+﻿## Interface: 50300
+## Title: |cff7fff7f AutomatonDruid|r 
+## Version: 0.1 
+## Author: Scarm
+## X-eMail:  
+## Notes: New version 
+## Dependencies: Automaton
+
+BalanceDruid.lua
+RestorDruid.lua

@@ -1,0 +1,29 @@
+﻿## Interface: 40300
+## Title: |cff7fff7f Bot|r 
+## Version: 0.1 
+## Author: Scarm
+## X-eMail:  
+## Notes: New version 
+## SavedVariablesPerCharacter: TB2_Vars
+TB2.lua
+TB2Modes.lua
+TB2SpellBinder.lua
+TB2Indicator.lua
+
+Druid.lua
+Hunter.lua
+Shaman.lua
+Warlock.lua
+Priest.lua
+Paladin.lua
+DeathKnight.lua
+Rogue.lua
+Warrior.lua
+
+TB2Modes.xml
+
+TB2Stress.lua
+TB2Stress.xml
+
+
+

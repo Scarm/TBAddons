@@ -95,6 +95,7 @@ function TBGroups()
 			end
 		end
 	end
+	party["mouseover"] = Targetting("mouseover")
 	-----
 	targets["focus"] = Targetting("focus")
 	for k,v in pairs(party) do

@@ -137,8 +137,10 @@ function TBFillValues(values)
 	values["1"] = 1
 	player, party, focus, targets = TBGroups()
 	
-
+	values["healing"] = UnitGetIncomingHeals("player")
+	values["absorbs"] = UnitGetTotalAbsorbs("player")
 	
+	--[[
 	local result = targets:CanUse("Гнев")
 	
 	
@@ -155,7 +157,7 @@ function TBFillValues(values)
 	end
 	
 	values["LastCommand"] = IndicatorFrame.LastCommand or "nil"	
-	
+	--]]
 	--[[
 	local party = TBPartyList()
 	for key,value in pairs(party) do

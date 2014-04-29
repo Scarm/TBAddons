@@ -83,7 +83,7 @@ function TBSetStaticCommands()
 	commands["player"] = 1
 	commands["focus"] = 1
 	commands["targetpet"] = 1
-	
+	commands["mouseover"] = 1
 	
 	for i=1,4,1 do
 		commands["party"..i] = 1

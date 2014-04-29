@@ -1,0 +1,197 @@
+﻿<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="TB2Modes.lua" />
+	<CheckButton name="ModeButtonTemplate" inherits="ActionButtonTemplate" EnableMouseWhee="true" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+			</OnLoad>
+			<OnClick>
+				if button=="LeftButton" then
+					TB2Modes:SwitchUp(self)
+				else
+					TB2Modes:SwitchDown(self)
+				end
+			</OnClick>
+			<OnMouseWheel>
+				if self:IsEnabled() then
+					if delta==1 then 
+						TB2Modes:SwitchUp(self)
+					else
+						TB2Modes:SwitchDown(self)
+					end
+				end
+			</OnMouseWheel>
+		</Scripts>
+	</CheckButton>
+
+	<CheckButton name="SpecButtonTemplate" inherits="ActionButtonTemplate" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+			</OnLoad>
+			<OnClick>
+				TB2:SetActiveSpec(self.Spec)
+			</OnClick> 
+		</Scripts>
+	</CheckButton>
+
+   	<CheckButton name="CurrentSpecButtonTemplate" inherits="ActionButtonTemplate" virtual="true">
+   		<Size> 
+			<AbsDimension x="20" y="20"/> 
+		</Size>	
+		<Scripts>
+   			<OnLoad>
+   					self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+					self:RegisterEvent("PLAYER_REGEN_DISABLED")
+   					print("SpecButton loaded!")
+   			</OnLoad>
+   			<OnClick>
+				if UnitAffectingCombat("player")==nil then
+     				if TB2.isSpecsShown==true then
+     					TB2:HideSpecs()
+     				else
+     					TB2:ShowSpecs()
+     				end
+				else
+					TB2:HideSpecs()
+				end
+			</OnClick>
+			<OnEvent>
+				TB2:HideSpecs()
+			</OnEvent>			 
+		</Scripts> 
+   	</CheckButton>
+
+	<Frame name="IndicatorFrameTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="5" y="5"/>
+        </Size>
+		<Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTex" parentKey="Tex">
+					<Anchors>
+                        <Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+				</Texture>
+            </Layer>
+		</Layers>
+	</Frame>
+
+	<Frame name="TB2EventFrame" parent="UIParent">
+
+		<Frames>
+			<Frame name="$parent_Spells" parentKey="SpellFrame"/>
+			<Frame name="$parent_Targets" parentKey="TargetFrame">
+				<Scripts>
+					<OnLoad>
+						self:RegisterEvent("PARTY_CONVERTED_TO_RAID") 
+						self:RegisterEvent("PARTY_MEMBERS_CHANGED")
+						self:RegisterEvent("PLAYER_LOGIN") 
+					</OnLoad>
+					<OnEvent>
+						TB2SpellBinder:PartyChanged()
+					</OnEvent>
+				</Scripts>
+			</Frame>
+		</Frames>
+
+		<Scripts>
+			<OnLoad>
+				self:RegisterEvent("PLAYER_LOGIN") 
+				TB2SpellBinder:OnLoad(self)
+				TB2:OnLoad(self) 
+			</OnLoad>
+			<OnEvent>
+				TB2:OnEvent(event,arg1,arg2)
+			</OnEvent>
+			<OnUpdate>
+				TB2:OnUpdate()
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="TB2ModesFrame" parent="UIParent" toplevel="true" enableMouse="true" Movable="true">
+		<Size>
+			<AbsDimension x="270" y="68" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset x="0" y="0" />
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>	
+		</Backdrop>
+
+		<Frames>
+			<CheckButton name="TB2SpecButton" inherits="CurrentSpecButtonTemplate" parentKey="CSB">
+				<Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-20" y="-20"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+			</CheckButton>
+		</Frames>
+
+		<Scripts>
+			<OnLoad>
+				self:RegisterEvent("PLAYER_LOGIN")
+				self:RegisterForDrag("RightButton")	
+				TB2Modes:OnLoad(self) 
+			</OnLoad> 
+            <OnDragStart>
+				self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+				self:StopMovingOrSizing()
+				TB2Modes:SavePos(self)
+            </OnDragStop>
+			<OnEvent>
+				print("TB2ModesFrame event=",event)
+				if (event == "PLAYER_LOGIN") then
+				  TB2Modes:LoadPos(self)
+				end   
+			</OnEvent>
+		</Scripts> 
+	</Frame>
+
+	<Frame name="TB2IndicatorFrame" parent="UIParent">
+		<Size>
+			<AbsDimension x="245" y="10" />
+		</Size>		
+		<Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTex" parentKey="Tex">
+					<Anchors>
+                        <Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+				</Texture>
+            </Layer>
+		</Layers>
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+		</Anchors>
+		<Frames>
+			<Frame name="$parentInvertor" inherits="IndicatorFrameTemplate" parentKey="Invertor">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT"/>
+				</Anchors>				
+			</Frame>
+		</Frames>
+				
+		<Scripts>
+			<OnLoad>
+				TB2Indicator:OnLoad(self) 
+			</OnLoad>
+			<OnUpdate>
+				TB2Indicator:Invert() 
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+</Ui>

@@ -68,17 +68,29 @@ function BaseGroup:Aura(spellKey, isMine, isSelf, inverseResult, timeLeft, stack
 		return result
 	end
 	
-	mask = "HELPFUL"
-	if isMine then
-        mask = mask.."|PLAYER"
-    end
-
-
 	function HasInnerAura(Key, Spell, TimeLeft, Stacks)
+	
+		local mask = "HARMFUL"
+		if isMine then
+			mask = mask.."|PLAYER"
+		end
+	
 		local stacksBase,_,_,etBase = select(4, UnitAura(Key, Spell.BaseName, nil, mask))
 		local stacksReal,_,_,etReal = select(4, UnitAura(Key, Spell.RealName, nil, mask))
 		local et = etBase or etReal
-		local stacks = stacksBase or stacksReal or 0
+		local stacks = stacksBase or stacksReal
+		
+		local mask = "HELPFUL"
+		if isMine then
+			mask = mask.."|PLAYER"
+		end
+	
+		local stacksBase,_,_,etBase = select(4, UnitAura(Key, Spell.BaseName, nil, mask))
+		local stacksReal,_,_,etReal = select(4, UnitAura(Key, Spell.RealName, nil, mask))
+		et = et or etBase or etReal
+		stacks = stacks or stacksBase or stacksReal or 0		
+		
+		
 		
 		if et and ((et == 0) or (et - GetTime() > TimeLeft)) then
 			if Stacks then

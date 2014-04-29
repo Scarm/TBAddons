@@ -178,7 +178,9 @@ function TBOnUpdate()
 	if IndicatorFrame.Spec then
 		local player, party, focus, targets = TBGroups()
 		local cmd = IndicatorFrame.Spec:OnUpdate(player, party, focus, targets, TBList())
-		IndicatorFrame.LastCommand = cmd or IndicatorFrame.LastCommand
+		if cmd then
+			IndicatorFrame.LastCommand = cmd
+		end
 		TBCommand(cmd)
 	end
 end

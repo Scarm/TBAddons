@@ -93,6 +93,9 @@ end
 function DruidRestor:OnUpdate(player, party, focus, targets, list)
 	if IsMounted() or GetShapeshiftForm() == 6 or GetShapeshiftForm() == 4 or GetShapeshiftForm() == 2 then return end
 	
+	if not UnitAffectingCombat("player") then
+		return
+	end
 	
 	if 100 * UnitPower("player") / UnitPowerMax("player") < 80 then
 		list:Cast( "Озарение", player:CanUse("Озарение"):MinHP() )
