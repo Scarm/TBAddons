@@ -1,0 +1,10 @@
+<Bindings>
+	<Binding name="CLICK TBButton1:LeftButton" description="1" header="TBBASE"/>
+	<Binding name="CLICK TBButton2:LeftButton"/>
+	<Binding name="CLICK TBButton3:LeftButton"/>
+	<Binding name="CLICK TBButton4:LeftButton"/>
+	<Binding name="CLICK TBButton5:LeftButton"/>
+	<Binding name="CLICK TBButton6:LeftButton"/>
+	<Binding name="CLICK TBButton7:LeftButton"/>
+	<Binding name="CLICK TBButton8:LeftButton"/>
+</Bindings>

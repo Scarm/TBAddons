@@ -6,8 +6,10 @@ TBEvent.xml
 TBEvent.lua
 TBBase.xml
 TBBase.lua
+TBPanel.lua
 TBCasting.lua
 TBIndicator.lua
 TBGroups.lua
 TBCommonFilters.lua
 TBList.lua
+

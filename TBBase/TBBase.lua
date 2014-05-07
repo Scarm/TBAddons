@@ -35,6 +35,7 @@ end
 
 function TBOnPlayerLogin(self)
 	TBCreateIndicators(self)
+	TBCreatePanel()
 	TBAssignBot(self)
 end
 
@@ -59,6 +60,7 @@ function TBAssignBot(self)
         return
 	end
 	
+	TBInitPanel()
 	return TBSetSpec(IndicatorFrame.Bots[class][currentTalents])
 end
 

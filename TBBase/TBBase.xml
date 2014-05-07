@@ -1,8 +1,8 @@
 ﻿<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
 	<Frame name="IndicatorFrame" parent="UIParent" FrameStrata="HIGH">
-	<Anchors>
-		<Anchor point="TOPLEFT"></Anchor>
-	</Anchors>
+		<Anchors>
+			<Anchor point="TOPLEFT"></Anchor>
+		</Anchors>
 		<Size>
 			<AbsDimension x="245" y="10" />
 		</Size>		
@@ -58,4 +58,49 @@
             </Layer>
 		</Layers>
 	</Button>
+	
+	<CheckButton name="TBButtonTemplate" inherits="ActionButtonTemplate" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("LeftButtonUp")
+			</OnLoad>
+            <OnClick>
+                print("Click!")
+            </OnClick> 
+		</Scripts>
+	</CheckButton>
+	
+	<Frame name="PanelFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">
+		<Anchors>
+			<Anchor point="CENTER"></Anchor>
+		</Anchors>
+		<Size>
+			<AbsDimension x="5" y="10" />
+		</Size>		
+		<Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTex" parentKey="Tex">	
+					<Anchors>
+                        <Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+                    <Color g="0" r="1" b="0" a="0.5"/>                    
+				</Texture>
+                </Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForDrag("RightButton")
+			</OnLoad> 
+            <OnDragStart>
+				self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+				self:StopMovingOrSizing()
+            </OnDragStop>
+			<OnUpdate>
+
+			</OnUpdate>
+		</Scripts> 
+	</Frame>
 </Ui>

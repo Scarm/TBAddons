@@ -137,8 +137,12 @@ function TBFillValues(values)
 	values["1"] = 1
 	player, party, focus, targets = TBGroups()
 	
-	values["healing"] = UnitGetIncomingHeals("player")
-	values["absorbs"] = UnitGetTotalAbsorbs("player")
+	--values["healing"] = UnitGetIncomingHeals("player")
+	--values["absorbs"] = UnitGetTotalAbsorbs("player")
+	
+	for key,value in pairs(PanelFrame.Groups) do
+		values[key] = value
+	end
 	
 	--[[
 	local result = targets:CanUse("Гнев")

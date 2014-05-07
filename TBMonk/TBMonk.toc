@@ -3,3 +3,4 @@
 ## Dependencies: TBBase
 
 Windwalker.lua
+Brewmaster.lua
