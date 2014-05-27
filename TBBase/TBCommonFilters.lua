@@ -34,7 +34,7 @@ function BaseGroup:UnBlocked()
 end
 
 function BaseGroup:AutoAttacking(yes)
-	if (IndicatorFrame.InCombat and yes) or (~IndicatorFrame.InCombat and ~yes) then
+	if (IndicatorFrame.InCombat and yes) or ( not IndicatorFrame.InCombat and not yes) then
 		return self
 	end
 	return self:CreateDerived()
@@ -57,9 +57,9 @@ end
 function BaseGroup:CanInterrupt()
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
-		local i1 = select(9,UnitCastingInfo(key))
-		local i2 = select(9,UnitChannelInfo(key))
-		if i1 or i2 then
+		local c1,i1 = select(8,UnitCastingInfo(key))
+		local c2,i2 = select(8,UnitChannelInfo(key))
+		if (c1 and not i1) or (c2 and not i2) then
 			result[key] = value
 		end
 	end

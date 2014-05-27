@@ -12,6 +12,7 @@ RogueCombat ={
 				["Мясорубка"] = 5171,
 				["Пробивающий удар"] = 84617,
 				["Незаметность"] = 1784,
+				["Пинок"] = 1766,
 			},
 			["Buffs"] = {
 			},
@@ -51,13 +52,14 @@ function RogueCombat:OnUpdate(g, list, modes)
 		list:Cast( "Незаметность", g.player:CanUse("Незаметность"):MinHP() )
 	end	
 	
-	// удар-стартер
+	-- удар-стартер
 	list:Cast( "Внезапный удар", g.targets:AutoAttacking("true"):CanUse("Внезапный удар"):MinHP() )
 		
 	if not UnitAffectingCombat("player") then
 		return list:Execute()
 	end
 	
+	list:Cast( "Пинок", g.targets:CanUse("Пинок"):CanInterrupt():MinHP() )
 
 	
 	--list:Cast( "Пробивающий удар", g.targets:CanUse("Пробивающий удар"):Target():Aura("Пробивающий удар", "mine", nil, "inverse", 3):MinHP() )

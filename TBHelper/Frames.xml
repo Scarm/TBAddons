@@ -254,8 +254,8 @@
 				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBHelperOnTalentChanged")
 				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBPrintEvent")
 				TBSubscribeEvent(self,"UPDATE_BINDINGS", "TBPrintEvent")
-				TBSubscribeEvent(self,"PLAYER_ENTER_COMBAT", "TBPrintEvent")
-				TBSubscribeEvent(self,"PLAYER_LEAVE_COMBAT", "TBPrintEvent")
+				--TBSubscribeEvent(self,"PLAYER_ENTER_COMBAT", "TBPrintEvent")
+				--TBSubscribeEvent(self,"PLAYER_LEAVE_COMBAT", "TBPrintEvent")
 				
 				
 			</OnLoad> 

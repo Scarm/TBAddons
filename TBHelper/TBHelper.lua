@@ -206,7 +206,7 @@ function TBFillValues(values)
 			values[key] = value
 		end
 	end
-	values["In combat"] = UnitAffectingCombat("player") or "nil"
+	values["In combat"] = PanelFrame.InCombat or "nil"
 	--[[
 	local list = TBList()
 	list:Cast( "Незаметность", player:CanUse("Незаметность"):MinHP() )
