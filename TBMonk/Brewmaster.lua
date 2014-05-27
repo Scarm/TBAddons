@@ -14,15 +14,15 @@ MonkBrewmaster = {
 			},
 		}
 		
-function MonkBrewmaster:OnUpdate(player, party, focus, targets, list)
+function MonkBrewmaster:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	if not UnitAffectingCombat("player") then
 		return
 	end
 	
-	list:Cast( "Лапа тигра", targets:CanUse("Лапа тигра"):Aura("Сила тигра", "mine", "self", "inverse", 3):MinHP() )
-	list:Cast( "Нокаутирующий удар", targets:CanUse("Нокаутирующий удар"):MinHP() )
-	list:Cast( "Дзуки", targets:CanUse("Дзуки"):MinHP() )
+	list:Cast( "Лапа тигра", g.targets:CanUse("Лапа тигра"):Aura("Сила тигра", "mine", "self", "inverse", 3):MinHP() )
+	list:Cast( "Нокаутирующий удар", g.targets:CanUse("Нокаутирующий удар"):MinHP() )
+	list:Cast( "Дзуки", g.targets:CanUse("Дзуки"):MinHP() )
 	
 	return list:Execute()
 end	

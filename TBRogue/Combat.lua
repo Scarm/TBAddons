@@ -44,28 +44,31 @@ function BaseGroup:Target()
 	return result
 end	
 
-function RogueCombat:OnUpdate(player, party, focus, targets, list, mode)
+function RogueCombat:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
-	--if GetShapeshiftForm() == 0 then
-		list:Cast( "Незаметность", player:CanUse("Незаметность"):MinHP() )
-	--end	
+	if GetShapeshiftForm() == 0 then
+		list:Cast( "Незаметность", g.player:CanUse("Незаметность"):MinHP() )
+	end	
 	
+	// удар-стартер
+	list:Cast( "Внезапный удар", g.targets:AutoAttacking("true"):CanUse("Внезапный удар"):MinHP() )
+		
 	if not UnitAffectingCombat("player") then
 		return list:Execute()
 	end
 	
-	list:Cast( "Внезапный удар", targets:CanUse("Внезапный удар"):MinHP() )
 
 	
-	list:Cast( "Пробивающий удар", targets:CanUse("Пробивающий удар"):Target():Aura("Пробивающий удар", "mine", nil, "inverse", 3):MinHP() )
-	list:Cast( "Мясорубка", player:CanUse("Мясорубка"):Aura("Мясорубка", "mine", "self", "inverse", 3):MinHP() )
-	list:Cast( "Заживление ран", player:CanUse("Заживление ран"):RangeHP(0, 80):Aura("Заживление ран", "mine", "self", "inverse", 3):MinHP() )
+	--list:Cast( "Пробивающий удар", g.targets:CanUse("Пробивающий удар"):Target():Aura("Пробивающий удар", "mine", nil, "inverse", 3):MinHP() )
+	list:Cast( "Пробивающий удар", g.target:CanUse("Пробивающий удар"):Aura("Пробивающий удар", "mine", nil, "inverse", 3):MinHP() )
+	list:Cast( "Мясорубка", g.player:CanUse("Мясорубка"):Aura("Мясорубка", "mine", "self", "inverse", 3):MinHP() )
+	list:Cast( "Заживление ран", g.player:CanUse("Заживление ран"):RangeHP(0, 80):Aura("Заживление ран", "mine", "self", "inverse", 3):MinHP() )
 	
 	--list:Cast( "Рваная рана", targets:CanUse("Рваная рана"):ComboPoints(5):Aura("Рваная рана", "mine", nil, "inverse", 3):MinHP() )
-	list:Cast( "Потрошение", targets:CanUse("Потрошение"):ComboPoints(5):MinHP() )
+	list:Cast( "Потрошение", g.targets:CanUse("Потрошение"):ComboPoints(5):MinHP() )
 
-	list:Cast( "Коварный удар", targets:CanUse("Коварный удар"):MinHP() )
+	list:Cast( "Коварный удар", g.targets:CanUse("Коварный удар"):MinHP() )
 	
 	return list:Execute()
 end	

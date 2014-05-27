@@ -179,8 +179,7 @@ function TBOnUpdate()
 	
 	TBClearControls()	
 	if IndicatorFrame.Spec then
-		local player, party, focus, targets = TBGroups()
-		local cmd = IndicatorFrame.Spec:OnUpdate(player, party, focus, targets, TBList(), PanelFrame.Groups)
+		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), PanelFrame.Groups)
 		if cmd then
 			IndicatorFrame.LastCommand = cmd
 		end
@@ -215,6 +214,7 @@ function TBLastCastUpdateFailed(self, event,...)
 	--print(event, GetSpellInfo(spellId))
 end
 
+--[[
 function TBCombatLog(self, event,timestamp, combatevent,...)
 	if combatevent == "UNIT_DIED" then
 		local guid = select(6,...)
@@ -240,4 +240,14 @@ function TBMouseOver()
 	IndicatorFrame.EnemyCount = 0
 	for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
 end
+--]]
+
+function TBEnterCombat() 
+	IndicatorFrame.InCombat = 1	
+end
+
+function TBLeaveCombat() 
+	IndicatorFrame.InCombat = nil	
+end
+
 

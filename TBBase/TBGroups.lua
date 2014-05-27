@@ -9,8 +9,8 @@ end
 
 
 TBNeedFullHealList = {
-					["Чавканье"] = "Чавканье"
-		}
+		["Чавканье"] = "Чавканье"
+	}
 
 
 function BaseGroup:NeedFullHeal()
@@ -77,6 +77,7 @@ function TBGroups()
 	local focus = BaseGroup:CreateDerived()
 	local party = BaseGroup:CreateDerived()
 	local targets = BaseGroup:CreateDerived()
+	local target = BaseGroup:CreateDerived()
   
 	-----
 	player["player"] = Targetting("player")
@@ -101,9 +102,17 @@ function TBGroups()
 	for k,v in pairs(party) do
 		targets[k.."target"] = Assisting(k.."target", v)
 		targets[k] = Targetting(k)
-	end  
-	-----  
-	return player, party, focus, targets
+	end 
+	-----
+	target["target"] = Targetting("target")
+	-----
+	local result = {}
+	result.player = player
+	result.party = party
+	result.focus = focus
+	result.targets = targets
+	result.target = target
+	return result
 end
 
 

@@ -24,30 +24,30 @@ DKFrost = {
 			},
 		}
 		
-function DKFrost:OnUpdate(player, party, focus, targets, list)
+function DKFrost:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	if not UnitAffectingCombat("player") then
 		return
 	end
 
 	
-	list:Cast( "Удар чумы", targets:CanUse("Удар чумы"):Aura("Кровавая чума", "mine", nil, "inverse", 3):MinHP() )
-	list:Cast( "Воющий ветер", targets:CanUse("Воющий ветер"):Aura("Озноб", "mine", nil, "inverse", 3):MinHP() )
+	list:Cast( "Удар чумы", g.targets:CanUse("Удар чумы"):Aura("Кровавая чума", "mine", nil, "inverse", 3):MinHP() )
+	list:Cast( "Воющий ветер", g.targets:CanUse("Воющий ветер"):Aura("Озноб", "mine", nil, "inverse", 3):MinHP() )
 	--list:Cast( "Кровоотвод", player:CanUse("Кровоотвод"):MinHP() )
 	
 	if 100 * UnitHealth("player") / UnitHealthMax("player") < 50 then
-		list:Cast( "Удар смерти", targets:CanUse("Удар смерти"):MinHP() )
+		list:Cast( "Удар смерти", g.targets:CanUse("Удар смерти"):MinHP() )
 	end	
-	list:Cast( "Уничтожение", targets:CanUse("Уничтожение"):Aura("Машина для убийств", "mine", "self", nil):MinHP() )
-	list:Cast( "Воющий ветер", targets:CanUse("Воющий ветер"):Aura("Морозная дымка", "mine", "self", nil):MinHP() )
-	list:Cast( "Кровавый удар", targets:CanUse("Кровавый удар"):MinHP() )
+	list:Cast( "Уничтожение", g.targets:CanUse("Уничтожение"):Aura("Машина для убийств", "mine", "self", nil):MinHP() )
+	list:Cast( "Воющий ветер", g.targets:CanUse("Воющий ветер"):Aura("Морозная дымка", "mine", "self", nil):MinHP() )
+	list:Cast( "Кровавый удар", g.targets:CanUse("Кровавый удар"):MinHP() )
 	
-	list:Cast( "Зимний горн", player:CanUse("Зимний горн"):MinHP() )
+	list:Cast( "Зимний горн", g.player:CanUse("Зимний горн"):MinHP() )
 	
 	if 100 * UnitHealth("player") / UnitHealthMax("player") < 80 then
-		list:Cast( "Удар смерти", targets:CanUse("Удар смерти"):MinHP() )
+		list:Cast( "Удар смерти", g.targets:CanUse("Удар смерти"):MinHP() )
 	end	
-	list:Cast( "Уничтожение", targets:CanUse("Уничтожение"):MinHP() )
+	list:Cast( "Уничтожение", g.targets:CanUse("Уничтожение"):MinHP() )
 	
 	
 	return list:Execute()

@@ -33,10 +33,39 @@ function BaseGroup:UnBlocked()
 	return self
 end
 
-function BaseGroup:NotMoving()
-	return self
+function BaseGroup:AutoAttacking(yes)
+	if (IndicatorFrame.InCombat and yes) or (~IndicatorFrame.InCombat and ~yes) then
+		return self
+	end
+	return self:CreateDerived()
 end
 
+function BaseGroup:Moving(yes)
+	local speed = GetUnitSpeed(unit)
+	if speed > 0 then
+		IndicatorFrame.LastMoving = GetTime()
+	end
+	
+	local cond = GetTime() > IndicatorFrame.LastMoving + 0.5
+	if (cond and yes) or (not cond and not yes) then
+		return self
+	end
+	
+	return self:CreateDerived()
+end
+
+function BaseGroup:CanInterrupt()
+	local result = self:CreateDerived()
+	for key,value in pairs(self) do
+		local i1 = select(9,UnitCastingInfo(key))
+		local i2 = select(9,UnitChannelInfo(key))
+		if i1 or i2 then
+			result[key] = value
+		end
+	end
+	
+	return result	
+end
 
 function BaseGroup:NeedDecurse(...)
 	local result = self:CreateDerived()
