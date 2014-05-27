@@ -13,6 +13,64 @@ function SlashCmdList.TBHELPER(msg, editbox)
 	end
 end
 
+function TBTestSpell()
+	print("start testing")
+	
+	key = "Незаметность"
+	
+	local spell = IndicatorFrame.ByKey[key]
+	if spell == nil then
+		print("НЕ НАЙДЕН СПЕЛЛ! ", key)
+		return result
+	end
+	
+    local caster = "player"
+    local idx = spell.TabIndex
+	local book = spell.Type
+
+    if UnitIsDead(caster) then
+        return "UnitIsDead"
+    end
+	  
+    if GetSpellCooldown(idx, book) ~= 0 then
+        return "GetSpellCooldown"
+    end
+    
+    if IsUsableSpell(idx, book) == nil then
+        return "GetSpellCooldown"
+    end
+           
+    local et = select(6,UnitCastingInfo(caster)) or select(6, UnitChannelInfo(caster))
+    if et and et > GetTime() * 1000 then 
+        return "UnitCastingInfo"
+    end
+	
+	target = "player"
+	
+	if UnitIsDead(target) then
+		return "UnitIsDead"
+	end
+	
+	if SpellHasRange(idx, book) and  IsSpellInRange(idx, book, target) == 0 then
+		return "IsSpellInRange"
+	end 
+		
+	if UnitCanAttack(caster, target) and IsHarmfulSpell(idx, book) then
+		return "++UnitCanAttack"
+	end
+
+		  
+	if UnitCanAssist(caster, target) and IsHelpfulSpell(idx, book) then
+		return "++UnitCanAssist"
+	end
+
+	-- Спелл можно кидать и в своих и в чужих, тогда разрешаем кидать, ответственность на составителе бота
+	if IsHarmfulSpell(idx, book)==nil and IsHelpfulSpell(idx, book)==nil then
+		return "++IsHarmfulSpell"
+	end
+	
+	return "finish"
+end
 
 
 function TBGroupNames()
@@ -139,21 +197,29 @@ function TBFillValues(values)
 	
 	--values["healing"] = UnitGetIncomingHeals("player")
 	--values["absorbs"] = UnitGetTotalAbsorbs("player")
+	values["form"] = GetShapeshiftForm()
 	
-	for key,value in pairs(PanelFrame.Groups) do
-		values[key] = value
+
+	
+	if PanelFrame.Groups then
+		for key,value in pairs(PanelFrame.Groups) do
+			values[key] = value
+		end
 	end
-	
+	values["In combat"] = UnitAffectingCombat("player") or "nil"
 	--[[
-	local result = targets:CanUse("Гнев")
+	local list = TBList()
+	list:Cast( "Незаметность", player:CanUse("Незаметность"):MinHP() )
+	
+	local result = player:CanUse("Незаметность"):MinHP()
 	
 	
 	for key,value in pairs(result) do
 		--values[key] = string.format("%d", 100 * UnitHealth(key) / UnitHealthMax(key))
-		values[key] = string.format("%d", 100 * UnitHealth(key))
+		values[key] = key
 	end
-	
-	
+	--]]
+	--[[
 	values["minHP"] = "nil"
 	local target = result:MinHP()
 	if target then

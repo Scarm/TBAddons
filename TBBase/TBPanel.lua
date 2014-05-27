@@ -108,17 +108,21 @@ function TBBindingClick(idx)
 	TBGroupControl(PanelFrame.Buttons[idx])
 end
 --]]
-function TBInitPanel()
-	print()
-	local role = select(6,GetSpecializationInfo(GetSpecialization()))
-	print(role)
-	
+function TBClearPanel()
 	PanelFrame.Groups = {}
 	
 	for idx = 1,8 do
 		button = PanelFrame.Buttons[idx]
 		button:Hide()
 	end
+end
+
+function TBInitPanel()
+	print()
+	local role = select(6,GetSpecializationInfo(GetSpecialization()))
+	print(role)
+	
+
 	
 	for idx, value in pairs(roleButtons[role]) do
 		button = PanelFrame.Buttons[idx]

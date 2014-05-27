@@ -45,6 +45,7 @@ function TBAssignBot(self)
 	end
 	-- бота чистим всегда, а устанавливаем - только если нашли подходящего
 	TBClearSpec()
+	TBClearPanel()
 	
     local name,class = UnitClass("player")
     print("Загружаются боты для класса",name)
@@ -179,7 +180,7 @@ function TBOnUpdate()
 	TBClearControls()	
 	if IndicatorFrame.Spec then
 		local player, party, focus, targets = TBGroups()
-		local cmd = IndicatorFrame.Spec:OnUpdate(player, party, focus, targets, TBList())
+		local cmd = IndicatorFrame.Spec:OnUpdate(player, party, focus, targets, TBList(), PanelFrame.Groups)
 		if cmd then
 			IndicatorFrame.LastCommand = cmd
 		end
