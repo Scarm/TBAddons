@@ -32,23 +32,11 @@ function BaseGroup:ComboPoints(points)
 	return result
 end
 
-function BaseGroup:Target()
-	local result = self:CreateDerived()
-	
-	for key,value in pairs(self) do
-		
-		if UnitIsUnit("target",key) then
-			result[key] = value
-			return result
-		end
-	end
-	return result
-end	
 
 function RogueCombat:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
-	if GetShapeshiftForm() == 0 then
+	if GetShapeshiftForm() == 0 and g.target:MinHP() then
 		list:Cast( "Незаметность", g.player:CanUse("Незаметность"):MinHP() )
 	end	
 	
@@ -61,8 +49,6 @@ function RogueCombat:OnUpdate(g, list, modes)
 	
 	list:Cast( "Пинок", g.targets:CanUse("Пинок"):CanInterrupt():MinHP() )
 
-	
-	--list:Cast( "Пробивающий удар", g.targets:CanUse("Пробивающий удар"):Target():Aura("Пробивающий удар", "mine", nil, "inverse", 3):MinHP() )
 	list:Cast( "Пробивающий удар", g.target:CanUse("Пробивающий удар"):Aura("Пробивающий удар", "mine", nil, "inverse", 3):MinHP() )
 	list:Cast( "Мясорубка", g.player:CanUse("Мясорубка"):Aura("Мясорубка", "mine", "self", "inverse", 3):MinHP() )
 	list:Cast( "Заживление ран", g.player:CanUse("Заживление ран"):RangeHP(0, 80):Aura("Заживление ран", "mine", "self", "inverse", 3):MinHP() )
