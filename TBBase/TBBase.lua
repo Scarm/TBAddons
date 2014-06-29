@@ -30,7 +30,7 @@ function TBRegister(bot)
 		return
 	end
 	
-	print("Регистрируем бота для Class = ", bot.Class," и спека = ",bot.Id)
+	--print("Регистрируем бота для Class = ", bot.Class," и спека = ",bot.Id)
 	IndicatorFrame.Bots[bot.Class][bot.Id] = bot
 end
 
@@ -38,7 +38,7 @@ end
 function TBOnPlayerLogin(self)
 	print("OnLogin")
 	TBCreateIndicators(self)
-	TBCreatePanel()
+	TBCreatePanel(self)
 	TBAssignBot(self)
 end
 

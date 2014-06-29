@@ -104,7 +104,7 @@ end
 
 function TBUpdateBindings(button)
 	local key = GetBindingKey("CLICK "..button:GetName()..":LeftButton");
-	print(key)
+	--print(key)
 	
 	if (key ) then
         button.hotkey:SetText(key);
@@ -140,9 +140,9 @@ function TBClearPanel()
 end
 
 function TBInitPanel()
-	print()
+	--print()
 	local role = select(6,GetSpecializationInfo(GetSpecialization()))
-	print(role)
+	--print(role)
 	
 
 	if (roleButtons[role]) then
