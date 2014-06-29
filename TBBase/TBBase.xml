@@ -39,6 +39,8 @@
 				
 				--TBSubscribeEvent(self,"COMBAT_LOG_EVENT_UNFILTERED", "TBCombatLog")
 				--TBSubscribeEvent(self,"UPDATE_MOUSEOVER_UNIT", "TBMouseOver")
+				
+				TBSubscribeEvent(self,"AUCTION_ITEM_LIST_UPDATE", "TBOnAuctionListUpdate")
 			</OnLoad>
 			<OnUpdate>
 				TBOnUpdate()

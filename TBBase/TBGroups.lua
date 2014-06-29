@@ -28,7 +28,31 @@ function BaseGroup:NeedFullHeal()
 	return result
 end
 
+function BaseGroup:Best()
 
+	for key,value in pairs(self) do
+		if UnitIsUnit(key, "focus") then
+			return value
+		end
+	end
+
+	for key,value in pairs(self) do
+		if UnitIsUnit(key, "target") then
+			return value
+		end
+	end
+	
+	local minHP = 101
+	local unit = nil
+	for key,value in pairs(self) do
+		local hp = 100 * UnitHealth(key) / UnitHealthMax(key)
+		if hp < minHP then
+			minHP = hp
+			unit = value
+		end
+	end
+	return unit
+end
 
 function BaseGroup:MinHP(focusFirst)
 	if focusFirst then

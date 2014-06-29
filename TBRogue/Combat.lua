@@ -1,3 +1,5 @@
+--print("Combat.lua")
+
 RogueCombat ={
 			["Unique"] = {
 			},
@@ -13,6 +15,7 @@ RogueCombat ={
 				["Пробивающий удар"] = 84617,
 				["Незаметность"] = 1784,
 				["Пинок"] = 1766,
+				["Бросок"] = 121733,
 			},
 			["Buffs"] = {
 			},
@@ -32,6 +35,7 @@ function BaseGroup:ComboPoints(points)
 	return result
 end
 
+--[[
 function BaseGroup:Target()
 	local result = self:CreateDerived()
 	
@@ -44,11 +48,12 @@ function BaseGroup:Target()
 	end
 	return result
 end	
+--]]
 
 function RogueCombat:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
-	if GetShapeshiftForm() == 0 then
+	if GetShapeshiftForm() == 0 and g.target:CanUse("Бросок"):MinHP() then
 		list:Cast( "Незаметность", g.player:CanUse("Незаметность"):MinHP() )
 	end	
 	

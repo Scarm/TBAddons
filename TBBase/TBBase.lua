@@ -1,4 +1,6 @@
-﻿function TBRegister(bot)
+﻿print("TBBase.lua")
+
+function TBRegister(bot)
 	if bot == nil then
 		print("Передан пустой бот")
 	end
@@ -34,6 +36,7 @@ end
 
 
 function TBOnPlayerLogin(self)
+	print("OnLogin")
 	TBCreateIndicators(self)
 	TBCreatePanel()
 	TBAssignBot(self)
@@ -250,4 +253,16 @@ function TBLeaveCombat()
 	IndicatorFrame.InCombat = nil	
 end
 
+function TBAuction()
+	print("TBAuction")
+	
+	SortAuctionClearSort("list")
+	SortAuctionSetSort("list", "buyout")
+	SortAuctionApplySort("list")
+	QueryAuctionItems("Символ боя насмерть")
+end
 
+function TBOnAuctionListUpdate()
+	print("TBOnAuctionListUpdate")
+	print(GetAuctionItemInfo("list", 1))
+end

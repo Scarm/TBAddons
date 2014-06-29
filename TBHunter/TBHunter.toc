@@ -1,0 +1,5 @@
+## Interface: 50400
+## Title: TB Hunter 
+## Dependencies: TBBase
+
+Marksmanship.lua

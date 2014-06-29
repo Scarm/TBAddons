@@ -18,21 +18,76 @@
 				["Торжество"] = 85673,
 			},
 			["Buffs"] = {
+				["Воин богов"] = 144595,
 			},
 			["Class"] = "PALADIN",
 		}
 	
---function TBCanUse(name, target)	
---function TBCast(name,target)
---function TBBuff(name,isMine,target)   
---function TBDebuff(name,isMine,target)
---function TBBuffElapsed(name,isMine,target)
---function TBBuffStack(name,isMine,target)
---function TBDebuffElapsed(name,isMine,target)
---function TBDebuffStack(name,isMine,target)
---function TBCanInterrupt(target)
+
+
+function BaseGroup:InPaladinRange()	
+	if IsSpellInRange("Удар воина Света", "target") then
+		return self
+	end
+	return self:CreateDerived()
+end
+
+function BaseGroup:HolyPower(points)	
+	if UnitPower("player", 9) >= points then
+		return self
+	end
+	return self:CreateDerived()
+end
 		
-function PaladinRetri:OnUpdate()
+function PaladinRetri:OnUpdate(g, list, modes)
+	if IsMounted() then return end
+	
+	if modes.AgroType == "Off" then 
+		return 
+	end
+	
+	local sealIdx = 1
+	local sealName = "Печать правды"
+	local spamStrike = "Удар воина Света"
+	local energyStrike = "Вердикт храмовника"
+	if modes.Rotation == "AoE" then
+		sealIdx = 2
+		sealName = "Печать праведности"
+		spamStrike = "Молот праведника"
+		energyStrike = "Божественная буря"
+	end
+	
+	if not UnitAffectingCombat("player") then
+		return list:Execute()
+	end
+
+	list:Cast( "Укор", g.targets:CanUse("Укор"):CanInterrupt():Best() )
+	list:Cast( "Дознание", g.player:CanUse("Дознание"):Aura("Дознание", "mine", "self", "inverse", 3):HolyPower(3):Best() )
+
+	
+	if modes.Rotation == "Single" then
+		list:Cast( "Божественная буря", g.targets:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):InPaladinRange():HolyPower(5):Best() )
+		list:Cast( energyStrike, g.targets:CanUse(energyStrike):HolyPower(5):Best() )
+		list:Cast( "Молот гнева", g.targets:CanUse("Молот гнева"):Best() )
+		list:Cast( spamStrike, g.targets:CanUse(spamStrike):Best() )
+		list:Cast( "Правосудие", g.targets:CanUse("Правосудие"):Best() )	
+		list:Cast( "Божественная буря", g.targets:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):InPaladinRange():Best() )
+		list:Cast( "Экзорцизм", g.targets:CanUse("Экзорцизм"):Best() )	
+		list:Cast( energyStrike, g.targets:CanUse(energyStrike):HolyPower(3):Best() )
+		else
+		list:Cast( "Божественная буря", g.targets:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):InPaladinRange():HolyPower(5):Best() )
+		list:Cast( energyStrike, g.targets:CanUse(energyStrike):HolyPower(5):InPaladinRange():Best() )
+		list:Cast( "Молот гнева", g.targets:CanUse("Молот гнева"):Best() )
+		list:Cast( "Экзорцизм", g.targets:CanUse("Экзорцизм"):Best() )
+		list:Cast( spamStrike, g.targets:CanUse(spamStrike):Best() )
+		list:Cast( "Правосудие", g.targets:CanUse("Правосудие"):Best() )	
+		list:Cast( energyStrike, g.targets:CanUse(energyStrike):InPaladinRange():HolyPower(3):Best() )
+	end
+	return list:Execute()
+end
+
+--[[	
+function PaladinRetri:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
 	local sealIdx = 1
@@ -51,11 +106,11 @@ function PaladinRetri:OnUpdate()
 		return TBCast("Укор","target")
 	end
 	
-	--[[
+	
 	if TBBuff("Благословение королей", 1,"player")==nil and TBCanUse("Благословение королей","player") then
 		return TBCast("Благословение королей","player")
 	end
-		--]]
+		
 	-- 
 	if UnitPower("player", 9) > 2 and TBBuff("Дознание",1,"player")==nil and  TBCanUse("Дознание","player") then 
 		return TBCast("Дознание","player")
@@ -98,8 +153,8 @@ function PaladinRetri:OnUpdate()
 	if UnitPower("player", 9) > 2 and TBCanUse(energyStrike,"target") then           
 		return TBCast(energyStrike,"target")
 	end
+	
 end
+--]]		
 		
-		
-		
-TBRegister(PaladinRetri)
+TBRegister(PaladinRetri)			

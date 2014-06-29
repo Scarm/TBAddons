@@ -92,6 +92,10 @@ end
 
 function DruidRestor:OnUpdate(g, list, modes)
 	if IsMounted() or GetShapeshiftForm() == 6 or GetShapeshiftForm() == 4 or GetShapeshiftForm() == 2 then return end
+
+	if modes.AgroType == "Off" then 
+		return 
+	end
 	
 	if not UnitAffectingCombat("player") then
 		return list:Execute()

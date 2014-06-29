@@ -40,7 +40,29 @@ roleButtons = {
 						GroupId = "Rotation"
 					},
 				},
-
+			["HEALER"] = {
+					[1] = {
+						Icon = "Interface\\Icons\\ABILITY_SEAL",
+						ToolTip = "Off",
+						GroupId = "AgroType"
+					},
+					[2] = {
+						Icon = "Interface\\Icons\\ACHIEVEMENT_GUILDPERK_MOBILEBANKING",
+						ToolTip = "Solo",
+						GroupId = "AgroType",
+						default = 1
+					},
+					[3] = {
+						Icon = "Interface\\Icons\\Ability_Warrior_Charge",
+						ToolTip = "Aggo",
+						GroupId = "AgroType"
+					},
+					[4] = {
+						Icon = "Interface\\Icons\\Ability_Stealth",
+						ToolTip = "Care",
+						GroupId = "AgroType"
+					},
+				},
 		}
 
 function TBCreateButton(tail)
@@ -123,16 +145,17 @@ function TBInitPanel()
 	print(role)
 	
 
-	
-	for idx, value in pairs(roleButtons[role]) do
-		button = PanelFrame.Buttons[idx]
-		button:Show()
-		button.icon:SetTexture(value.Icon)
-		button.GroupId = value.GroupId
-		button.GroupValue = value.ToolTip
-		button:SetScript("OnClick", TBGroupControl)
-		if value.default then
-			TBGroupControl(button)
-		end
-	end			
+	if (roleButtons[role]) then
+		for idx, value in pairs(roleButtons[role]) do
+			button = PanelFrame.Buttons[idx]
+			button:Show()
+			button.icon:SetTexture(value.Icon)
+			button.GroupId = value.GroupId
+			button.GroupValue = value.ToolTip
+			button:SetScript("OnClick", TBGroupControl)
+			if value.default then
+				TBGroupControl(button)
+			end
+		end	
+	end
 end

@@ -41,8 +41,11 @@ function BaseGroup:AutoAttacking(yes)
 end
 
 function BaseGroup:Moving(yes)
-	local speed = GetUnitSpeed(unit)
+	local speed = GetUnitSpeed("player")
 	if speed > 0 then
+		IndicatorFrame.LastMoving = GetTime()
+	end
+	if IndicatorFrame.LastMoving == nil then
 		IndicatorFrame.LastMoving = GetTime()
 	end
 	
