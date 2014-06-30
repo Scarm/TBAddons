@@ -65,7 +65,7 @@ function BaseGroup:MinHP(focusFirst)
 	local minHP = 101
 	local unit = nil
 	for key,value in pairs(self) do
-		local hp = 100 * UnitHealth(key) / UnitHealthMax(key)
+		local hp = 100 * (UnitHealth(key) + UnitGetIncomingHeals(key)) / UnitHealthMax(key)
 		if hp < minHP then
 			minHP = hp
 			unit = value
@@ -139,7 +139,7 @@ function TBGroups()
 	return result
 end
 
-
+--[[
 function CastKey(key, target)
   result = {
     action = "spell",
@@ -177,3 +177,4 @@ function Execute(command)
 		return Execute(command.condition)
 	end
 end
+--]]

@@ -20,7 +20,7 @@ function BaseGroup:HealingRange(minHP, maxHP)
 	local limit = minHP + (maxHP - minHP) * mpp
 	
 	for key,value in pairs(self) do
-		local hp = 100 * UnitHealth(key) / UnitHealthMax(key)
+		local hp = 100 * (UnitHealth(key) + UnitGetIncomingHeals(key)) / UnitHealthMax(key)
 		if hp < limit then
 			result[key] = value
 		end
@@ -70,17 +70,56 @@ function BaseGroup:CanInterrupt()
 	return result	
 end
 
+function BaseGroup:TBLastCast(key, yes)
+	if IndicatorFrame.LastSpellTime == nil then
+		IndicatorFrame.LastSpellTime = 0
+	end
+	
+	if GetTime() > IndicatorFrame.LastSpellTime then
+		IndicatorFrame.LastSpell = nil
+	end
+
+	local cond = IndicatorFrame.LastSpell and IndicatorFrame.LastSpell.Key == key
+	if (cond and yes) or (not cond and not yes) then
+		return self
+	end
+	
+	return self:CreateDerived()
+end
+
 function BaseGroup:NeedDecurse(...)
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
 		local needDecurse = nil
-		
+		--[[
 		local types = select("#", ...)
 		dispelType = select(5, UnitAura(key, 1, "HARMFUL"))
 		for i = 1,types,1 do
 			if dispelType == select(i, ...) then
 				needDecurse = 1
 			end			
+		end
+		--]]
+		
+		local debuffNum = 1
+		local needContinue = 1
+		-- проходим по всем дебаффам, пока они не кончатся, или не найдем хоть что то для диспела
+		while needContinue do
+			local types = select("#", ...)
+			dispelType = select(5, UnitAura(key, debuffNum, "HARMFUL"))
+			if dispelType then
+				-- какой то дебафф есть, проверим, можно ли его диспеллить
+				for i = 1,types,1 do
+					if dispelType == select(i, ...) then
+						needDecurse = 1
+						needContinue = nil
+					end			
+				end
+			else
+				--дебаффы закончились
+				needContinue = nil
+			end
+			debuffNum = debuffNum + 1
 		end
 
 		if needDecurse then

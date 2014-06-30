@@ -14,6 +14,8 @@
 				["Восстановление"] = 8936,
 				["Природный целитель"] = 88423,
 				["Гнев"] = 5176,
+				["Железная кора"] = 102342,
+				["Щит Кенария"] = 102351,
 			},
 			["Buffs"] = {
 				["Гармония"] = 100977,
@@ -107,25 +109,32 @@ function DruidRestor:OnUpdate(g, list, modes)
 	--декурсинг	
 	list:Cast( "Природный целитель", g.party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )	
 
+	
+	
 	-- Изначально, при полной мане кастуем с оверхилом, затем критерии ужесточаются
 	list:Cast( "Буйный рост", g.party:HealingRange(80,90):WildGrowth(5) )
 	list:Cast( "Буйный рост", g.party:HealingRange(75,85):WildGrowth(4) )
 	list:Cast( "Буйный рост", g.party:HealingRange(70,80):WildGrowth(3) )
 
+	
+	-- Кидаем защитку на танка
+	list:Cast( "Железная кора", g.focus:HealingRange(30,50)::CanUse("Железная кора"):MinHP() )
+	list:Cast( "Щит Кенария", g.focus:HealingRange(30,50)::CanUse("Щит Кенария"):MinHP() )
+
 	-- экстренный подъем целей
 	-- в этом блоке ужесточение требований должно быть минимальным
 	local gr = g.party:HealingRange(30,40)
 	list:Cast( "Омоложение",                gr:Rejuvenation() )
-	list:Cast( "Восстановление",            gr:FreeRegrowth() )
 	list:Cast( "Сила Природы",              gr:ForceOfNature() )
+	list:Cast( "Восстановление",            gr:FreeRegrowth() )
 	list:Cast( "Быстрое восстановление",    gr:Swiftmend() )
 	list:Cast( "Целительное прикосновение", gr:HealingTouch() )
 	
 	-- поднимаем цели, которые надо поднять до фулл хп
 	local gr = g.party:NeedFullHeal():UnBlocked()
 	list:Cast( "Омоложение",                gr:RangeHP(0,85):Rejuvenation() )
-	list:Cast( "Восстановление",            gr:RangeHP(0,85):FreeRegrowth() )
 	list:Cast( "Сила Природы",              gr:RangeHP(0,85):ForceOfNature() )
+	list:Cast( "Восстановление",            gr:RangeHP(0,85):FreeRegrowth() )
 	list:Cast( "Быстрое восстановление",    gr:RangeHP(0,85):Swiftmend() )
 	list:Cast( "Целительное прикосновение", gr:RangeHP(0,85):HealingTouch() )
 	list:Cast( "Покровительство Природы",   gr:Nourish() )	
@@ -144,8 +153,8 @@ function DruidRestor:OnUpdate(g, list, modes)
 	-- поднимаем просевшего танка
 	list:Cast( "Омоложение",                g.focus:HealingRange(80,99):Rejuvenation() )
 	local gr = g.focus:HealingRange(50,80)
-	list:Cast( "Восстановление",            gr:FreeRegrowth() )
 	list:Cast( "Сила Природы",              gr:ForceOfNature() )
+	list:Cast( "Восстановление",            gr:FreeRegrowth() )
 	list:Cast( "Быстрое восстановление",    gr:Swiftmend() )
 	list:Cast( "Целительное прикосновение", gr:HealingTouch() )
 	
@@ -153,8 +162,8 @@ function DruidRestor:OnUpdate(g, list, modes)
 	-- поднимаем просевших
 	list:Cast( "Омоложение",                g.party:HealingRange(70,85):Rejuvenation() )
 	local gr = g.party:HealingRange(50,70)
-	list:Cast( "Восстановление",            gr:FreeRegrowth() )
 	list:Cast( "Сила Природы",              gr:ForceOfNature() )
+	list:Cast( "Восстановление",            gr:FreeRegrowth() )
 	list:Cast( "Быстрое восстановление",    gr:Swiftmend() )
 	list:Cast( "Целительное прикосновение", gr:HealingTouch() )
 	
