@@ -20,7 +20,8 @@ function BaseGroup:HealingRange(minHP, maxHP)
 	local limit = minHP + (maxHP - minHP) * mpp
 	
 	for key,value in pairs(self) do
-		local hp = 100 * (UnitHealth(key) + UnitGetIncomingHeals(key)) / UnitHealthMax(key)
+		--local hp = 100 * (UnitHealth(key) + (UnitGetIncomingHeals(key) or 0)) / UnitHealthMax(key)
+		local hp = 100 * UnitHealth(key) / UnitHealthMax(key)
 		if hp < limit then
 			result[key] = value
 		end

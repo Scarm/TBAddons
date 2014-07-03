@@ -14,8 +14,8 @@
 				["Восстановление"] = 8936,
 				["Природный целитель"] = 88423,
 				["Гнев"] = 5176,
-				["Железная кора"] = 102342,
-				["Щит Кенария"] = 102351,
+				--["Железная кора"] = 102342,
+				--["Щит Кенария"] = 102351,
 			},
 			["Buffs"] = {
 				["Гармония"] = 100977,
@@ -69,11 +69,11 @@ function BaseGroup:Rejuvenation()
 end
 
 function BaseGroup:FreeRegrowth()
-	return self:Moving("false"):CanUse("Восстановление"):Aura("Ясность мысли", "mine", "self", nil, 2):MinHP()
+	return self:Moving("false"):CanUse("Восстановление"):Aura("Ясность мысли", "mine", "self", nil, 2):TBLastCast("Восстановление"):MinHP()
 end
 
 function BaseGroup:ForceOfNature()
-	return self:CanUse("Сила Природы"):MinHP()
+	return self:CanUse("Сила Природы"):TBLastCast("Сила Природы"):MinHP()
 end
 
 function BaseGroup:Swiftmend()
@@ -106,6 +106,9 @@ function DruidRestor:OnUpdate(g, list, modes)
 	if 100 * UnitPower("player") / UnitPowerMax("player") < 80 then
 		list:Cast( "Озарение", g.player:CanUse("Озарение"):MinHP() )
 	end
+	
+	list:Cast( "Омоложение",                g.party:HealingRange(70,85):Rejuvenation() )
+	--[[
 	--декурсинг	
 	list:Cast( "Природный целитель", g.party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )	
 
@@ -118,8 +121,8 @@ function DruidRestor:OnUpdate(g, list, modes)
 
 	
 	-- Кидаем защитку на танка
-	list:Cast( "Железная кора", g.focus:HealingRange(30,50)::CanUse("Железная кора"):MinHP() )
-	list:Cast( "Щит Кенария", g.focus:HealingRange(30,50)::CanUse("Щит Кенария"):MinHP() )
+	--list:Cast( "Железная кора", g.focus:HealingRange(30,50):CanUse("Железная кора"):MinHP() )
+	--list:Cast( "Щит Кенария", g.focus:HealingRange(30,50):CanUse("Щит Кенария"):MinHP() )
 
 	-- экстренный подъем целей
 	-- в этом блоке ужесточение требований должно быть минимальным
@@ -172,7 +175,7 @@ function DruidRestor:OnUpdate(g, list, modes)
 	if (100 * UnitPower("player") / UnitPowerMax("player") > 80) and (g.party:RangeHP(0,90):MinHP())  then
 		list:Cast( "Гнев", g.targets:CanUse("Гнев"):MinHP() )
 	end
-	
+	--]]
 	
 	return list:Execute()
 

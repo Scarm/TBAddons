@@ -197,16 +197,20 @@ function TBFillValues(values)
 	
 	--values["healing"] = UnitGetIncomingHeals("player")
 	--values["absorbs"] = UnitGetTotalAbsorbs("player")
-	values["form"] = GetShapeshiftForm()
+	--values["form"] = GetShapeshiftForm()
 	
 
 	
 	if PanelFrame.Groups then
-		for key,value in pairs(PanelFrame.Groups) do
-			values[key] = value
+		for key,value in pairs(TBGroups().party:HealingRange(70,85)) do
+			values[key] = key
 		end
 	end
-	values["In combat"] = PanelFrame.InCombat or "nil"
+	--values["In combat"] = PanelFrame.InCombat or "nil"
+	
+	--values["IncomingHeals"] = UnitGetIncomingHeals("player") or "nil"
+	
+	values["Indicator"] = IndicatorFrame.DebugIndicatorName or "nil"
 	--[[
 	local list = TBList()
 	list:Cast( "Незаметность", player:CanUse("Незаметность"):MinHP() )

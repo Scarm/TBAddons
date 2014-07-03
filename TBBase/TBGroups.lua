@@ -65,7 +65,8 @@ function BaseGroup:MinHP(focusFirst)
 	local minHP = 101
 	local unit = nil
 	for key,value in pairs(self) do
-		local hp = 100 * (UnitHealth(key) + UnitGetIncomingHeals(key)) / UnitHealthMax(key)
+		--local hp = 100 * (UnitHealth(key) + (UnitGetIncomingHeals(key) or 0)) / UnitHealthMax(key)
+		local hp = 100 * UnitHealth(key) / UnitHealthMax(key)
 		if hp < minHP then
 			minHP = hp
 			unit = value

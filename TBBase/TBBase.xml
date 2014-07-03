@@ -15,7 +15,7 @@
                     </Anchors>
                     <Color g="0" r="1" b="0"/>                    
 				</Texture>
-                </Layer>
+            </Layer>
 		</Layers>
         
 		<Scripts>
