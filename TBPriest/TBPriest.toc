@@ -1,5 +1,0 @@
-﻿## Interface: 50400
-## Title: TB Priest 
-## Dependencies: TBBase
-
-Shadow.lua

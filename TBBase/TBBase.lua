@@ -43,7 +43,7 @@ function TBOnPlayerLogin(self)
 end
 
 function TBAssignBot(self)
-	if IsLoggedIn() == nil then
+	if IsLoggedIn() == false then
 		return
 	end
 	-- бота чистим всегда, а устанавливаем - только если нашли подходящего
@@ -180,7 +180,7 @@ end
 
 function TBOnUpdate()
 	
-	TBClearControls()	
+	--TBClearControls()	
 	if IndicatorFrame.Spec then
 		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), PanelFrame.Groups)
 		if cmd then

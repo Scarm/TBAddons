@@ -108,6 +108,7 @@ function TBGroups()
 	player["player"] = Targetting("player")
 	-----
 	focus["focus"]  = Targetting("focus")
+	focus["focustarget"] = Assisting("focustarget", focus["focus"])
 	-----
 	if IsInRaid() then
 		for i = 1,GetNumGroupMembers() do

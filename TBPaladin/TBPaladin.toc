@@ -1,6 +1,0 @@
-﻿## Interface: 50400
-## Title: TB Paladin 
-## Dependencies: TBBase
-
-Retri.lua
-Prot.lua

@@ -44,6 +44,29 @@ roleButtons = {
 					[1] = {
 						Icon = "Interface\\Icons\\ABILITY_SEAL",
 						ToolTip = "Off",
+						GroupId = "Type"
+					},
+					[2] = {
+						Icon = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierGreen.blp",
+						ToolTip = "Low",
+						GroupId = "Type",
+						default = 1
+					},
+					[3] = {
+						Icon = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierOrange.blp",
+						ToolTip = "Medium",
+						GroupId = "Type"
+					},
+					[4] = {
+						Icon = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
+						ToolTip = "High",
+						GroupId = "Type"
+					},
+				},
+			["TANK"] = {
+					[1] = {
+						Icon = "Interface\\Icons\\ABILITY_SEAL",
+						ToolTip = "Off",
 						GroupId = "AgroType"
 					},
 					[2] = {
@@ -61,6 +84,23 @@ roleButtons = {
 						Icon = "Interface\\Icons\\Ability_Stealth",
 						ToolTip = "Care",
 						GroupId = "AgroType"
+					},
+					
+					[5] = {
+						Icon = "Interface\\Icons\\Ability_MeleeDamage",
+						ToolTip = "Single",
+						GroupId = "Rotation",
+						default = 1
+					},
+					[6] = {
+						Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
+						ToolTip = "AoE",
+						GroupId = "Rotation"
+					},
+					[7] = {
+						Icon = "Interface\\Icons\\Ability_Warrior_Rampage",
+						ToolTip = "Burst",
+						GroupId = "Rotation"
 					},
 				},
 		}
@@ -142,7 +182,7 @@ end
 function TBInitPanel()
 	--print()
 	local role = select(6,GetSpecializationInfo(GetSpecialization()))
-	--print(role)
+	print(role)
 	
 
 	if (roleButtons[role]) then

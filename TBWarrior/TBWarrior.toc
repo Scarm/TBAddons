@@ -1,5 +1,6 @@
-## Interface: 50400
+## Interface: 60000
 ## Title: TB Warrior 
 ## Dependencies: TBBase
 
 Arms.lua
+Protection.lua

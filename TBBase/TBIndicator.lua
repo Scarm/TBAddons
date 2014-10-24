@@ -1,4 +1,5 @@
 ﻿function TBCreateIndicators(self)
+	print("TBCreateIndicators")
     IndicatorFrame.Frames = {}
 	IndicatorFrame.Rows = 48
 	for row= 0,1,1 do
@@ -98,6 +99,11 @@ function TBSetStaticCommands()
 	
 		
 	for name,value in pairs(commands) do
+		-- исключаем комбинацию CTRL-SHIFT-0 - она перехватывается виндой
+		if IndicatorFrame.TargetCount == 57 then
+			IndicatorFrame.TargetCount = IndicatorFrame.TargetCount + 1
+		end
+	
 		-- биндим цель
 		IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("type","target")
 		IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("unit",name)
@@ -141,6 +147,7 @@ end
 
 
 function TBCommand(name)
+	--if name then print(name) end
 	IndicatorFrame.DebugIndicatorName = name
     TBClearControls()
 	local id = IndicatorFrame.Spells[name] or IndicatorFrame.Targets[name]

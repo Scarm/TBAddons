@@ -140,6 +140,7 @@ function TBHelperOnReceiveDrag(self)
 end
 
 function TBHelperOnPlayerLogin(self,event,...)
+	print("TBHelperOnPlayerLogin")
 	if TBHelperData == nil then
 		TBHelperData = {}						
 	end
@@ -193,55 +194,36 @@ end
 function TBFillValues(values)
 
 	values["1"] = 1
-	player, party, focus, targets = TBGroups()
 	
-	--values["healing"] = UnitGetIncomingHeals("player")
-	--values["absorbs"] = UnitGetTotalAbsorbs("player")
-	--values["form"] = GetShapeshiftForm()
+	values["eclipse"] = UnitPower("player", SPELL_POWER_ECLIPSE)
+	values["direction"] = GetEclipseDirection()
 	
+	values["canUse"] = type(IsUsableSpell("Удар героя"));
+	
+	--[[
+	values["canUse"] = "nil"
 
-	
-	if PanelFrame.Groups then
-		for key,value in pairs(TBGroups().party:HealingRange(70,85)) do
-			values[key] = key
+	local power = UnitPower("player", SPELL_POWER_ECLIPSE)
+	if GetEclipseDirection() == "sun" and power > 70 then
+		values["canUse"] = "in range"
+		local val = TBGroups().target:CanUse("Звездный поток"):Aura("Солнечное могущество", "mine", "self", "inverse"):Best()
+		if val then
+			values["canUse"] = val.value or "nil"
 		end
 	end
-	--values["In combat"] = PanelFrame.InCombat or "nil"
-	
-	--values["IncomingHeals"] = UnitGetIncomingHeals("player") or "nil"
-	
-	values["Indicator"] = IndicatorFrame.DebugIndicatorName or "nil"
-	--[[
-	local list = TBList()
-	list:Cast( "Незаметность", player:CanUse("Незаметность"):MinHP() )
-	
-	local result = player:CanUse("Незаметность"):MinHP()
-	
-	
-	for key,value in pairs(result) do
-		--values[key] = string.format("%d", 100 * UnitHealth(key) / UnitHealthMax(key))
-		values[key] = key
-	end
 	--]]
-	--[[
-	values["minHP"] = "nil"
-	local target = result:MinHP()
-	if target then
-		values["minHP"] = target.value
-	end
-	
-	values["LastCommand"] = IndicatorFrame.LastCommand or "nil"	
-	--]]
-	--[[
-	local party = TBPartyList()
-	for key,value in pairs(party) do
-		value.HP = string.format("%d", 100 * UnitHealth(key) / UnitHealthMax(key))
-	end
-	local filtered = TBHasBuff("Омоложение",1,TBCanUse("Омоложение", party))
-	for key,value in pairs(filtered) do
-		values[key] = value.HP
-	end	
-	--]]
+--[[
+	local i = 1
+	local name = "1"
+	repeat
+		name = UnitAura("player", i)
+		id = select(11, UnitAura("player", i))
+		if name then
+			values[id] = name
+		end
+		i = i + 1
+	until id == nil
+--]]	
 end
 
 function TBHelperUpdateValues()

@@ -11,8 +11,10 @@ function TBRouteEvent(event,...)
 end
 
 function TBSubscribeEvent(self, event, func)
-	if TBEventFrame:IsEventRegistered(event) == nil then
+	--print("register event:", event)
+	if TBEventFrame:IsEventRegistered(event) == false then
 		TBEventFrame:RegisterEvent(event)
+		--print("registered!")
 	end
 	
 	if TBEventFrame.EventRoutingMap[event] == nil then

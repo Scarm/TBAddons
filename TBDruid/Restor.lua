@@ -3,27 +3,23 @@
 			},
 			["Id"] = 4,
 			["Spells"] = {
+				["Железная кора"] = 102342,
 				["Омоложение"] = 774,
-				["Жизнецвет"] = 33763,
-				["Покровительство Природы"] = 50464,
-				["Буйный рост"] = 48438,
-				["Целительное прикосновение"] = 5185,
 				["Быстрое восстановление"] = 18562,
-				["Сила Природы"] = 106737,
-				["Озарение"] = 29166,
-				["Восстановление"] = 8936,
+				["Природная стремительность"] = 132158,
+				["Целительное прикосновение"] = 5185,
+				["Щит Кенария"] = 102351,
 				["Природный целитель"] = 88423,
+				["Жизнецвет"] = 33763,
+				["Буйный рост"] = 48438,
 				["Гнев"] = 5176,
-				--["Железная кора"] = 102342,
-				--["Щит Кенария"] = 102351,
-			},
-			["Buffs"] = {
-				["Гармония"] = 100977,
-				["Ясность мысли"] = 16870,
+				["Восстановление"] = 8936,
 			},
 			["Class"] = "DRUID",
+			["Buffs"] = {
+			},
 		}
-	
+--[[	
 function BaseGroup:BestForWG(maxUnits)
 	local units = 0
 	local realUnits = 0
@@ -73,7 +69,7 @@ function BaseGroup:FreeRegrowth()
 end
 
 function BaseGroup:ForceOfNature()
-	return self:CanUse("Сила Природы"):TBLastCast("Сила Природы"):MinHP()
+	return self:CanUse("Сила Природы"):TBLastCast("Сила Природы"):TBLastCast("Сила Природы"):MinHP()
 end
 
 function BaseGroup:Swiftmend()
@@ -91,38 +87,60 @@ end
 function BaseGroup:HealingTouch()
 	return self:Moving("false"):CanUse("Целительное прикосновение"):MinHP()
 end
-
+--]]
 function DruidRestor:OnUpdate(g, list, modes)
-	if IsMounted() or GetShapeshiftForm() == 6 or GetShapeshiftForm() == 4 or GetShapeshiftForm() == 2 then return end
 
-	if modes.AgroType == "Off" then 
+	if IsMounted() then return end
+
+	if modes.Type == "Off" then 
 		return 
 	end
+	
+	if modes.Type == "Medium" then 
+		list:Cast( "Жизнецвет",   g.focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 3):MinHP() ) 
+	end	
+	
+	if modes.Type == "Hiht" then 
+		list:Cast( "Жизнецвет",   g.focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 3):MinHP() ) 
+		list:Cast( "Омоложение",   g.focus:CanUse("Омоложение"):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() ) 
+	end	
 	
 	if not UnitAffectingCombat("player") then
 		return list:Execute()
 	end
 	
-	if 100 * UnitPower("player") / UnitPowerMax("player") < 80 then
-		list:Cast( "Озарение", g.player:CanUse("Озарение"):MinHP() )
-	end
-	
-	list:Cast( "Омоложение",                g.party:HealingRange(70,85):Rejuvenation() )
-	--[[
 	--декурсинг	
 	list:Cast( "Природный целитель", g.party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )	
 
+	list:Cast( "Жизнецвет",   g.focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 3):MinHP() ) 
 	
+	if modes.Type == "Low" then 
+		
+	end	
 	
+	if modes.Type == "Medium" then 
+		list:Cast( "Омоложение",   g.focus:CanUse("Омоложение"):HealingRange(60,80):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() ) 
+
+	end	
+	
+	if modes.Type == "Hiht" then 
+		list:Cast( "Омоложение",   g.focus:CanUse("Омоложение"):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
+	end
+
+
+	
+	list:Cast( "Гнев", g.targets:CanUse("Гнев"):Best() )
+	
+	--[[
 	-- Изначально, при полной мане кастуем с оверхилом, затем критерии ужесточаются
-	list:Cast( "Буйный рост", g.party:HealingRange(80,90):WildGrowth(5) )
-	list:Cast( "Буйный рост", g.party:HealingRange(75,85):WildGrowth(4) )
-	list:Cast( "Буйный рост", g.party:HealingRange(70,80):WildGrowth(3) )
+	list:Cast( "Буйный рост", g.party:HealingRange(85,95):WildGrowth(5) )
+	list:Cast( "Буйный рост", g.party:HealingRange(80,90):WildGrowth(4) )
+	list:Cast( "Буйный рост", g.party:HealingRange(75,85):WildGrowth(3) )
 
 	
 	-- Кидаем защитку на танка
-	--list:Cast( "Железная кора", g.focus:HealingRange(30,50):CanUse("Железная кора"):MinHP() )
-	--list:Cast( "Щит Кенария", g.focus:HealingRange(30,50):CanUse("Щит Кенария"):MinHP() )
+	list:Cast( "Железная кора", g.focus:HealingRange(50,60):CanUse("Железная кора"):MinHP() )
+	list:Cast( "Щит Кенария", g.focus:HealingRange(60,80):CanUse("Щит Кенария"):MinHP() )
 
 	-- экстренный подъем целей
 	-- в этом блоке ужесточение требований должно быть минимальным
@@ -144,7 +162,7 @@ function DruidRestor:OnUpdate(g, list, modes)
 	
 	-- по танку
 	-- обязательно поддерживаем 3 стака
-	list:Cast( "Жизнецвет",   g.focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 3, 3):MinHP() )
+	list:Cast( "Жизнецвет",   g.focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 5, 3):MinHP() )
 	
 	-- обновляем гармонию, ниже приоритером стаков, потому что каст бафнет стаки
 	list:Cast( "Покровительство Природы", g.focus:Aura("Гармония", "mine", "self", "inverse", 2):Nourish() )
@@ -175,8 +193,8 @@ function DruidRestor:OnUpdate(g, list, modes)
 	if (100 * UnitPower("player") / UnitPowerMax("player") > 80) and (g.party:RangeHP(0,90):MinHP())  then
 		list:Cast( "Гнев", g.targets:CanUse("Гнев"):MinHP() )
 	end
-	--]]
 	
+--]]	
 	return list:Execute()
 
 end

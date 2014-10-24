@@ -107,8 +107,8 @@ function BaseGroup:NeedDecurse(...)
 		-- проходим по всем дебаффам, пока они не кончатся, или не найдем хоть что то для диспела
 		while needContinue do
 			local types = select("#", ...)
-			dispelType = select(5, UnitAura(key, debuffNum, "HARMFUL"))
-			if dispelType then
+			n,_,_,_,dispelType = UnitAura(key, debuffNum, "HARMFUL")
+			if n then
 				-- какой то дебафф есть, проверим, можно ли его диспеллить
 				for i = 1,types,1 do
 					if dispelType == select(i, ...) then
@@ -260,7 +260,7 @@ function BaseGroup:CanUse(key)
         return result
     end
     
-    if IsUsableSpell(idx, book) == nil then
+    if IsUsableSpell(idx, book) == false then
         return result
     end
            
