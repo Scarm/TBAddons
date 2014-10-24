@@ -220,17 +220,17 @@ function BaseGroup:CheckTarget(target, idx, book, caster)
 		return nil
 	end 
 		
-	if UnitCanAttack(caster, target) and IsHarmfulSpell(idx, book) then
+	if UnitCanAttack(caster, target) and IsHarmfulSpell(idx, book) == true then
 		return 1
 	end
 
 		  
-	if UnitCanAssist(caster, target) and IsHelpfulSpell(idx, book) then
+	if UnitCanAssist(caster, target) and IsHelpfulSpell(idx, book) == true then
 		return 1
 	end
 
 	-- Спелл можно кидать и в своих и в чужих, тогда разрешаем кидать, ответственность на составителе бота
-	if IsHarmfulSpell(idx, book)==nil and IsHelpfulSpell(idx, book)==nil then
+	if IsHarmfulSpell(idx, book) == false and IsHelpfulSpell(idx, book) == false then
 		return 1
 	end
 	

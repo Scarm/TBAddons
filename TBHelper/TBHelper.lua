@@ -198,7 +198,84 @@ function TBFillValues(values)
 	values["eclipse"] = UnitPower("player", SPELL_POWER_ECLIPSE)
 	values["direction"] = GetEclipseDirection()
 	
-	values["canUse"] = type(IsUsableSpell("Удар героя"));
+	values["pet"] = GetUnitName("playerpet") or "nil";
+	
+	values["error"] = "-"
+	
+	local spell = IndicatorFrame.ByKey["Призыв элементаля воды"]
+	if spell == nil then
+		values["error"] = "НЕ НАЙДЕН СПЕЛЛ! "
+	end
+	
+    local caster = "player"
+    local idx = spell.TabIndex
+	local book = spell.Type
+
+    if UnitIsDead(caster) then
+        values["error"] = "UnitIsDead"
+    end
+	  
+    if GetSpellCooldown(idx, book) ~= 0 then
+        values["error"] = "GetSpellCooldown"
+    end
+    
+    if IsUsableSpell(idx, book) == false then
+        values["error"] = "IsUsableSpell"
+    end
+           
+    local et = select(6,UnitCastingInfo(caster)) or select(6, UnitChannelInfo(caster))
+    if et and et > GetTime() * 1000 then 
+        values["error"] = "UnitCastingInfo"
+    end
+	
+	local target = "player"
+	
+	if UnitIsDead(target) then
+		values["error"] = "UnitIsDead"
+	end
+	
+	if SpellHasRange(idx, book) and  IsSpellInRange(idx, book, target) == 0 then
+		values["error"] = "SpellHasRange"
+	end 
+		
+	if UnitCanAttack(caster, target) and IsHarmfulSpell(idx, book) then
+		values["error"] = "UnitCanAttack"
+	end
+
+		  
+	if UnitCanAssist(caster, target) and IsHelpfulSpell(idx, book) then
+		values["error"] = "UnitCanAssist"
+	end
+
+	-- Спелл можно кидать и в своих и в чужих, тогда разрешаем кидать, ответственность на составителе бота
+	if IsHarmfulSpell(idx, book)==nil and IsHelpfulSpell(idx, book)==nil then
+		values["error"] = "IsHarmfulSpell/IsHelpfulSpell"
+	end
+	
+
+	values["IsHarmfulSpell"] = "-"
+	if IsHarmfulSpell(idx, book)==nil then
+		values["IsHarmfulSpell"] = "nil"
+	end
+	if IsHarmfulSpell(idx, book) == true then
+		values["IsHarmfulSpell"] = "true"
+	end
+	if IsHarmfulSpell(idx, book) == false then
+		values["IsHarmfulSpell"] = "false"
+	end
+
+	values["IsHelpfulSpell"] = "-"
+	if IsHelpfulSpell(idx, book)==nil then
+		values["IsHelpfulSpell"] = "nil"
+	end
+	if IsHelpfulSpell(idx, book) == true then
+		values["IsHelpfulSpell"] = "true"
+	end
+	if IsHelpfulSpell(idx, book) == false then
+		values["IsHelpfulSpell"] = "false"
+	end	
+
+
 	
 	--[[
 	values["canUse"] = "nil"
