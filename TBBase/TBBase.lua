@@ -217,34 +217,6 @@ function TBLastCastUpdateFailed(self, event,...)
 	--print(event, GetSpellInfo(spellId))
 end
 
---[[
-function TBCombatLog(self, event,timestamp, combatevent,...)
-	if combatevent == "UNIT_DIED" then
-		local guid = select(6,...)
-		IndicatorFrame.Enemies[guid] = nil
-		
-		IndicatorFrame.EnemyCount = 0
-		for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
-	end
-end
-
-function TBMouseOver()
-	local goodTarget = UnitIsDead("mouseover")==nil 
-		and UnitCanAttack("player", "mouseover") 
-		and IsSpellInRange("Удар воина Света", "mouseover") == 1 
-		and UnitAffectingCombat("mouseover")
-
-	if goodTarget then
-		IndicatorFrame.Enemies[UnitGUID("mouseover")] = GetUnitName("mouseover")
-	else
-		IndicatorFrame.Enemies[UnitGUID("mouseover")] = nil
-	end
-	
-	IndicatorFrame.EnemyCount = 0
-	for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
-end
---]]
-
 function TBEnterCombat() 
 	IndicatorFrame.InCombat = 1	
 end

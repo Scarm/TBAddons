@@ -19,7 +19,7 @@ function MageFrost:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
 	if modes.AgroType == "Off" then 
-		return 
+		return list:Execute()
 	end
 	
 	if GetUnitName("playerpet") == nil then
