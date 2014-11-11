@@ -62,7 +62,7 @@ function BaseGroup:CanInterrupt()
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
 		local c1,i1 = select(8,UnitCastingInfo(key))
-		local c2,i2 = select(8,UnitChannelInfo(key))
+		local c2,i2 = select(7,UnitChannelInfo(key))
 		if (c1 and not i1) or (c2 and not i2) then
 			result[key] = value
 		end
