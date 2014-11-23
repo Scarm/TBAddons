@@ -193,7 +193,7 @@ end
 function TBLastCastUpdate(self, event,...)
 	local unitId,_,_,lineId,spellId = select(1,...)
 	-- Если колдовали мы
-	if unitId=="player" then	
+	if unitId=="player" then
 		local spell = IndicatorFrame.ById[spellId]	
 		-- И спелл, за которым надо следить
 		if spell then
@@ -201,9 +201,9 @@ function TBLastCastUpdate(self, event,...)
 		
 			local et = select(6,UnitCastingInfo("player")) or select(6, UnitChannelInfo("player"))
 			if et then
-				IndicatorFrame.LastSpellTime = (et/1000) + 1 -- время окончания плюс секунда
+				IndicatorFrame.LastSpellTime = (et/1000) + 2 -- время окончания плюс секунда
 			else
-				IndicatorFrame.LastSpellTime = GetTime() + 1
+				IndicatorFrame.LastSpellTime = GetTime() + 2
 			end
 		end
 	end
@@ -216,6 +216,34 @@ function TBLastCastUpdateFailed(self, event,...)
 	end
 	--print(event, GetSpellInfo(spellId))
 end
+
+--[[
+function TBCombatLog(self, event,timestamp, combatevent,...)
+	if combatevent == "UNIT_DIED" then
+		local guid = select(6,...)
+		IndicatorFrame.Enemies[guid] = nil
+		
+		IndicatorFrame.EnemyCount = 0
+		for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
+	end
+end
+
+function TBMouseOver()
+	local goodTarget = UnitIsDead("mouseover")==nil 
+		and UnitCanAttack("player", "mouseover") 
+		and IsSpellInRange("Удар воина Света", "mouseover") == 1 
+		and UnitAffectingCombat("mouseover")
+
+	if goodTarget then
+		IndicatorFrame.Enemies[UnitGUID("mouseover")] = GetUnitName("mouseover")
+	else
+		IndicatorFrame.Enemies[UnitGUID("mouseover")] = nil
+	end
+	
+	IndicatorFrame.EnemyCount = 0
+	for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
+end
+--]]
 
 function TBEnterCombat() 
 	IndicatorFrame.InCombat = 1	

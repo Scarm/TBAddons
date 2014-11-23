@@ -23,6 +23,7 @@
 function PaladinProt:OnUpdate()
 	if IsMounted() then return end
 	
+	--[[
 	local sealIdx = 1
 	local sealName = "Печать правды"
 	local spamStrike = "Удар воина Света"
@@ -79,6 +80,8 @@ function PaladinProt:OnUpdate()
 			return TBCast("Гнев небес","target")
 		end	
 	end
+	
+	--]]
 end
 		
 		

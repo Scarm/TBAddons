@@ -62,7 +62,7 @@ function BaseGroup:CanInterrupt()
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
 		local c1,i1 = select(8,UnitCastingInfo(key))
-		local c2,i2 = select(7,UnitChannelInfo(key))
+		local c2,i2 = select(8,UnitChannelInfo(key))
 		if (c1 and not i1) or (c2 and not i2) then
 			result[key] = value
 		end
@@ -239,7 +239,7 @@ function BaseGroup:CheckTarget(target, idx, book, caster)
 end
 
 
-function BaseGroup:CanUse(key)
+function BaseGroup:CanUse(key, ignoreChannel)
 	local result = self:CreateDerived()
 	
 	local spell = IndicatorFrame.ByKey[key]
@@ -264,10 +264,17 @@ function BaseGroup:CanUse(key)
         return result
     end
            
-    local et = select(6,UnitCastingInfo(caster)) or select(6, UnitChannelInfo(caster))
+    local et = select(6,UnitCastingInfo(caster))
     if et and et > GetTime() * 1000 then 
         return result
     end
+	
+	if ignoreChannel == nil then
+		local et = select(6, UnitChannelInfo(caster))
+		if et and et > GetTime() * 1000 then 
+			return result
+		end	
+	end
 	
 	for key,value in pairs(self) do
 		if self:CheckTarget(key, idx, book, caster) then

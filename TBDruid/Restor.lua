@@ -129,7 +129,7 @@ function DruidRestor:OnUpdate(g, list, modes)
 
 
 	
-	list:Cast( "Гнев", g.targets:CanUse("Гнев"):Best() )
+	--list:Cast( "Гнев", g.targets:CanUse("Гнев"):Best() )
 	
 	--[[
 	-- Изначально, при полной мане кастуем с оверхилом, затем критерии ужесточаются

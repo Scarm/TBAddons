@@ -195,7 +195,16 @@ function TBFillValues(values)
 
 	values["1"] = 1
 	
-		
+	if IndicatorFrame.LastSpell then
+		values["lastcast"] = IndicatorFrame.LastSpell.Key
+	else 
+		values["lastcast"] = "nil"	
+	end
+	
+	local key = "Слово Тьмы: Смерть"
+	local cond = IndicatorFrame.LastSpell and IndicatorFrame.LastSpell.Key == key
+	
+	values["cond"] = cond or "nil"	
 end
 
 function TBHelperUpdateValues()
