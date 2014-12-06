@@ -194,7 +194,7 @@ end
 function TBFillValues(values)
 
 	values["1"] = 1
-	
+	--[[
 	if IndicatorFrame.LastSpell then
 		values["lastcast"] = IndicatorFrame.LastSpell.Key
 	else 
@@ -205,6 +205,24 @@ function TBFillValues(values)
 	local cond = IndicatorFrame.LastSpell and IndicatorFrame.LastSpell.Key == key
 	
 	values["cond"] = cond or "nil"	
+	--]]
+	
+	--[[
+	for i=1,20,1 do
+		local name = UnitAura("player",i)
+		local id = select(11, UnitAura("player",i))
+		
+		if name then
+			values[id] = name
+		end
+	end
+	--]]
+	
+	local gr = TBGroups().party:Aura("Зарождение", "mine");
+	for key,value in pairs(gr) do
+		values[key] = key	
+	end
+	
 end
 
 function TBHelperUpdateValues()

@@ -36,7 +36,7 @@ function DruidBalance:OnUpdate(g, list, modes)
 		list:Cast( "Лунный огонь", g.target:CanUse("Лунный огонь"):Aura("Лунный огонь", "mine", nil, "inverse", 3):Best() )
 		list:Cast( "Лунный огонь", g.target:CanUse("Лунный огонь"):Aura("Лунный пик", "mine", "self"):Best() )
 		
-		if GetEclipseDirection() == "moon" and power < -50 then
+		if GetEclipseDirection() == "moon" and power < 0 then
 			list:Cast( "Звездный поток", g.target:CanUse("Звездный поток"):Aura("Лунное могущество", "mine", "self", "inverse"):Best() )
 		end	
 		list:Cast( "Звездный огонь", g.target:CanUse("Звездный огонь"):Best() )	
@@ -45,7 +45,7 @@ function DruidBalance:OnUpdate(g, list, modes)
 		list:Cast( "Лунный огонь", g.target:CanUse("Лунный огонь"):Aura("Солнечный огонь", "mine", nil, "inverse", 3):Best() )
 		list:Cast( "Лунный огонь", g.target:CanUse("Лунный огонь"):Aura("Солнечный пик", "mine", "self"):Best() )
 
-		if GetEclipseDirection() == "sun" and power > 50 then
+		if GetEclipseDirection() == "sun" and power > 0 then
 			list:Cast( "Звездный поток", g.target:CanUse("Звездный поток"):Aura("Солнечное могущество", "mine", "self", "inverse"):Best() )
 		end	
 		list:Cast( "Гнев", g.target:CanUse("Гнев"):Best() )	
