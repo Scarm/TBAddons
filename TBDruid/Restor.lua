@@ -117,12 +117,12 @@ function DruidRestor:OnUpdate(g, list, modes)
 		list:Cast( "Жизнецвет",   g.focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 3):MinHP() ) 
 		list:Cast( "Омоложение",   g.focus:CanUse("Омоложение"):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() ) 
 	end	
-	
+	--]]
 	
 	if not UnitAffectingCombat("player") then
 		return list:Execute()
 	end
-	--]]
+	
 	--декурсинг	
 	list:Cast( "Природный целитель", g.party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )	
 
@@ -131,14 +131,16 @@ function DruidRestor:OnUpdate(g, list, modes)
 		list:Cast( "Омоложение",   g.focus:CanUse("Омоложение"):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
 		list:Cast( "Омоложение",   g.focus:CanUse("Омоложение"):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )
 		
-		list:Cast( "Железная кора", g.focus:RangeHP(0,40):CanUse("Железная кора"):MinHP() )
+		list:Cast( "Железная кора", g.focus:RangeHP(0,50):CanUse("Железная кора"):MinHP() )
 		list:Cast( "Восстановление", g.focus:RangeHP(0,50):Regrowth() )
 		
 		list:Cast( "Буйный рост", g.party:RangeHP(0,80):WildGrowth(5) )
 		list:Cast( "Буйный рост", g.party:RangeHP(0,70):WildGrowth(4) )
 		list:Cast( "Буйный рост", g.party:RangeHP(0,60):WildGrowth(3) )
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0,50):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0,50):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )	
+		
+		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 75):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 
+		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0,60):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
+		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0,60):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )	
 		
 
 		--[[
@@ -151,16 +153,46 @@ function DruidRestor:OnUpdate(g, list, modes)
 		list:Cast( "Целительное прикосновение", g.focus:RangeHP(0,70):HealingTouch() )
 		
 		list:Cast( "Восстановление", g.party:RangeHP(0,60):FreeRegrowth() )
-		list:Cast( "Целительное прикосновение", g.party:RangeHP(0,50):HealingTouch() )
+		list:Cast( "Целительное прикосновение", g.party:RangeHP(0,60):HealingTouch() )
 		
 		list:Cast( "Целительное прикосновение", g.focus:Aura("Гармония", "mine", "self", "inverse", 3):HealingTouch() )
 		
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 75):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 
 		
 		list:Cast( "Гнев", g.focus:CanUse("Гнев"):Best() )
 	end		
 	
-	
+	if modes.Type == "Medium" then 
+		list:Cast( "Жизнецвет",   g.focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 3):MinHP() ) 
+		list:Cast( "Омоложение",   g.focus:CanUse("Омоложение"):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
+		list:Cast( "Омоложение",   g.focus:CanUse("Омоложение"):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )
+		
+		list:Cast( "Железная кора", g.focus:RangeHP(0,50):CanUse("Железная кора"):MinHP() )
+		list:Cast( "Восстановление", g.focus:RangeHP(0,50):Regrowth() )
+		
+		list:Cast( "Буйный рост", g.party:RangeHP(0,75):WildGrowth(5) )
+		
+		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 75):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 
+		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 60):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
+		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 60):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )	
+		
+
+		--[[
+		-- поднимаем цели, которые надо поднять до фулл хп
+		local gr = g.party:NeedFullHeal()
+		list:Cast( "Омоложение",                gr:RangeHP(0,80):CanUse("Омоложение"):Aura("Омоложение", "mine", nil, "inverse", 3) )
+		list:Cast( "Восстановление",            gr:RangeHP(0,90):Regrowth() )
+		--]]
+		list:Cast( "Восстановление", g.focus:RangeHP(0,70):FreeRegrowth() )
+		list:Cast( "Целительное прикосновение", g.focus:RangeHP(0,70):HealingTouch() )
+		
+		list:Cast( "Восстановление", g.party:RangeHP(0,40):FreeRegrowth() )
+		list:Cast( "Целительное прикосновение", g.party:RangeHP(0,40):HealingTouch() )
+		
+		list:Cast( "Целительное прикосновение", g.focus:Aura("Гармония", "mine", "self", "inverse", 3):HealingTouch() )
+		
+		
+		list:Cast( "Гнев", g.focus:CanUse("Гнев"):Best() )
+	end		
 	--[[
 	list:Cast( "Жизнецвет",   g.focus:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", nil, "inverse", 3):MinHP() ) 
 	

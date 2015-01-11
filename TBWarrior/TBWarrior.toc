@@ -4,3 +4,4 @@
 
 Arms.lua
 Protection.lua
+Fury.lua

@@ -3,28 +3,25 @@ WarriorProt= {
 			},
 			["Id"] = 3,
 			["Spells"] = {
-				["Удар грома"] = 6343,
-				["Удар громовержца"] = 107570,
+				["Сокрушение"] = 20243,
+				["Рывок"] = 100,
+				["Казнь"] = 5308,
 				["Победный раж"] = 34428,
 				["Зуботычина"] = 6552,
-				["Блок щитом"] = 2565,
-				["Героический бросок"] = 57755,
-				["Ударная волна"] = 46968,
-				["Деморализующий крик"] = 1160,
-				["Мощный удар щитом"] = 23922,
-				["Командирский крик"] = 469,
-				["Ярость берсерка"] = 18499,
 				["Боевой крик"] = 6673,
-				["Непроницаемый щит"] = 112048,
-				["Рывок"] = 100,
-				["Реванш"] = 6572,
+				["Оглушающий удар"] = 175708,
+				["Героический бросок"] = 57755,
 				["Удар героя"] = 78,
-				["Рассекающий удар"] = 845,
-				["Раскол брони"] = 7386,
+				["Блок щитом"] = 2565,
+				["Провокация"] = 355,
+				["Реванш"] = 6572,
+				["Удар грома"] = 6343,
+				["Мощный удар щитом"] = 23922,
+				["Непроницаемый щит"] = 112048,
 			},
 			["Class"] = "WARRIOR",
 			["Buffs"] = {
-				["Ультиматум"] = 122509,
+				["Ультиматум"] = 122510,
 			},
 		}
 function BaseGroup:ProtRage(rage)	
@@ -33,7 +30,14 @@ function BaseGroup:ProtRage(rage)
 	end
 	return self:CreateDerived()
 end
-		
+	
+function BaseGroup:InProtRange()	
+	if IsSpellInRange("Реванш", "target") then
+		return self
+	end
+	return self:CreateDerived()
+end
+	
 function WarriorProt:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
@@ -50,27 +54,31 @@ function WarriorProt:OnUpdate(g, list, modes)
 	
 	list:Cast( "Зуботычина", g.targets:CanUse("Зуботычина"):CanInterrupt():Best() )
 
-	list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):ProtRage(100):RangeHP(0, 50):Aura("Блок щитом", "mine", "self", "inverse"):MinHP() )
+	--list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):ProtRage(100):RangeHP(0, 50):Aura("Блок щитом", "mine", "self", "inverse"):MinHP() )
+	list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):Aura("Блок щитом", "mine", "self", "inverse"):MinHP() )
 	list:Cast( "Непроницаемый щит", g.player:CanUse("Непроницаемый щит"):ProtRage(100):Aura("Непроницаемый щит", "mine", "self", "inverse"):MinHP() )
+	
+	if UnitHealth("player") < 0.8 * UnitHealthMax("player") then
+		list:Cast( "Победный раж", g.target:CanUse("Победный раж"):Best() )
+	end
 	
 	if modes.Rotation == "Single" then
 		list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):Aura("Боевой крик", "mine", "self", "inverse", 3):Best() )
-		list:Cast( "Мощный удар щитом", g.targets:CanUse("Мощный удар щитом"):Best() )
-		list:Cast( "Реванш", g.targets:CanUse("Реванш"):Best() )
-		list:Cast( "Удар громовержца", g.targets:CanUse("Удар громовержца"):Best() )
-		list:Cast( "Удар героя", g.targets:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )	
-		list:Cast( "Раскол брони", g.targets:CanUse("Раскол брони"):Best() )
-		list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):Best() )
+		list:Cast( "Мощный удар щитом", g.target:CanUse("Мощный удар щитом"):Best() )
+		list:Cast( "Реванш", g.target:CanUse("Реванш"):Best() )
+		list:Cast( "Удар героя", g.target:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )
+		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
+		list:Cast( "Оглушающий удар", g.target:CanUse("Оглушающий удар"):Best() )
+		list:Cast( "Героический бросок", g.target:CanUse("Оглушающий удар"):Best() )
 	else
 		list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):Aura("Боевой крик", "mine", "self", "inverse", 3):Best() )
-		list:Cast( "Ударная волна", g.targets:CanUse("Ударная волна"):Best() )	
-		list:Cast( "Удар грома", g.targets:CanUse("Удар грома"):Best() )	
-		list:Cast( "Мощный удар щитом", g.targets:CanUse("Мощный удар щитом"):Best() )
-		list:Cast( "Реванш", g.targets:CanUse("Реванш"):Best() )
-		list:Cast( "Удар громовержца", g.targets:CanUse("Удар громовержца"):Best() )
-		list:Cast( "Удар героя", g.targets:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )	
-		list:Cast( "Раскол брони", g.targets:CanUse("Раскол брони"):Best() )
-		list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):Best() )
+		list:Cast( "Удар грома", g.target:InProtRange():CanUse("Удар грома"):Best() )		
+		list:Cast( "Мощный удар щитом", g.target:CanUse("Мощный удар щитом"):Best() )
+		list:Cast( "Реванш", g.target:CanUse("Реванш"):Best() )
+		list:Cast( "Удар героя", g.target:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )
+		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
+		list:Cast( "Оглушающий удар", g.target:CanUse("Оглушающий удар"):Best() )
+		list:Cast( "Героический бросок", g.target:CanUse("Оглушающий удар"):Best() )
 	end
 	return list:Execute()
 end	
