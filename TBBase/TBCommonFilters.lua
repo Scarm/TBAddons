@@ -284,3 +284,16 @@ function BaseGroup:CanUse(key, ignoreChannel)
 	
 	return result	
 end
+
+
+function BaseGroup:IsFocus()
+	if GetUnitName("focus") == nil then
+		return self
+	else
+		if UnitIsUnit("focus","target") then
+			return self
+		end
+	end
+
+	return self:CreateDerived()
+end

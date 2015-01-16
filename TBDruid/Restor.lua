@@ -134,9 +134,9 @@ function DruidRestor:OnUpdate(g, list, modes)
 		list:Cast( "Железная кора", g.focus:RangeHP(0,50):CanUse("Железная кора"):MinHP() )
 		list:Cast( "Восстановление", g.focus:RangeHP(0,50):Regrowth() )
 		
-		list:Cast( "Буйный рост", g.party:RangeHP(0,80):WildGrowth(5) )
-		list:Cast( "Буйный рост", g.party:RangeHP(0,70):WildGrowth(4) )
-		list:Cast( "Буйный рост", g.party:RangeHP(0,60):WildGrowth(3) )
+		--list:Cast( "Буйный рост", g.party:RangeHP(0,80):WildGrowth(5) )
+		--list:Cast( "Буйный рост", g.party:RangeHP(0,70):WildGrowth(4) )
+		--list:Cast( "Буйный рост", g.party:RangeHP(0,60):WildGrowth(3) )
 		
 		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 75):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 
 		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0,60):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
@@ -169,11 +169,11 @@ function DruidRestor:OnUpdate(g, list, modes)
 		list:Cast( "Железная кора", g.focus:RangeHP(0,50):CanUse("Железная кора"):MinHP() )
 		list:Cast( "Восстановление", g.focus:RangeHP(0,50):Regrowth() )
 		
-		list:Cast( "Буйный рост", g.party:RangeHP(0,75):WildGrowth(5) )
+		--list:Cast( "Буйный рост", g.party:RangeHP(0,75):WildGrowth(5) )
 		
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 75):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 60):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 60):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )	
+		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 85):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 
+		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 70):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
+		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):RangeHP(0, 70):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )	
 		
 
 		--[[
@@ -185,8 +185,8 @@ function DruidRestor:OnUpdate(g, list, modes)
 		list:Cast( "Восстановление", g.focus:RangeHP(0,70):FreeRegrowth() )
 		list:Cast( "Целительное прикосновение", g.focus:RangeHP(0,70):HealingTouch() )
 		
-		list:Cast( "Восстановление", g.party:RangeHP(0,40):FreeRegrowth() )
-		list:Cast( "Целительное прикосновение", g.party:RangeHP(0,40):HealingTouch() )
+		list:Cast( "Восстановление", g.party:RangeHP(0,60):FreeRegrowth() )
+		list:Cast( "Целительное прикосновение", g.party:RangeHP(0,60):HealingTouch() )
 		
 		list:Cast( "Целительное прикосновение", g.focus:Aura("Гармония", "mine", "self", "inverse", 3):HealingTouch() )
 		
