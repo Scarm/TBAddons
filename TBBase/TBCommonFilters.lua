@@ -14,11 +14,19 @@ end
 
 -- метод отбирает просевшие цели в зависимости от количества маны у кастера
 -- этот метод - упрощение использования RangeHP для вариации маны
-function BaseGroup:HealingRange(minHP, maxHP)
+function BaseGroup:HealingRange(minHP, maxHP, minMana, maxMana)
 	local result = self:CreateDerived()
-	local mpp = UnitPower("player") / UnitPowerMax("player")
-	local limit = minHP + (maxHP - minHP) * mpp
 	
+	minMana = minMana or 0
+	maxMana = maxMana or 100
+	local mpp = 100 * UnitPower("player") / UnitPowerMax("player")
+	
+	if mpp < minMana then
+		return result
+	end
+	
+	local limit = minHP + (maxHP - minHP) * (mpp - minMana) / (maxMana - minMana)
+
 	for key,value in pairs(self) do
 		--local hp = 100 * (UnitHealth(key) + (UnitGetIncomingHeals(key) or 0)) / UnitHealthMax(key)
 		local hp = 100 * UnitHealth(key) / UnitHealthMax(key)

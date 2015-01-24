@@ -49,7 +49,7 @@ function PriestShadow:OnUpdate(g, list, modes)
 		
 		list:Cast( "Слово Тьмы: Смерть", g.target:CanUse("Слово Тьмы: Смерть", "yes"):TBLastCast("Слово Тьмы: Смерть", "yes"):Best() )
 		list:Cast( "Всепожирающая чума", g.target:RangeHP(0, 20):CanUse("Всепожирающая чума", "yes"):Aura("Всепожирающая чума", "mine", nil, "inverse"):Best() )	
-		list:Cast( "Взрыв разума", g.target:CanUse("Взрыв разума", "yes"):OrbLimit(5,"false"):Best() )
+		list:Cast( "Взрыв разума", g.target:CanUse("Взрыв разума", "yes"):Best() )
 		list:Cast( "Слово Тьмы: Смерть", g.target:CanUse("Слово Тьмы: Смерть", "yes"):Best() )
 		list:Cast( "Пронзание разума", g.target:RangeHP(0, 20):Aura("Наступление Тьмы", "mine", "self"):CanUse("Пронзание разума", "yes"):Best() )
 		list:Cast( "Пронзание разума", g.target:RangeHP(0, 20):Aura("Всепожирающая чума", "mine", nil, "inverse"):CanUse("Пронзание разума"):Best() )
@@ -83,19 +83,22 @@ function PriestShadow:OnUpdate(g, list, modes)
 		
 	else
 		list:Cast( "Слово Тьмы: Смерть", g.target:CanUse("Слово Тьмы: Смерть", "yes"):TBLastCast("Слово Тьмы: Смерть", "yes"):Best() )	
-		list:Cast( "Всепожирающая чума", g.target:CanUse("Всепожирающая чума", "yes"):Aura("Всепожирающая чума", "mine", nil, "inverse"):Best() )	
+		list:Cast( "Всепожирающая чума", g.target:CanUse("Всепожирающая чума", "yes"):OrbLimit(5):Aura("Всепожирающая чума", "mine", nil, "inverse"):Best() )	
 		list:Cast( "Взрыв разума", g.target:CanUse("Взрыв разума", "yes"):Best() )
 		list:Cast( "Слово Тьмы: Смерть", g.target:CanUse("Слово Тьмы: Смерть", "yes"):Best() )
-		list:Cast( "Кара", g.target:CanUse("Кара"):Aura("Всепожирающая чума", "mine"):Best() )
+		
+		list:Cast( "Слово Тьмы: Боль", g.target:CanUse("Слово Тьмы: Боль"):OrbLimit(3):Aura("Слово Тьмы: Боль", "mine", nil, "inverse", 6):Best() )
+		list:Cast( "Прикосновение вампира", g.target:CanUse("Прикосновение вампира"):OrbLimit(3):Aura("Прикосновение вампира", "mine", nil, "inverse", 6):TBLastCast("Прикосновение вампира"):Best() )	
+		list:Cast( "Всепожирающая чума", g.target:CanUse("Всепожирающая чума", "yes"):Aura("Всепожирающая чума", "mine", nil, "inverse"):Best() )	
 		
 		list:Cast( "Пронзание разума", g.target:Aura("Наступление Тьмы", "mine", "self"):CanUse("Пронзание разума", "yes"):Best() )
+		list:Cast( "Кара", g.target:CanUse("Кара"):Aura("Всепожирающая чума", "mine"):Best() )
 		list:Cast( "Пронзание разума", g.target:RangeHP(0, 20):CanUse("Пронзание разума"):Best() )
 		
 		list:Cast( "Слово Тьмы: Боль", g.target:CanUse("Слово Тьмы: Боль"):Aura("Слово Тьмы: Боль", "mine", nil, "inverse", 3):Best() )
 		list:Cast( "Прикосновение вампира", g.target:CanUse("Прикосновение вампира"):Aura("Прикосновение вампира", "mine", nil, "inverse", 4):TBLastCast("Прикосновение вампира"):Best() )	
 		list:Cast( "Кара", g.target:CanUse("Кара"):Best() )
 		
-		--list:Cast( "Иссушение разума", g.target:CanUse("Иссушение разума"):Best() )	
 	end
 	
 	return list:Execute()

@@ -14,12 +14,15 @@ WarriorFury = {
 				["Ярость берсерка"] = 18499,
 				["Рывок"] = 100,
 				["Победный раж"] = 34428,
+				["Выплеснувшая ярость"] = 175710,
+				["Оглушающий удар"] = 175708,
 			},
 			["Class"] = "WARRIOR",
 			["Buffs"] = {
 				["Яростный выпад!"] = 131116,
 				["Прилив крови"] = 46916,
 				["Кровавый фарш"] = 85739,
+				["Кровавая баня"] = 12292,
 			},
 		}
 		
@@ -56,7 +59,9 @@ function WarriorFury:OnUpdate(g, list, modes)
 		end
 		
 		list:Cast( "Казнь", g.target:CanUse("Казнь"):ArmsRage(60):Best() )
+		list:Cast( "Оглушающий удар", g.target:CanUse("Оглушающий удар"):Best() )
 		list:Cast( "Зверский удар", g.target:CanUse("Зверский удар"):ArmsRage(90):Best() )
+		list:Cast( "Зверский удар", g.target:CanUse("Зверский удар"):Aura("Кровавая баня", "mine", "self"):Best() )
 		list:Cast( "Зверский удар", g.target:CanUse("Зверский удар"):Aura("Прилив крови", "mine", "self"):Best() )
 		list:Cast( "Яростный выпад", g.target:CanUse("Яростный выпад"):Best() )
 		

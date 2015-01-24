@@ -1,0 +1,5 @@
+## Interface: 60000
+## Title: TB Rogue 
+## Dependencies: TBBase
+
+Combat.lua
