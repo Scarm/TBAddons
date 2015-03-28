@@ -103,6 +103,8 @@ function TBGroups()
 	local party = BaseGroup:CreateDerived()
 	local targets = BaseGroup:CreateDerived()
 	local target = BaseGroup:CreateDerived()
+	local tanks = BaseGroup:CreateDerived()
+	local healers = BaseGroup:CreateDerived()
   
 	-----
 	player["player"] = Targetting("player")
@@ -122,13 +124,36 @@ function TBGroups()
 			end
 		end
 	end
-	party["mouseover"] = Targetting("mouseover")
 	-----
 	targets["focus"] = Targetting("focus")
 	for k,v in pairs(party) do
 		targets[k.."target"] = Assisting(k.."target", v)
 		targets[k] = Targetting(k)
 	end 
+	
+	local DamagePerHealer = 0;
+	local HealersCount = 0;
+	for k,v in pairs(party) do
+		if UnitIsDead(k) == false then
+			DamagePerHealer = DamagePerHealer + ( UnitHealthMax(k) - UnitHealth(k) ) / UnitHealthMax(k)
+		end
+		
+		if UnitGroupRolesAssigned(k) == "TANK" then
+			tanks[k] = Targetting(k)
+		end
+		if UnitGroupRolesAssigned(k) == "HEALER" then
+			healers[k] = Targetting(k)
+			if UnitIsDead(k) == false then
+				HealersCount = HealersCount + 1
+			end
+		end		
+	end
+	if HealersCount == 0 then
+		HealersCount = 1
+	end
+
+	party["mouseover"] = Targetting("mouseover")
+	
 	-----
 	target["target"] = Targetting("target")
 	-----
@@ -138,6 +163,9 @@ function TBGroups()
 	result.focus = focus
 	result.targets = targets
 	result.target = target
+	result.tanks = tanks
+	result.healers = healers
+	result.DamagePerHealer = DamagePerHealer / HealersCount
 	return result
 end
 

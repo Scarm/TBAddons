@@ -29,7 +29,6 @@ function MageFrost:OnUpdate(g, list, modes)
 	list:Cast( "Стрела ледяного огня", g.target:CanUse("Стрела ледяного огня"):Aura("Заморозка мозгов", "mine", "self"):Best() )
 	list:Cast( "Огненный взрыв", g.target:CanUse("Огненный взрыв"):Aura("Ледяные пальцы", "mine", "self"):Best() )	
 	list:Cast( "Ледяная стрела", g.target:CanUse("Ледяная стрела"):Best() )
-
 	
 	return list:Execute()
 end

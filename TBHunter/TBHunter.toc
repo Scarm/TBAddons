@@ -1,0 +1,6 @@
+## Interface: 60000
+## Title: TB Hunter 
+## Dependencies: TBBase
+
+Marksmanship.lua
+BeastMaster.lua

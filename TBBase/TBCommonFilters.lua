@@ -11,7 +11,6 @@ function BaseGroup:RangeHP(minHP, maxHP)
 	return result
 end
 
-
 -- метод отбирает просевшие цели в зависимости от количества маны у кастера
 -- этот метод - упрощение использования RangeHP для вариации маны
 function BaseGroup:HealingRange(minHP, maxHP, minMana, maxMana)
@@ -37,6 +36,7 @@ function BaseGroup:HealingRange(minHP, maxHP, minMana, maxMana)
 	
 	return result	
 end
+
 
 function BaseGroup:UnBlocked()
 	return self
@@ -226,7 +226,19 @@ function BaseGroup:CheckTarget(target, idx, book, caster)
 	
 	if SpellHasRange(idx, book) and  IsSpellInRange(idx, book, target) == 0 then
 		return nil
-	end 
+	end
+
+	local inRange, checkedRange = UnitInRange(target)
+	if checkedRange and not inRange then 
+		return nil
+	end
+	
+	local lastBanned = IndicatorFrame.LoS.Banned[GetUnitName(target,true)] or 0
+	
+	if UnitIsPlayer(target) and GetTime() < lastBanned + 3 then
+		return nil
+	end
+	
 		
 	if UnitCanAttack(caster, target) and IsHarmfulSpell(idx, book) == true then
 		return 1
@@ -264,22 +276,38 @@ function BaseGroup:CanUse(key, ignoreChannel)
         return result
     end
 	  
-    if GetSpellCooldown(idx, book) ~= 0 then
+	
+    --if GetSpellCooldown(idx, book) ~= 0 then
+    --    return result
+    --end
+	
+	
+	local startTime, duration = GetSpellCooldown(idx, book)
+	local endTime = startTime + duration
+	
+	local lag = 50
+	local delay = (GetCVar("maxSpellStartRecoveryOffset") - lag)/ 1000.0
+	if delay < 0 then
+		delay = 0
+	end
+	
+	if GetTime() < endTime - delay then
         return result
     end
+	
     
     if IsUsableSpell(idx, book) == false then
         return result
     end
            
     local et = select(6,UnitCastingInfo(caster))
-    if et and et > GetTime() * 1000 then 
+    if et and GetTime() < (et / 1000.0) - delay  then 
         return result
     end
 	
 	if ignoreChannel == nil then
 		local et = select(6, UnitChannelInfo(caster))
-		if et and et > GetTime() * 1000 then 
+		if et and GetTime() < (et / 1000) - delay then 
 			return result
 		end	
 	end

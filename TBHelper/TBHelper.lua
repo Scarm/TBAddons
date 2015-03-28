@@ -1,11 +1,13 @@
 ﻿SLASH_TBHELPER1 = '/tbh';
 function SlashCmdList.TBHELPER(msg, editbox)
-    if msg == 'hidespells' then
+    if msg == 'hide' then
 		TBHelperFrame:Hide()
+		TBHelperValuesFrame:Hide()
 	end
 	
-	if msg == 'showspells' then
+	if msg == 'show' then
 		TBHelperFrame:Show()
+		TBHelperValuesFrame:Show()
 	end
 	
 	if msg == 'names' then
@@ -13,6 +15,7 @@ function SlashCmdList.TBHELPER(msg, editbox)
 	end
 end
 
+--[[
 function TBTestSpell()
 	print("start testing")
 	
@@ -84,7 +87,7 @@ function TBGroupNames()
 	end
 	
 end
-
+--]]
 function TBCheckDistance(self)
 
 end
@@ -145,6 +148,10 @@ function TBHelperOnPlayerLogin(self,event,...)
 		TBHelperData = {}						
 	end
 	
+	if TBHelperAuras == nil then
+		TBHelperAuras = {}
+	end
+	
 	if TBHelperData.Specializations == nil then
 		TBHelperData.Specializations = {}		
 	end	
@@ -191,9 +198,38 @@ function TBHelperOnTalentChanged(self)
 	end	
 end
 
+function BoolToString(value)
+	if value == nil then
+		return "nil"
+	end
+	if value == true then
+		return "true"
+	end
+	if value == false then
+		return "false"
+	end
+end
+
+
 function TBFillValues(values)
 
 	values["1"] = 1
+	
+	local gr = TBGroups()
+	values["DmgPerHealer"] = gr.DamagePerHealer
+	
+	values["LastCommand"] = IndicatorFrame.LastCommand
+	
+
+	for k,v in pairs(IndicatorFrame.LoS.Banned) do
+		local lastBanned = v or 0
+		if GetTime() < lastBanned + 2 then
+			values[k] = v	
+		end
+	end
+
+	values["target"] = GetUnitName("target",true)
+	
 	--[[
 	if IndicatorFrame.LastSpell then
 		values["lastcast"] = IndicatorFrame.LastSpell.Key
@@ -208,7 +244,7 @@ function TBFillValues(values)
 	--]]
 	
 
-	
+	--[[
 	for i=1,40,1 do
 		local name = UnitAura("player",i)
 		local id = select(11, UnitAura("player",i))
@@ -226,6 +262,52 @@ function TBFillValues(values)
 			values["-"..id] = name
 		end
 	end	
+	--]]
+end
+
+function TBHelperLogDebuffs()
+	local targets = TBGroups().targets
+	
+	local zone = GetZoneText()
+	local subzone = GetSubZoneText()
+	
+	if TBHelperAuras[zone] == nil then
+		TBHelperAuras[zone] = {}
+	end
+	if TBHelperAuras[zone][subzone] == nil then
+		TBHelperAuras[zone][subzone] = {}
+	end	
+	
+	local zn = TBHelperAuras[zone][subzone]
+	
+	if zn.buffs == nil then
+		zn.buffs = {}
+	end
+	if zn.debuffs == nil then
+		zn.debuffs = {}
+	end	
+	
+	for key,value in pairs(targets) do
+
+		for i=1,40,1 do
+			local name = UnitAura(key,i)
+			local id = select(11, UnitAura(key,i))
+			
+			if name then
+				zn.buffs[id] = name
+			end
+		end
+		
+		for i=1,40,1 do
+			local name = UnitAura(key,i,"HARMFUL")
+			local id = select(11, UnitAura(key,i,"HARMFUL"))
+			
+			if name then
+				zn.debuffs[id] = name
+			end
+		end	
+	
+	end
 end
 
 function TBHelperUpdateValues()
@@ -251,7 +333,10 @@ function TBHelperUpdateValues()
 	TBHelperNamesString:SetText(names)
 	TBHelperValuesString:SetText(values)
 	
+	TBHelperLogDebuffs()
 end
+
+
 
 function TBShow(spellId)
 

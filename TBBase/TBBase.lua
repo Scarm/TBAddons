@@ -40,6 +40,11 @@ function TBOnPlayerLogin(self)
 	TBCreateIndicators(self)
 	TBCreatePanel(self)
 	TBAssignBot(self)
+	
+	if IndicatorFrame.LoS == nil then
+		IndicatorFrame.LoS = {}
+		IndicatorFrame.LoS.Banned = {}
+	end
 end
 
 function TBAssignBot(self)
@@ -64,7 +69,7 @@ function TBAssignBot(self)
         return
 	end
 	
-	TBInitPanel()
+	TBInitPanel(IndicatorFrame.Bots[class][currentTalents])
 	return TBSetSpec(IndicatorFrame.Bots[class][currentTalents])
 end
 
@@ -178,11 +183,129 @@ function TBCreateSpellMaps()
 	
 end
 
+TBBagActions = {}
+
+
+function TBMacroCommands()
+	--TBSetMacro("/cast Измельчение\n/use Награндский стрелоцвет")
+
+	if TBBagActions.Milling then
+		local Herbs = {}
+		Herbs["Морозноцвет"] = 0
+		Herbs["Таладорская орхидея"] = 0
+		Herbs["Пламецвет"] = 0
+		Herbs["Звездоцвет"] = 0
+		Herbs["Награндский стрелоцвет"] = 0
+		Herbs["Горгрондская мухоловка"] = 0
+	
+		for bag = 0,4 do
+			for slot = 1,GetContainerNumSlots(bag) do
+				local id = GetContainerItemID(bag, slot)
+				local _,count = GetContainerItemInfo(bag, slot)
+				if id then
+					local name = GetItemInfo(id)
+					if Herbs[name] then
+						Herbs[name] = Herbs[name] + count
+					end
+				end
+			end
+		end
+		
+		local macrotext = "/cast Измельчение\n/use "
+		
+		TBBagActions.Milling = nil
+		for k,v in pairs(Herbs) do
+			if v > 5 then
+				macrotext = macrotext..k
+				TBSetMacro(macrotext)
+				TBBagActions.Milling = 1
+				return "macro"
+			end
+		end
+		
+	end
+	
+	if TBBagActions.Salvage then
+
+		for bag = 1,4 do
+			for slot = 1,GetContainerNumSlots(bag) do
+				local id = GetContainerItemID(bag, slot)
+				local _,count = GetContainerItemInfo(bag, slot)
+				if id then
+					local name,_,quality, ilvl = GetItemInfo(id)
+					local itemSpell = GetItemSpell(id)
+					local equipSlot = select(9, GetItemInfo(id))
+					
+					if quality == 0 then
+						PickupContainerItem(bag, slot)
+						PickupMerchantItem()
+					end
+					
+					if (quality == 2 or quality == 3) and ilvl < 500 and equipSlot and equipSlot~="" and equipSlot~="INVTYPE_BAG" then
+						PickupContainerItem(bag, slot)
+						PickupMerchantItem()
+						--print(name, equipSlot)
+					end
+				end
+			end
+		end
+	
+		TBBagActions.Salvage = nil
+		local macrotext = "/use "
+		for bag = 0,4 do
+			for slot = 1,GetContainerNumSlots(bag) do
+				local id = GetContainerItemID(bag, slot)
+				if id then
+					local name = GetItemInfo(id)
+					if (name == "Большой ящик для утиля" or name == "Сумка с утилем") and TBBagActions.Salvage == nil  then
+						macrotext = macrotext.. name
+						TBSetMacro(macrotext)
+						TBBagActions.Salvage = 1
+					end
+				end
+			end
+		end
+		return "macro"
+	end
+	
+	--[[
+		print("sell list:")
+		for bag = 1,4 do
+			for slot = 1,GetContainerNumSlots(bag) do
+				local id = GetContainerItemID(bag, slot)
+				local _,count = GetContainerItemInfo(bag, slot)
+				if id then
+					local name,_,quality, ilvl = GetItemInfo(id)
+					local itemSpell = GetItemSpell(id)
+					local equipSlot = select(9, GetItemInfo(id))
+					
+					if quality == 0 then
+						PickupContainerItem(bag, slot)
+						PickupMerchantItem()
+					end
+					
+					if (quality == 2 or quality == 3) and ilvl < 500 and equipSlot and equipSlot~="" then
+						PickupContainerItem(bag, slot)
+						PickupMerchantItem()
+					end
+					
+					--if ilvl > 500 and (quality == 2 or quality == 3) and itemSpell == nil then
+					--	print(name, quality, ilvl)
+					--end
+				end
+			end
+		end
+		TBBagActions.Sell = nil
+	end	
+	--]]
+	
+end
+
 function TBOnUpdate()
 	
 	--TBClearControls()	
 	if IndicatorFrame.Spec then
-		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), PanelFrame.Groups)
+		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), PanelFrame.Groups) or TBMacroCommands()
 		if cmd then
 			IndicatorFrame.LastCommand = cmd
 		end
@@ -217,17 +340,23 @@ function TBLastCastUpdateFailed(self, event,...)
 	--print(event, GetSpellInfo(spellId))
 end
 
---[[
-function TBCombatLog(self, event,timestamp, combatevent,...)
-	if combatevent == "UNIT_DIED" then
-		local guid = select(6,...)
-		IndicatorFrame.Enemies[guid] = nil
-		
-		IndicatorFrame.EnemyCount = 0
-		for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
-	end
+function TBLastCastData(self, event,...)
+	if (select(1,...) == "player") then
+		IndicatorFrame.LoS.SpellName = select(2,...)
+		IndicatorFrame.LoS.targetName = select(4,...)
+   end
 end
 
+function TBLoSdetect(self, event,...)
+	if (select(2,...) == "SPELL_CAST_FAILED") 
+	and (select(5,...) == UnitName("player")) 
+	and (select(15,...) == SPELL_FAILED_LINE_OF_SIGHT)
+	and (select(13,...) == IndicatorFrame.LoS.SpellName) then
+		print(IndicatorFrame.LoS.targetName)	
+		IndicatorFrame.LoS.Banned[IndicatorFrame.LoS.targetName] = GetTime()
+	end
+end
+--[[
 function TBMouseOver()
 	local goodTarget = UnitIsDead("mouseover")==nil 
 		and UnitCanAttack("player", "mouseover") 
@@ -253,6 +382,7 @@ function TBLeaveCombat()
 	IndicatorFrame.InCombat = nil	
 end
 
+--[[]]
 function TBAuction()
 	print("TBAuction")
 	
@@ -266,3 +396,34 @@ function TBOnAuctionListUpdate()
 	print("TBOnAuctionListUpdate")
 	print(GetAuctionItemInfo("list", 1))
 end
+
+TBStatistic = {}
+TBStatistic.Value = 0
+
+function TBStatisticFunc(self, event, ...)
+	
+	local curr = GetTime()
+	if TBStatistic.prev == nil then
+		TBStatistic.sum = 0
+		TBStatistic.count = 0
+		TBStatistic.Value = 0
+	else
+		local val = curr - TBStatistic.prev
+		TBStatistic.sum = TBStatistic.sum + val
+		TBStatistic.count = TBStatistic.count + 1
+		TBStatistic.Value = TBStatistic.sum / TBStatistic.count
+	end
+	TBStatistic.prev = curr
+	
+	print(TBStatistic.Value,"(",TBStatistic.sum, "/" ,TBStatistic.count,")" )
+end
+--]]
+
+
+
+
+
+
+
+
+

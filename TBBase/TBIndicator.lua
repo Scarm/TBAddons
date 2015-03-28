@@ -125,8 +125,13 @@ function TBSetStaticCommands()
 	IndicatorFrame.Targets["stop"] = IndicatorFrame.TargetCount
 	IndicatorFrame.TargetCount = IndicatorFrame.TargetCount + 1	
 		
+	IndicatorFrame.Targets["macro"] = 83
 end
 
+function TBSetMacro(text)
+	IndicatorFrame.Frames[83]:SetAttribute("type","macro")
+	IndicatorFrame.Frames[83]:SetAttribute("macrotext",text)	
+end
 
 
 function TBRegisterSpell(spell)
@@ -144,6 +149,7 @@ function TBRegisterSpell(spell)
     IndicatorFrame.Spells[spell] = IndicatorFrame.SpellCount 
     IndicatorFrame.SpellCount = IndicatorFrame.SpellCount + 1
 end
+
 
 
 function TBCommand(name)

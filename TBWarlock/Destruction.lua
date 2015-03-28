@@ -30,10 +30,10 @@ function WarlockDestr:OnUpdate(g, list, modes)
 		return list:Execute()
 	end
 	
+	list:Cast( "Ожог Тьмы", g.target:CanUse("Ожог Тьмы"):Best() )	
 	list:Cast( "Порча", g.target:CanUse("Порча"):Aura("Порча", "mine", nil, "inverse", 3):TBLastCast("Порча"):Best() )
 	list:Cast( "Поджигание", g.target:CanUse("Поджигание"):Aura("Поджигание", "mine", nil, "inverse", 3):Best() )
 	
-	list:Cast( "Ожог Тьмы", g.target:CanUse("Ожог Тьмы"):Best() )
 	list:Cast( "Стрела Хаоса", g.target:CanUse("Стрела Хаоса"):EmbersLimit(3):Best() )
 	list:Cast( "Стрела Тьмы", g.target:CanUse("Стрела Тьмы"):Best() )
 	

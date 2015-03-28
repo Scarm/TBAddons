@@ -2,6 +2,7 @@
 ## Title: TBHelper 
 ## Dependencies: TBBase
 ## SavedVariablesPerCharacter: TBHelperData
+## SavedVariables: TBHelperAuras
 
 Frames.xml
 TBHelper.lua

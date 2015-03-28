@@ -23,6 +23,18 @@ WarriorProt= {
 			["Buffs"] = {
 				["Ультиматум"] = 122510,
 			},
+			["Buttons"] = {
+					[1] = {
+						Icon = "Interface\\Icons\\ABILITY_SEAL",
+						ToolTip = "Off",
+						GroupId = "Run",
+					},
+					[2] = {
+						Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
+						ToolTip = "On",
+						GroupId = "AoE"
+					},
+				},
 		}
 function BaseGroup:ProtRage(rage)	
 	if UnitPower("player") >= rage then
@@ -41,7 +53,7 @@ end
 function WarriorProt:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
-	if modes.AgroType == "Off" then 
+	if modes.Run == "Off" then 
 		return 
 	end
 	
@@ -62,22 +74,21 @@ function WarriorProt:OnUpdate(g, list, modes)
 		list:Cast( "Победный раж", g.target:CanUse("Победный раж"):Best() )
 	end
 	
-	if modes.Rotation == "Single" then
-		list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):Aura("Боевой крик", "mine", "self", "inverse", 3):Best() )
-		list:Cast( "Мощный удар щитом", g.target:CanUse("Мощный удар щитом"):Best() )
-		list:Cast( "Реванш", g.target:CanUse("Реванш"):Best() )
-		list:Cast( "Удар героя", g.target:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )
-		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
-		list:Cast( "Оглушающий удар", g.target:CanUse("Оглушающий удар"):Best() )
-		list:Cast( "Героический бросок", g.target:CanUse("Оглушающий удар"):Best() )
-	else
+	if modes.AoE == "On" then
 		list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):Aura("Боевой крик", "mine", "self", "inverse", 3):Best() )
 		list:Cast( "Удар грома", g.target:InProtRange():CanUse("Удар грома"):Best() )		
 		list:Cast( "Мощный удар щитом", g.target:CanUse("Мощный удар щитом"):Best() )
 		list:Cast( "Реванш", g.target:CanUse("Реванш"):Best() )
 		list:Cast( "Удар героя", g.target:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )
 		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
-		list:Cast( "Оглушающий удар", g.target:CanUse("Оглушающий удар"):Best() )
+
+	else
+		list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):Aura("Боевой крик", "mine", "self", "inverse", 3):Best() )
+		list:Cast( "Мощный удар щитом", g.target:CanUse("Мощный удар щитом"):Best() )
+		list:Cast( "Реванш", g.target:CanUse("Реванш"):Best() )
+		list:Cast( "Удар героя", g.target:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )
+		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
+		--list:Cast( "Оглушающий удар", g.target:CanUse("Оглушающий удар"):Best() )
 		list:Cast( "Героический бросок", g.target:CanUse("Оглушающий удар"):Best() )
 	end
 	return list:Execute()

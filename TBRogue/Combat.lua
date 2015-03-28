@@ -15,6 +15,7 @@ RogueCombat = {
 				["Заживление ран"] = 73651,
 				["Мясорубка"] = 5171,
 				["Пинок"] = 1766,
+				["Метка смерти"] = 137619,
 			},
 			["Class"] = "ROGUE",
 			["Buffs"] = {
@@ -49,6 +50,8 @@ function RogueCombat:OnUpdate(g, list, modes)
 	end
 	
 	list:Cast( "Пинок", g.targets:CanUse("Пинок"):CanInterrupt():Best() )
+	
+	list:Cast( "Метка смерти", g.target:CanUse("Метка смерти"):Best() )
 
 	list:Cast( "Пробивающий удар", g.target:CanUse("Пробивающий удар"):Aura("Пробивающий удар", "mine", nil, "inverse", 3):Best() )
 	list:Cast( "Мясорубка", g.player:CanUse("Мясорубка"):Aura("Мясорубка", "mine", "self", "inverse", 3):Best() )
