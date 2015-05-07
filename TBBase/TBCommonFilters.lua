@@ -259,6 +259,17 @@ function BaseGroup:CheckTarget(target, idx, book, caster)
 end
 
 
+function BaseGroup:Charges(key, charges)
+	local spell = IndicatorFrame.ByKey[key]
+	
+	local ch = GetSpellCharges(spell.RealId)
+	if charges and ch >= charges then
+		return self
+	end
+	
+	return self:CreateDerived()
+end
+
 function BaseGroup:CanUse(key, ignoreChannel)
 	local result = self:CreateDerived()
 	
@@ -276,12 +287,6 @@ function BaseGroup:CanUse(key, ignoreChannel)
         return result
     end
 	  
-	
-    --if GetSpellCooldown(idx, book) ~= 0 then
-    --    return result
-    --end
-	
-	
 	local startTime, duration = GetSpellCooldown(idx, book)
 	local endTime = startTime + duration
 	
@@ -294,8 +299,7 @@ function BaseGroup:CanUse(key, ignoreChannel)
 	if GetTime() < endTime - delay then
         return result
     end
-	
-    
+	   
     if IsUsableSpell(idx, book) == false then
         return result
     end

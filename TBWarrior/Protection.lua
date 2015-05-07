@@ -64,7 +64,7 @@ function WarriorProt:OnUpdate(g, list, modes)
 		return list:Execute()
 	end
 	
-	list:Cast( "Зуботычина", g.targets:CanUse("Зуботычина"):CanInterrupt():Best() )
+	list:Cast( "Зуботычина", g.target:CanUse("Зуботычина"):CanInterrupt():Best() )
 
 	--list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):ProtRage(100):RangeHP(0, 50):Aura("Блок щитом", "mine", "self", "inverse"):MinHP() )
 	list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):Aura("Блок щитом", "mine", "self", "inverse"):MinHP() )

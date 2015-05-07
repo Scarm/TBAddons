@@ -215,7 +215,7 @@ function TBMacroCommands()
 		
 		TBBagActions.Milling = nil
 		for k,v in pairs(Herbs) do
-			if v > 5 then
+			if v > 200 then
 				macrotext = macrotext..k
 				TBSetMacro(macrotext)
 				TBBagActions.Milling = 1
@@ -241,10 +241,14 @@ function TBMacroCommands()
 						PickupMerchantItem()
 					end
 					
-					if (quality == 2 or quality == 3) and ilvl < 500 and equipSlot and equipSlot~="" and equipSlot~="INVTYPE_BAG" then
+					if quality == 2 and equipSlot and equipSlot~="" and equipSlot~="INVTYPE_BAG" then
 						PickupContainerItem(bag, slot)
 						PickupMerchantItem()
-						--print(name, equipSlot)
+					end
+					
+					if quality == 3 and ilvl < 500 and equipSlot and equipSlot~="" and equipSlot~="INVTYPE_BAG" then
+						PickupContainerItem(bag, slot)
+						PickupMerchantItem()
 					end
 				end
 			end
@@ -257,7 +261,7 @@ function TBMacroCommands()
 				local id = GetContainerItemID(bag, slot)
 				if id then
 					local name = GetItemInfo(id)
-					if (name == "Большой ящик для утиля" or name == "Сумка с утилем") and TBBagActions.Salvage == nil  then
+					if (name == "Большой ящик для утиля" or name == "Сумка с утилем" or name == "Ящик для утиля") and TBBagActions.Salvage == nil  then
 						macrotext = macrotext.. name
 						TBSetMacro(macrotext)
 						TBBagActions.Salvage = 1
@@ -382,7 +386,7 @@ function TBLeaveCombat()
 	IndicatorFrame.InCombat = nil	
 end
 
---[[]]
+--[[
 function TBAuction()
 	print("TBAuction")
 	

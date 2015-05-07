@@ -15,79 +15,7 @@ function SlashCmdList.TBHELPER(msg, editbox)
 	end
 end
 
---[[
-function TBTestSpell()
-	print("start testing")
-	
-	key = "Незаметность"
-	
-	local spell = IndicatorFrame.ByKey[key]
-	if spell == nil then
-		print("НЕ НАЙДЕН СПЕЛЛ! ", key)
-		return result
-	end
-	
-    local caster = "player"
-    local idx = spell.TabIndex
-	local book = spell.Type
 
-    if UnitIsDead(caster) then
-        return "UnitIsDead"
-    end
-	  
-    if GetSpellCooldown(idx, book) ~= 0 then
-        return "GetSpellCooldown"
-    end
-    
-    if IsUsableSpell(idx, book) == nil then
-        return "GetSpellCooldown"
-    end
-           
-    local et = select(6,UnitCastingInfo(caster)) or select(6, UnitChannelInfo(caster))
-    if et and et > GetTime() * 1000 then 
-        return "UnitCastingInfo"
-    end
-	
-	target = "player"
-	
-	if UnitIsDead(target) then
-		return "UnitIsDead"
-	end
-	
-	if SpellHasRange(idx, book) and  IsSpellInRange(idx, book, target) == 0 then
-		return "IsSpellInRange"
-	end 
-		
-	if UnitCanAttack(caster, target) and IsHarmfulSpell(idx, book) then
-		return "++UnitCanAttack"
-	end
-
-		  
-	if UnitCanAssist(caster, target) and IsHelpfulSpell(idx, book) then
-		return "++UnitCanAssist"
-	end
-
-	-- Спелл можно кидать и в своих и в чужих, тогда разрешаем кидать, ответственность на составителе бота
-	if IsHarmfulSpell(idx, book)==nil and IsHelpfulSpell(idx, book)==nil then
-		return "++IsHarmfulSpell"
-	end
-	
-	return "finish"
-end
-
-
-function TBGroupNames()
-	print("party names:")
-	
-	player, party, focus, targets = TBGroups()
-	
-	print("party:")
-	for key,value in pairs(party:Aura("Омоложение", 1, nil, nil)) do
-		print(key)
-	end
-	
-end
---]]
 function TBCheckDistance(self)
 
 end
@@ -147,6 +75,8 @@ function TBHelperOnPlayerLogin(self,event,...)
 	if TBHelperData == nil then
 		TBHelperData = {}						
 	end
+	
+	TBHelperData.Followers = C_Garrison.GetFollowers()
 	
 	if TBHelperAuras == nil then
 		TBHelperAuras = {}
@@ -287,6 +217,7 @@ function TBHelperLogDebuffs()
 		zn.debuffs = {}
 	end	
 	
+	
 	for key,value in pairs(targets) do
 
 		for i=1,40,1 do
@@ -308,6 +239,7 @@ function TBHelperLogDebuffs()
 		end	
 	
 	end
+	
 end
 
 function TBHelperUpdateValues()
@@ -336,6 +268,89 @@ function TBHelperUpdateValues()
 	TBHelperLogDebuffs()
 end
 
+
+function TBFollowers()
+		
+		Equip = {		
+			["Слабое улучшение оружия"] = {
+				Type = "weapon",
+				Value = 3,
+				Amount = 0,
+			},
+			["Среднее улучшение оружия"] = {
+				Type = "weapon",
+				Value = 6,
+				Amount = 0,
+			},
+			["Усиленное улучшение оружия"] = {
+				Type = "weapon",
+				Value = 9,
+				Amount = 0,
+			},
+			
+			["Слабое улучшение брони"] = {
+				Type = "armor",
+				Value = 3,
+				Amount = 0,
+			},
+			["Среднее улучшение брони"] = {
+				Type = "armor",
+				Value = 6,
+				Amount = 0,
+			},
+			["Усиленное улучшение брони"] = {
+				Type = "armor",
+				Value = 9,
+				Amount = 0,
+			},
+			
+		}
+		
+
+	for bag = 0,4 do
+		for slot = 1,GetContainerNumSlots(bag) do
+			local id = GetContainerItemID(bag, slot)
+			if id then
+				local name = GetItemInfo(id)
+				local _,count = GetContainerItemInfo(bag, slot)
+				
+				for k,v in pairs(Equip) do
+					if name == k then
+						v.Amount = v.Amount + count
+					end
+				end
+			end
+		end
+	end
+	
+	local totalWeapon = 0
+	local totalArmor = 0
+	
+	for k,v in pairs(Equip) do
+		--print(k, v.Amount)
+		if v.Type == "weapon" then
+			totalWeapon = totalWeapon + v.Amount * v.Value
+		end
+		
+		if v.Type == "armor" then
+			totalArmor = totalArmor + v.Amount * v.Value
+		end
+	end
+	
+	local followersCount = 0
+	local requiredWeapon = - totalWeapon
+	local requiredArmor = - totalArmor
+	local followers = C_Garrison.GetFollowers()
+	for k,follower in pairs(followers) do
+		if follower.isCollected == true then
+			local weaponItemID, weaponItemLevel, armorItemID, armorItemLevel = C_Garrison.GetFollowerItems(follower.followerID)
+			requiredWeapon = requiredWeapon + 675 - weaponItemLevel
+			requiredArmor = requiredArmor + 675 - armorItemLevel
+		end
+	end
+	print("required weapon upgrades", requiredWeapon)
+	print("required armor upgrades", requiredArmor)
+end
 
 
 function TBShow(spellId)
