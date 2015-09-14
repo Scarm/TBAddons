@@ -14,6 +14,16 @@ function TBBaseList:Cast(key, target)
 	end
 end
 
+function TBBaseList:Focus(target)
+	if target then
+		local cmd = {
+				action = "setfocus",
+				condition = target
+			}
+		self:Push(cmd)
+	end
+end
+
 function TBBaseList:Push(cmd)
 	if self.command then return self end
 	self.command = cmd
@@ -46,9 +56,11 @@ function TBBaseList:Execute()
 		if InnerSuccessCondiotion(cmd.condition) then
 			if cmd.action == "assist" then
 				return "assist"
-			else
-				return cmd.value
 			end
+			if cmd.action == "setfocus" then
+				return "setfocus"
+			end			
+			return cmd.value
 		else
 			return InnerExecute(cmd.condition)
 		end 

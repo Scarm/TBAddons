@@ -2,7 +2,8 @@
 ## Title: TBHelper 
 ## Dependencies: TBBase
 ## SavedVariablesPerCharacter: TBHelperData
-## SavedVariables: TBHelperAuras
+## SavedVariables: TBHelperDebuffIgnores, TBHelperDebuffQueue, TBHelperGlyphs, TBHelperDebuffCollection, TBHelperTargetsCollection
+
 
 Frames.xml
 TBHelper.lua

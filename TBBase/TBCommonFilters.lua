@@ -1,11 +1,83 @@
 function BaseGroup:RangeHP(minHP, maxHP)
 	local result = self:CreateDerived()
 	
+	-- костыль для Велари
+	local maxPerc = select(15, UnitAura("boss1", "Аура презрения")) or 100
+	
 	for key,value in pairs(self) do
-		local hp = 100 * UnitHealth(key) / UnitHealthMax(key)
+		local hp = 100 * (UnitHealth(key) / UnitHealthMax(key)) * ( 100 / maxPerc )
 		if (minHP == nil or hp > minHP) and (maxHP ==nil or hp < maxHP) then
 			result[key] = value
 		end
+	end
+	
+	return result
+end
+
+function BaseGroup:AvgRangeHP(minHP, maxHP)
+	-- костыль для Велари
+	local maxPerc = select(15, UnitAura("boss1", "Аура презрения")) or 100
+	
+	local totalHP = 0
+	local cnt = 0
+	for key,value in pairs(self) do
+		local hp = 100 * (UnitHealth(key) / UnitHealthMax(key)) * ( 100 / maxPerc )
+		totalHP = totalHP + hp
+		cnt = cnt + 1
+	end
+	
+	if cnt > 0 then
+		totalHP = totalHP / cnt
+		if (minHP == nil or totalHP > minHP) and (maxHP ==nil or totalHP < maxHP) then
+			return self
+		else
+			return self:CreateDerived()
+		end
+	else
+		return self
+	end
+end
+
+
+function BaseGroup:HealthLimit(health)
+	local hpp = 100 * UnitHealth("player") / UnitHealthMax("player")
+	if hpp <= health then
+		return self
+	end
+	return self:CreateDerived()
+end
+
+function BaseGroup:ManaLimit(mana)	
+	local mpp = 100 * UnitPower("player") / UnitPowerMax("player")
+	if mpp >= mana then
+		return self
+	end
+	return self:CreateDerived()
+end
+
+function BaseGroup:Count(c)	
+	local cc = 0
+	for key,value in pairs(self) do
+		cc = cc + 1
+	end
+	
+	if cc >= c then
+		return self
+	end
+	return self:CreateDerived()
+end
+
+function BaseGroup:HasBossDebuff()
+	local result = self:CreateDerived()
+	for key,value in pairs(self) do
+		for i=1,40,1 do
+			local name = UnitAura(key,i,"HARMFUL")
+			local id = select(11, UnitAura(key,i,"HARMFUL"))
+			
+			if id and name and TBDebuffList[id] == name then
+				result[key] = value
+			end
+		end	
 	end
 	
 	return result
@@ -88,27 +160,30 @@ function BaseGroup:TBLastCast(key, yes)
 		IndicatorFrame.LastSpell = nil
 	end
 
+	
+	
 	local cond = IndicatorFrame.LastSpell and IndicatorFrame.LastSpell.Key == key
 	if (cond and yes) or (not cond and not yes) then
 		return self
 	end
 	
-	return self:CreateDerived()
+	local result = self:CreateDerived()
+	
+	for key,value in pairs(self) do
+		if UnitName(key) == IndicatorFrame.LastTarget then
+			--print("Исключаем: ", key, "(",UnitName(key),")" )
+		else
+			result[key] = value
+		end
+	end
+
+	return result
 end
 
 function BaseGroup:NeedDecurse(...)
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
 		local needDecurse = nil
-		--[[
-		local types = select("#", ...)
-		dispelType = select(5, UnitAura(key, 1, "HARMFUL"))
-		for i = 1,types,1 do
-			if dispelType == select(i, ...) then
-				needDecurse = 1
-			end			
-		end
-		--]]
 		
 		local debuffNum = 1
 		local needContinue = 1
@@ -235,7 +310,7 @@ function BaseGroup:CheckTarget(target, idx, book, caster)
 	
 	local lastBanned = IndicatorFrame.LoS.Banned[GetUnitName(target,true)] or 0
 	
-	if UnitIsPlayer(target) and GetTime() < lastBanned + 3 then
+	if UnitIsPlayer(target) and GetTime() < lastBanned + 5 then
 		return nil
 	end
 	
@@ -299,10 +374,12 @@ function BaseGroup:CanUse(key, ignoreChannel)
 	if GetTime() < endTime - delay then
         return result
     end
-	   
-    if IsUsableSpell(idx, book) == false then
-        return result
-    end
+	
+    if key ~= "Слово силы: Щит"	then
+		if IsUsableSpell(idx, book) == false then
+			return result
+		end
+	end
            
     local et = select(6,UnitCastingInfo(caster))
     if et and GetTime() < (et / 1000.0) - delay  then 
@@ -325,7 +402,6 @@ function BaseGroup:CanUse(key, ignoreChannel)
 	return result	
 end
 
-
 function BaseGroup:IsFocus()
 	if GetUnitName("focus") == nil then
 		return self
@@ -336,4 +412,110 @@ function BaseGroup:IsFocus()
 	end
 
 	return self:CreateDerived()
+end
+
+function BaseGroup:CanAttack()
+	local result = self:CreateDerived()
+	
+	for key,value in pairs(self) do
+		if UnitCanAttack("player", key) then
+			result[key] = value
+		end
+	end
+	
+	return result	
+end
+
+function BaseGroup:AffectingCombat()
+	local result = self:CreateDerived()
+	
+	for key,value in pairs(self) do
+		if UnitAffectingCombat(key) then
+			result[key] = value
+		end
+	end
+	
+	return result	
+end
+
+function BaseGroup:Acceptable(party)
+	function InnerAcceptable(target, party)
+		for key,value in pairs(party) do
+			if UnitThreatSituation(key, target) or UnitIsUnit( key, target.."target") then
+				return 1
+			end
+		end
+	end
+	
+	local result = self:CreateDerived()
+	for key,value in pairs(self) do
+		if UnitAffectingCombat(key) and InnerAcceptable(key, party) then
+			result[key] = value
+		end
+	end
+	
+	return result	
+end
+
+function BaseGroup:CanAssist()
+	local result = self:CreateDerived()
+	
+	for key,value in pairs(self) do
+		if UnitCanAssist("player", key) then
+			result[key] = value
+		end
+	end
+	
+	return result	
+end
+
+
+function distance(a,b)
+	local x1,y1 = UnitPosition(a)
+	local x2,y2 = UnitPosition(b)
+	
+	if x1 and x2 then
+		local dx = x2 - x1
+		local dy = y2 - y1
+		return math.sqrt(dx*dx + dy*dy)
+	end
+	return nil
+end
+
+function distToParty(unit, party, range)
+	local res = 0
+	local totalDist = 0
+	for key,value in pairs(party) do
+		local d = distance(unit, key)
+		if d and d < range then
+			res = res + 1
+			totalDist = totalDist + d
+		end
+	end
+	return res, totalDist
+end
+
+function BaseGroup:BastForAoE(limit,range)
+	local result = nil
+	local bestC = 0
+	local bestD = 0
+	
+	for key,value in pairs(self) do
+		local c, d = distToParty(key, self, range)
+		
+		if c > bestC then
+			result = value
+			bestC = c
+			bestD = d
+		end
+		if c == bestC and d < bestD then
+			result = value
+			bestC = c
+			bestD = d		
+		end		
+	end 
+	
+	if bestC >= limit then
+		return result
+	end
 end

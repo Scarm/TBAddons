@@ -10,10 +10,23 @@ WarlockDestr = {
 				["Увечащие тени"] = 175707,
 				["Порча"] = 172,
 				["Поджигание"] = 17962,
+				["Огонь и сера"] = 108683,
 			},
 			["Buffs"] = {
 			},
 			["Class"] = "WARLOCK",
+						["Buttons"] = {
+				[1] = {
+					Icon = "Interface\\Icons\\ABILITY_SEAL",
+					ToolTip = "Off",
+					GroupId = "Run",
+				},
+				[2] = {
+					Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
+					ToolTip = "On",
+					GroupId = "AoE"
+				},				
+			},
 		}
 	
 function BaseGroup:EmbersLimit(embers)
@@ -26,8 +39,12 @@ end
 function WarlockDestr:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
-	if modes.AgroType == "Off" then 
-		return list:Execute()
+	if modes.Run == "Off" then 
+		return 
+	end
+		
+	if modes.AoE == "On" then
+	
 	end
 	
 	list:Cast( "Ожог Тьмы", g.target:CanUse("Ожог Тьмы"):Best() )	
@@ -36,6 +53,7 @@ function WarlockDestr:OnUpdate(g, list, modes)
 	
 	list:Cast( "Стрела Хаоса", g.target:CanUse("Стрела Хаоса"):EmbersLimit(3):Best() )
 	list:Cast( "Стрела Тьмы", g.target:CanUse("Стрела Тьмы"):Best() )
+	
 	
 	return list:Execute()
 end

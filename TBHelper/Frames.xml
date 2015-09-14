@@ -25,7 +25,7 @@
 						<Anchor point="LEFT"/>
 					</Anchors>
 					<Size>
-						<AbsDimension x="98"/>
+						<AbsDimension x="100"/>
 					</Size>	
 				</FontString>
 				<FontString name="TBHelperValuesString" inherits="GameFontNormal" text = "Значение" justifyH="LEFT">
@@ -35,7 +35,7 @@
 						<Anchor point="RIGHT"/>
 					</Anchors>
 					<Size>
-						<AbsDimension x="398"/>
+						<AbsDimension x="400"/>
 					</Size>					
 				</FontString>
 			</Layer>
@@ -52,7 +52,6 @@
             </OnDragStop>
 			<OnUpdate>
 				TBHelperUpdateValues()
-				TBCheckDistance(self)
 			</OnUpdate>
 		</Scripts> 
 	</Frame>
@@ -62,7 +61,7 @@
 			<Anchor point="CENTER"></Anchor>
 		</Anchors>
 		<Size>
-			<AbsDimension x="770" y="30" />
+			<AbsDimension x="270" y="30" />
 		</Size>		
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -76,7 +75,7 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame name="TBHelperSpellFrame" enableMouse="true">
+			<Button name="TBHelperSpellFrame" enableMouse="true">
 				<Anchors>
 					<Anchor point="LEFT" >
 						<Offset>
@@ -129,135 +128,22 @@
 				<Scripts>
 					<OnReceiveDrag>
 						TBHelperOnReceiveDrag(self)				
-					</OnReceiveDrag>				
+					</OnReceiveDrag>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+					</OnLoad> 
+					 <OnClick>
+						wipe(self.SpellsTable)
+						TBLists(self)
+					</OnClick> 
 				</Scripts>		
-			</Frame>
-			<Frame name="TBHelperBuffFrame" enableMouse="true">
-				<Anchors>
-					<Anchor point="LEFT" >
-						<Offset>
-							<AbsDimension x="260"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Size>
-					<AbsDimension x="250" y="20" />
-				</Size>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture name="$parentTex" parentKey="Tex">	
-							<Anchors>
-								<Anchor point="TOPLEFT"/>
-								<Anchor point="BOTTOMRIGHT"/>
-							</Anchors>
-							<Color g="1" r="0" b="0" a = "1"/>                    
-						</Texture>
-					</Layer>
-					<Layer>
-						<FontString name="$parentText" inherits="GameFontNormal" text = "Баффы">
-							<Size>
-								<AbsDimension y="20"/>
-							</Size>
-							<Anchors>
-								<Anchor point="LEFT"/>
-								<Anchor point="RIGHT"/>
-							</Anchors>					
-						</FontString>
-						<FontString name="$parentList" inherits="GameFontNormal" text = "Хрень">
-							<Size>
-								<AbsDimension y="20"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativepoint="BOTTOMLEFT">
-									<Offset>
-										<AbsDimension y="-10"/>
-									</Offset>
-								</Anchor>
-								<Anchor point="TOPRIGHT" relativepoint="BOTTOMRIGHT">
-									<Offset>
-										<AbsDimension x="-10"/>
-									</Offset>
-								</Anchor>
-							</Anchors>					
-						</FontString>						
-					</Layer>
-				</Layers>				
-				<Scripts>
-					<OnReceiveDrag>
-						TBHelperOnReceiveDrag(self)				
-					</OnReceiveDrag>				
-				</Scripts>		
-			</Frame>
-			<Frame name="TBHelperUniqueFrame" enableMouse="true">
-				<Anchors>
-					<Anchor point="LEFT" >
-						<Offset>
-							<AbsDimension x="515"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Size>
-					<AbsDimension x="250" y="20" />
-				</Size>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture name="$parentTex" parentKey="Tex">	
-							<Anchors>
-								<Anchor point="TOPLEFT"/>
-								<Anchor point="BOTTOMRIGHT"/>
-							</Anchors>
-							<Color g="1" r="0" b="0" a = "1"/>                    
-						</Texture>
-					</Layer>
-					<Layer>
-						<FontString name="$parentText" inherits="GameFontNormal" text = "Уникальные">
-							<Size>
-								<AbsDimension y="20"/>
-							</Size>
-							<Anchors>
-								<Anchor point="LEFT"/>
-								<Anchor point="RIGHT"/>
-							</Anchors>					
-						</FontString>
-						<FontString name="$parentList" inherits="GameFontNormal" text = "Хрень">
-							<Size>
-								<AbsDimension y="20"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativepoint="BOTTOMLEFT">
-									<Offset>
-										<AbsDimension y="-10"/>
-									</Offset>
-								</Anchor>
-								<Anchor point="TOPRIGHT" relativepoint="BOTTOMRIGHT">
-									<Offset>
-										<AbsDimension x="-10"/>
-									</Offset>
-								</Anchor>
-							</Anchors>					
-						</FontString>
-					</Layer>
-				</Layers>				
-				<Scripts>
-					<OnReceiveDrag>
-						TBHelperOnReceiveDrag(self)				
-					</OnReceiveDrag>				
-				</Scripts>		
-			</Frame>			
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad>
 				self:RegisterForDrag("RightButton")
-			
-				TBSubscribeEvent(self,"LEARNED_SPELL_IN_TAB", "TBPrintEvent")
 				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBHelperOnPlayerLogin")
-				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBHelperOnTalentChanged")
-				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBPrintEvent")
-				TBSubscribeEvent(self,"UPDATE_BINDINGS", "TBPrintEvent")
-				--TBSubscribeEvent(self,"PLAYER_ENTER_COMBAT", "TBPrintEvent")
-				--TBSubscribeEvent(self,"PLAYER_LEAVE_COMBAT", "TBPrintEvent")
-				
-				
+				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBHelperOnTalentChanged")				
 			</OnLoad> 
             <OnDragStart>
 				self:StartMoving()
@@ -270,4 +156,104 @@
 			</OnEvent>
 		</Scripts> 		
 	</Frame>
+	
+<Frame name="TBHelperDebuffFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">	
+		<Anchors>
+			<Anchor point="CENTER"></Anchor>
+		</Anchors>
+		<Size>
+			<AbsDimension x="145" y="45" />
+		</Size>		
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTex" parentKey="Tex">	
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color g="0.1" r="0.1" b="0.1" a = "0.5"/>                    
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="TBAddDebuffButton" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT">
+						<Offset>
+							<AbsDimension x="10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>	
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+					</OnLoad>
+					<OnClick>
+						TBAddDebuff()
+					</OnClick> 
+				</Scripts>
+			</Button>
+			<Button name="TBInfoDebuffButton" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT">
+						<Offset>
+							<AbsDimension x="52"/>
+						</Offset>
+					</Anchor>
+				</Anchors>	
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+					</OnLoad>
+					<OnClick>
+						TBInfoDebuff()
+					</OnClick>
+					<OnEnter>
+						if TBCurrentDebuff then
+							GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT");
+							GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2);
+							GameTooltip:SetSpellByID(TBCurrentDebuff) ;
+						end
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>					
+				</Scripts>
+			</Button>
+			<Button name="TBIgnoreDebuffButton" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT">
+						<Offset>
+							<AbsDimension x="94"/>
+						</Offset>
+					</Anchor>
+				</Anchors>	
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+					</OnLoad>
+					<OnClick>
+						TBIgnoreDebuff()
+					</OnClick> 
+				</Scripts>
+			</Button>
+			
+			
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForDrag("RightButton")	
+				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBInitDebuffs")
+			</OnLoad> 
+            <OnDragStart>
+				self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+				self:StopMovingOrSizing()
+            </OnDragStop>
+			<OnUpdate>
+				TBScanDebuffs()
+			</OnUpdate>
+		</Scripts> 		
+	</Frame>	
 </Ui>

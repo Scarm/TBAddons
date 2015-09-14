@@ -19,6 +19,18 @@ BeastMaster = {
 				["Бешенство"] = 19615,
 				["Охотничий азарт"] = 34720,
 			},
+			["Buttons"] = {
+					[1] = {
+						Icon = "Interface\\Icons\\ABILITY_SEAL",
+						ToolTip = "Off",
+						GroupId = "Run",
+					},
+					[2] = {
+						Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
+						ToolTip = "On",
+						GroupId = "AoE"
+					},					
+				},
 		}
 
 function BaseGroup:HunterFocus(focus)	
@@ -31,8 +43,8 @@ end
 function BeastMaster:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
-	if modes.AgroType == "Off" then 
-		return list:Execute()
+	if modes.Run == "Off" then 
+		return 
 	end
 
 	list:Cast( "Встречный выстрел", g.target:CanUse("Встречный выстрел"):CanInterrupt():Best() )

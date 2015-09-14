@@ -13,6 +13,7 @@
 				["Цепная молния"] = 421,
 				["Огненный шок"] = 8050,
 				["Земной шок"] = 8042,
+				["Призрачный волк"] = 2645,
 			},
 			["Class"] = "SHAMAN",
 			["Buffs"] = {
@@ -41,16 +42,19 @@
 	
 function ShamanElem:OnUpdate(g, list, modes)
 	
-	if IsMounted() then return end
+	if IsMounted() and UnitAura("player", "Северный боевой волк") == nil then return end
 	
 	if modes.Run == "Off" then 
 		return 
 	end
-
+	
 	list:Cast( "Щит молний", g.player:CanUse("Щит молний"):Aura("Щит молний", "mine", "self", "inverse"):Best() )
 	list:Cast( "Огненный шок", g.target:CanUse("Огненный шок"):AutoAttacking("true"):Aura("Огненный шок", "mine", nil, "inverse", 6):Best() )
 	
 	if not UnitAffectingCombat("player") then
+		if  UnitAura("player", "Северный боевой волк") == nil then
+			list:Cast( "Призрачный волк", g.player:Moving():CanUse("Призрачный волк"):Aura("Призрачный волк", "mine", "self", "inverse"):Best() )
+		end
 		return list:Execute()
 	end
 	list:Cast( "Пронизывающий ветер", g.target:CanUse("Пронизывающий ветер"):CanInterrupt():Best() )

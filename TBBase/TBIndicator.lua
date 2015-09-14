@@ -113,16 +113,22 @@ function TBSetStaticCommands()
 		IndicatorFrame.TargetCount = IndicatorFrame.TargetCount + 1
 	end
 	
-
-	IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("type","assist")
+	-- Команда Assist работает как с дружественной, так и с враждебной целью. Это может вызвать тремор, 
+	-- поэтому мы делаем спец заглушку: мы может переключить ассист тольок с дружественной цели.
+	-- Возможно, будет иметь смысл сделать специальные команды ассиста дружественной и враждебной цели.
+	IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("helpbutton","heal")
+	IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("type-heal","assist")
+	--IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("type","assist")
 	IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("unit","target")
 	IndicatorFrame.Targets["assist"] = IndicatorFrame.TargetCount
+	
+	print(IndicatorFrame.TargetCount)
 	IndicatorFrame.TargetCount = IndicatorFrame.TargetCount + 1
 	
 
-	IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("type","stop")
-	--IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("unit","player")
-	IndicatorFrame.Targets["stop"] = IndicatorFrame.TargetCount
+	IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("type","focus")
+	IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("unit","target")
+	IndicatorFrame.Targets["setfocus"] = IndicatorFrame.TargetCount
 	IndicatorFrame.TargetCount = IndicatorFrame.TargetCount + 1	
 		
 	IndicatorFrame.Targets["macro"] = 83
@@ -157,6 +163,7 @@ function TBCommand(name)
 	IndicatorFrame.DebugIndicatorName = name
     TBClearControls()
 	local id = IndicatorFrame.Spells[name] or IndicatorFrame.Targets[name]
+	
 	if id then
 		IndicatorFrame.Frames[ id ].Tex:SetTexture(1.0, 1.0, 1.0, 1.0);
 	end

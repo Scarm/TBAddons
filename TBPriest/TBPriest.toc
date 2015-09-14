@@ -3,3 +3,5 @@
 ## Dependencies: TBBase
 
 Shadow.lua
+Disc.lua
+Holy.lua

@@ -45,6 +45,10 @@ function TBOnPlayerLogin(self)
 		IndicatorFrame.LoS = {}
 		IndicatorFrame.LoS.Banned = {}
 	end
+	
+	if TBDebuffList == nil then
+		TBDebuffList = {}
+	end
 end
 
 function TBAssignBot(self)
@@ -112,7 +116,7 @@ function TBCreateSpellMaps()
 		return
 	end
 	
-	print("TBCreateSpellMaps")
+	--print("TBCreateSpellMaps")
 
 	IndicatorFrame.ByName = {}
 	IndicatorFrame.ById = {}
@@ -215,7 +219,7 @@ function TBMacroCommands()
 		
 		TBBagActions.Milling = nil
 		for k,v in pairs(Herbs) do
-			if v > 200 then
+			if v > 5 then
 				macrotext = macrotext..k
 				TBSetMacro(macrotext)
 				TBBagActions.Milling = 1
@@ -261,7 +265,7 @@ function TBMacroCommands()
 				local id = GetContainerItemID(bag, slot)
 				if id then
 					local name = GetItemInfo(id)
-					if (name == "Большой ящик для утиля" or name == "Сумка с утилем" or name == "Ящик для утиля") and TBBagActions.Salvage == nil  then
+					if (name == "Большой ящик для утиля" or name == "Большой ящик с утилем" or name == "Сумка с утилем" or name == "Ящик для утиля") and TBBagActions.Salvage == nil  then
 						macrotext = macrotext.. name
 						TBSetMacro(macrotext)
 						TBBagActions.Salvage = 1
@@ -272,42 +276,29 @@ function TBMacroCommands()
 		return "macro"
 	end
 	
-	--[[
-		print("sell list:")
-		for bag = 1,4 do
+	if TBBagActions.Mail then
+		local idx = 1
+		for bag = 0,4 do
 			for slot = 1,GetContainerNumSlots(bag) do
 				local id = GetContainerItemID(bag, slot)
-				local _,count = GetContainerItemInfo(bag, slot)
 				if id then
-					local name,_,quality, ilvl = GetItemInfo(id)
-					local itemSpell = GetItemSpell(id)
-					local equipSlot = select(9, GetItemInfo(id))
-					
-					if quality == 0 then
+					local name = GetItemInfo(id)				
+					if name =="Сырая шкура зверя " then
 						PickupContainerItem(bag, slot)
-						PickupMerchantItem()
+						ClickSendMailItemButton(idx, false)
+						idx = idx + 1
 					end
-					
-					if (quality == 2 or quality == 3) and ilvl < 500 and equipSlot and equipSlot~="" then
-						PickupContainerItem(bag, slot)
-						PickupMerchantItem()
-					end
-					
-					--if ilvl > 500 and (quality == 2 or quality == 3) and itemSpell == nil then
-					--	print(name, quality, ilvl)
-					--end
 				end
 			end
 		end
-		TBBagActions.Sell = nil
-	end	
-	--]]
-	
+		--SendMail("Логрис","routing")
+		
+		print("TBBagActions.Mail")
+		TBBagActions.Mail = nil
+	end
 end
 
 function TBOnUpdate()
-	
-	--TBClearControls()	
 	if IndicatorFrame.Spec then
 		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), PanelFrame.Groups) or TBMacroCommands()
 		if cmd then
@@ -325,6 +316,7 @@ function TBLastCastUpdate(self, event,...)
 		-- И спелл, за которым надо следить
 		if spell then
 			IndicatorFrame.LastSpell = spell
+			IndicatorFrame.LastTarget = IndicatorFrame.LastSpellTargets[select(4,...)]
 		
 			local et = select(6,UnitCastingInfo("player")) or select(6, UnitChannelInfo("player"))
 			if et then
@@ -345,10 +337,19 @@ function TBLastCastUpdateFailed(self, event,...)
 end
 
 function TBLastCastData(self, event,...)
+	--Заполняем информацию для LoS
 	if (select(1,...) == "player") then
 		IndicatorFrame.LoS.SpellName = select(2,...)
 		IndicatorFrame.LoS.targetName = select(4,...)
    end
+   
+   --Заполняем инфрмацию для LastCast
+   if (select(1,...) == "player") then
+		if IndicatorFrame.LastSpellTargets == nil then
+			IndicatorFrame.LastSpellTargets = {}
+		end
+		IndicatorFrame.LastSpellTargets[ select(5,...) ] = select(4,...)
+   end  
 end
 
 function TBLoSdetect(self, event,...)

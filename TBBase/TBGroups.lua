@@ -77,7 +77,23 @@ end
 
 
 
+TBBestTankKey = nil
 
+function TankIncomingDamage(key)
+	if key == nil then
+		return nil
+	end
+	
+	for i=1,40,1 do
+		local id = select(11, UnitAura(key,i))
+		
+		if id == 158300 then 
+			return select(17,UnitAura(key,i))
+		end
+	end
+	
+	return nil
+end
 
 function TBGroups()
 	function Targetting(target)
@@ -104,7 +120,8 @@ function TBGroups()
 	local targets = BaseGroup:CreateDerived()
 	local target = BaseGroup:CreateDerived()
 	local tanks = BaseGroup:CreateDerived()
-	local healers = BaseGroup:CreateDerived()
+	local mainTank = BaseGroup:CreateDerived()
+	--local healers = BaseGroup:CreateDerived()
   
 	-----
 	player["player"] = Targetting("player")
@@ -126,6 +143,7 @@ function TBGroups()
 	end
 	-----
 	targets["focus"] = Targetting("focus")
+	targets["mouseover"] = Targetting("mouseover")
 	for k,v in pairs(party) do
 		targets[k.."target"] = Assisting(k.."target", v)
 		targets[k] = Targetting(k)
@@ -133,26 +151,59 @@ function TBGroups()
 	
 	local DamagePerHealer = 0;
 	local HealersCount = 0;
+	local incDmg = TankIncomingDamage(TBBestTankKey) or 0
+	if incDmg == 0 then
+		TBBestTankKey = nil
+	end
+	
 	for k,v in pairs(party) do
 		if UnitIsDead(k) == false then
 			DamagePerHealer = DamagePerHealer + ( UnitHealthMax(k) - UnitHealth(k) ) / UnitHealthMax(k)
 		end
 		
-		if UnitGroupRolesAssigned(k) == "TANK" then
+		local dmg = TankIncomingDamage(k)
+		if dmg and UnitAura(k,"Стойка гладиатора")==nil then
 			tanks[k] = Targetting(k)
+		
+			if dmg > incDmg * 1.2 then
+				TBBestTankKey = k
+			end
 		end
+
 		if UnitGroupRolesAssigned(k) == "HEALER" then
-			healers[k] = Targetting(k)
 			if UnitIsDead(k) == false then
 				HealersCount = HealersCount + 1
 			end
-		end		
+		end
 	end
+	
+	if UnitName("focus") then
+		-- Если есть цель в фокусе - значит она назначена главной целью
+		TBBestTankKey = "focus"
+		
+		local needAddFocus = true
+		for k,v in pairs(tanks) do
+			if UnitIsUnit(k,"focus") or UnitIsUnit(k,"focustarget") then
+				needAddFocus = nil
+			end
+		end
+		
+		if needAddFocus then
+			tanks["focus"]  = Targetting("focus")
+			tanks["focustarget"] = Assisting("focustarget", tanks["focus"])
+		end
+	end
+	
+	if TBBestTankKey then	
+		mainTank[TBBestTankKey] = Targetting(TBBestTankKey)
+		mainTank[TBBestTankKey.."target"] = Assisting(TBBestTankKey.."target", mainTank[TBBestTankKey])
+	end
+	
 	if HealersCount == 0 then
 		HealersCount = 1
 	end
 
-	party["mouseover"] = Targetting("mouseover")
+	--party["mouseover"] = Targetting("mouseover")
 	
 	-----
 	target["target"] = Targetting("target")
@@ -164,47 +215,8 @@ function TBGroups()
 	result.targets = targets
 	result.target = target
 	result.tanks = tanks
-	result.healers = healers
+	--result.healers = healers
+	result.mainTank = mainTank
 	result.DamagePerHealer = DamagePerHealer / HealersCount
 	return result
 end
-
---[[
-function CastKey(key, target)
-  result = {
-    action = "spell",
-    value = key,
-    condition = target
-  }
-  return result
-end
-
-
-function SuccessCondiotion(command)  
-
-	if command == nil then
-		return 1
-	end
-
-	-- если мы хотим кастить в себя, и при этом в фокусе цель, которую нельзя лечить - не надо менять цель
-	if command.action == "target" and UnitIsUnit("player", command.value) and UnitCanAttack("player", "target") then -- По моему тут ошибка
-		return 1
-	end
-
-	if command.action == "target" and UnitIsUnit("target", command.value) then
-		return 1
-	end
-
-	if command.action == "assist" and UnitIsUnit("target", command.value) then
-		return 1
-	end  
-end
-
-function Execute(command)
-	if SuccessCondiotion(command.condition) then
-		return command.value
-	else
-		return Execute(command.condition)
-	end
-end
---]]
