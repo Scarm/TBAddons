@@ -265,7 +265,7 @@ function TBMacroCommands()
 				local id = GetContainerItemID(bag, slot)
 				if id then
 					local name = GetItemInfo(id)
-					if (name == "Большой ящик для утиля" or name == "Большой ящик с утилем" or name == "Сумка с утилем" or name == "Ящик для утиля") and TBBagActions.Salvage == nil  then
+					if (name == "Большой ящик для утиля" or name == "Большой ящик с утилем" or name == "Сумка с утилем" or name == "Ящик для утиля" or name == "Ящик с утилем") and TBBagActions.Salvage == nil  then
 						macrotext = macrotext.. name
 						TBSetMacro(macrotext)
 						TBBagActions.Salvage = 1

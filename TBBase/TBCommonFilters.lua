@@ -348,6 +348,7 @@ end
 function BaseGroup:CanUse(key, ignoreChannel)
 	local result = self:CreateDerived()
 	
+	-- можно получать индекс вот так: FindSpellBookSlotBySpellID(ID) ТОЛЬКО ДЛЯ СВОИХ СПЕЛОВ
 	local spell = IndicatorFrame.ByKey[key]
 	if spell == nil then
 		print("НЕ НАЙДЕН СПЕЛЛ! ", key)
@@ -362,6 +363,8 @@ function BaseGroup:CanUse(key, ignoreChannel)
         return result
     end
 	  
+	  
+	-- добавить сюда еще GetSpellLossOfControlCooldown
 	local startTime, duration = GetSpellCooldown(idx, book)
 	local endTime = startTime + duration
 	
