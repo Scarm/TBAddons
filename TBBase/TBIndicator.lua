@@ -50,7 +50,7 @@ function TBSetBindings()
 		SetOverrideBindingClick(IndicatorFrame, true, "ALT-CTRL-"      ..bind, "TBInd_"..(i+48))
 		SetOverrideBindingClick(IndicatorFrame, true, "CTRL-SHIFT-"    ..bind, "TBInd_"..(i+60))
 		SetOverrideBindingClick(IndicatorFrame, true, "ALT-SHIFT-"     ..bind, "TBInd_"..(i+72))
-		SetOverrideBindingClick(IndicatorFrame, true, "ALT-CTRL-SHIFT-"..bind, "TBInd_"..(i+84))			
+		SetOverrideBindingClick(IndicatorFrame, true, "ALT-CTRL-SHIFT-"..bind, "TBInd_"..(i+84))
     end
 end
 
@@ -73,13 +73,6 @@ function TBSetStaticCommands()
     IndicatorFrame.TargetCount = 24
     -- очищаем карту индикаторов
     IndicatorFrame.Targets = {}
-	
-	--[[
-	for i=24,83,1 do
-		IndicatorFrame.Frames[i]:SetAttribute("type","target")
-		IndicatorFrame.Frames[i]:SetAttribute("unit",nil)
-	end
-	--]]
 	
 	commands = {}
 	commands["player"] = 1
@@ -122,7 +115,7 @@ function TBSetStaticCommands()
 	IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("unit","target")
 	IndicatorFrame.Targets["assist"] = IndicatorFrame.TargetCount
 	
-	print(IndicatorFrame.TargetCount)
+
 	IndicatorFrame.TargetCount = IndicatorFrame.TargetCount + 1
 	
 
@@ -130,13 +123,14 @@ function TBSetStaticCommands()
 	IndicatorFrame.Frames[IndicatorFrame.TargetCount]:SetAttribute("unit","target")
 	IndicatorFrame.Targets["setfocus"] = IndicatorFrame.TargetCount
 	IndicatorFrame.TargetCount = IndicatorFrame.TargetCount + 1	
-		
+
+	print(IndicatorFrame.TargetCount)
 	IndicatorFrame.Targets["macro"] = 83
 end
 
 function TBSetMacro(text)
 	IndicatorFrame.Frames[83]:SetAttribute("type","macro")
-	IndicatorFrame.Frames[83]:SetAttribute("macrotext",text)	
+	IndicatorFrame.Frames[83]:SetAttribute("macrotext",text)
 end
 
 

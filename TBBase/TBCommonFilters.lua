@@ -300,6 +300,10 @@ function BaseGroup:CheckTarget(target, idx, book, caster)
 		return nil
 	end
 	
+	-- SpellHasRange - вообще то нигде не используется. Нужен ли он вообще?
+	-- inRange - 1 if the player is near enough to cast the spell on the unit; 0 if not in range; nil if the unit is not a valid target for the spell
+	-- значит, SpellHasRange вроде как не нужен.
+	-- Поиск по стандартным lua не нашел применений IsSpellInRange вообще
 	if SpellHasRange(idx, book) and  IsSpellInRange(idx, book, target) == 0 then
 		return nil
 	end
@@ -368,6 +372,7 @@ function BaseGroup:CanUse(key, ignoreChannel)
         return result
     end
 	
+	-- поддерживает запрос по ID спелла 
     if key ~= "Слово силы: Щит"	then
 		if IsUsableSpell(idx, book) == false then
 			return result
