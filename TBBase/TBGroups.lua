@@ -54,14 +54,7 @@ function BaseGroup:Best()
 	return unit
 end
 
-function BaseGroup:MinHP(focusFirst)
-	if focusFirst then
-		for key,value in pairs(self) do
-			if UnitIsUnit(key, "focus") then
-				return value
-			end
-		end
-	end
+function BaseGroup:MinHP()
 	local minHP = 101
 	local unit = nil
 	for key,value in pairs(self) do
@@ -121,7 +114,6 @@ function TBGroups()
 	local target = BaseGroup:CreateDerived()
 	local tanks = BaseGroup:CreateDerived()
 	local mainTank = BaseGroup:CreateDerived()
-	--local healers = BaseGroup:CreateDerived()
   
 	-----
 	player["player"] = Targetting("player")
@@ -149,17 +141,17 @@ function TBGroups()
 		targets[k] = Targetting(k)
 	end 
 	
-	local DamagePerHealer = 0;
-	local HealersCount = 0;
+	--local DamagePerHealer = 0;
+	--local HealersCount = 0;
 	local incDmg = TankIncomingDamage(TBBestTankKey) or 0
 	if incDmg == 0 then
 		TBBestTankKey = nil
 	end
 	
 	for k,v in pairs(party) do
-		if UnitIsDead(k) == false then
-			DamagePerHealer = DamagePerHealer + ( UnitHealthMax(k) - UnitHealth(k) ) / UnitHealthMax(k)
-		end
+		--if UnitIsDead(k) == false then
+		--	DamagePerHealer = DamagePerHealer + ( UnitHealthMax(k) - UnitHealth(k) ) / UnitHealthMax(k)
+		--end
 		
 		local dmg = TankIncomingDamage(k)
 		if dmg and UnitAura(k,"Стойка гладиатора")==nil then
@@ -170,11 +162,11 @@ function TBGroups()
 			end
 		end
 
-		if UnitGroupRolesAssigned(k) == "HEALER" then
-			if UnitIsDead(k) == false then
-				HealersCount = HealersCount + 1
-			end
-		end
+		--if UnitGroupRolesAssigned(k) == "HEALER" then
+		--	if UnitIsDead(k) == false then
+		--		HealersCount = HealersCount + 1
+		--	end
+		--end
 	end
 	
 	if UnitName("focus") then
@@ -199,9 +191,9 @@ function TBGroups()
 		mainTank[TBBestTankKey.."target"] = Assisting(TBBestTankKey.."target", mainTank[TBBestTankKey])
 	end
 	
-	if HealersCount == 0 then
-		HealersCount = 1
-	end
+	--if HealersCount == 0 then
+	--	HealersCount = 1
+	--end
 
 	--party["mouseover"] = Targetting("mouseover")
 	
@@ -217,6 +209,6 @@ function TBGroups()
 	result.tanks = tanks
 	--result.healers = healers
 	result.mainTank = mainTank
-	result.DamagePerHealer = DamagePerHealer / HealersCount
+	--result.DamagePerHealer = DamagePerHealer / HealersCount
 	return result
 end

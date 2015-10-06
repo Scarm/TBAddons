@@ -1,8 +1,5 @@
 TBBaseList = {}
 
-
-
-
 function TBBaseList:Cast(key, target)
 	if target then
 		local cmd = {

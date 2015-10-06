@@ -121,17 +121,18 @@ function BaseGroup:AutoAttacking(yes)
 	return self:CreateDerived()
 end
 
-function BaseGroup:Moving(yes)
+function BaseGroup:Moving(value, duration)
 	local speed = GetUnitSpeed("player")
-	if speed > 0 then
-		IndicatorFrame.LastMoving = GetTime()
-	end
-	if IndicatorFrame.LastMoving == nil then
+	if speed > 0 or IndicatorFrame.LastMoving == nil then
 		IndicatorFrame.LastMoving = GetTime()
 	end
 	
-	local cond = GetTime() > IndicatorFrame.LastMoving + 0.5
-	if (cond and yes) or (not cond and not yes) then
+	local dt = duration or 0.2
+	value = value or "true"
+	
+	--верно, если стоим уже больше dt секунд
+	local cond = GetTime() > IndicatorFrame.LastMoving + dt
+	if (cond and value == "false") or (not cond and value == "true") then
 		return self
 	end
 	
@@ -141,9 +142,9 @@ end
 function BaseGroup:CanInterrupt()
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
-		local c1,i1 = select(8,UnitCastingInfo(key))
-		local c2,i2 = select(8,UnitChannelInfo(key))
-		if (c1 and not i1) or (c2 and not i2) then
+		local notInterruptible1 = select(9,UnitCastingInfo(key))
+		local notInterruptible2 = select(8,UnitChannelInfo(key))
+		if (UnitCastingInfo(key) and not notInterruptible1) or (UnitChannelInfo(key) and not notInterruptible2) then
 			result[key] = value
 		end
 	end
@@ -334,17 +335,6 @@ function BaseGroup:CheckTarget(target, idx, book, caster)
 end
 
 
-function BaseGroup:Charges(key, charges)
-	local spell = IndicatorFrame.ByKey[key]
-	
-	local ch = GetSpellCharges(spell.RealId)
-	if charges and ch >= charges then
-		return self
-	end
-	
-	return self:CreateDerived()
-end
-
 function BaseGroup:CanUse(key, ignoreChannel)
 	local result = self:CreateDerived()
 	
@@ -417,11 +407,36 @@ function BaseGroup:IsFocus()
 	return self:CreateDerived()
 end
 
+
+
+function BaseGroup:Charges(key, charges)
+	local spell = IndicatorFrame.ByKey[key]
+	
+	local ch = GetSpellCharges(spell.RealId)
+	if charges and ch >= charges then
+		return self
+	end
+	
+	return self:CreateDerived()
+end
+
 function BaseGroup:CanAttack()
 	local result = self:CreateDerived()
 	
 	for key,value in pairs(self) do
 		if UnitCanAttack("player", key) then
+			result[key] = value
+		end
+	end
+	
+	return result	
+end
+
+function BaseGroup:CanAssist()
+	local result = self:CreateDerived()
+	
+	for key,value in pairs(self) do
+		if UnitCanAssist("player", key) then
 			result[key] = value
 		end
 	end
@@ -460,17 +475,6 @@ function BaseGroup:Acceptable(party)
 	return result	
 end
 
-function BaseGroup:CanAssist()
-	local result = self:CreateDerived()
-	
-	for key,value in pairs(self) do
-		if UnitCanAssist("player", key) then
-			result[key] = value
-		end
-	end
-	
-	return result	
-end
 
 
 function distance(a,b)
