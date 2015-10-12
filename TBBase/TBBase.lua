@@ -17,15 +17,20 @@ function TBRegister(bot)
 		print("Не задана функция OnUpdate")
 	end
 	
-	IndicatorFrame.Bots = IndicatorFrame.Bots or {}
-	IndicatorFrame.Bots[bot.Class] = IndicatorFrame.Bots[bot.Class] or {}
+	if IndicatorFrame.Bots == nil then
+		IndicatorFrame.Bots = {}
+	end
 	
+	if IndicatorFrame.Bots[bot.Class] == nil then
+		IndicatorFrame.Bots[bot.Class] = {}
+	end
 	
-	if IndicatorFrame.Bots[bot.Class][bot.Id] then
+	if IndicatorFrame.Bots[bot.Class][bot.Id] ~= nil then
 		print("Повторная регистрация бота для Class = ", bot.Class," и спека = ",bot.Id)
 		return
 	end
 	
+	--print("Регистрируем бота для Class = ", bot.Class," и спека = ",bot.Id)
 	IndicatorFrame.Bots[bot.Class][bot.Id] = bot
 end
 
@@ -56,7 +61,7 @@ function TBAssignBot(self)
 	
     local name,class = UnitClass("player")
     print("Загружаются боты для класса",name)
-
+    --self:InitSavedVariables()   
     if IndicatorFrame.Bots[class] == nil then
         print("Не обнаружено ботов для этого класса")
         return
@@ -74,13 +79,18 @@ end
 
 -- очистить текущий спек
 function TBClearSpec()
-    --print("ClearSpec") 
+    print("ClearSpec") 
     IndicatorFrame.Spec = nil
     TBUnregisterAllSpells()
 		
 	IndicatorFrame.ByName = {}
 	IndicatorFrame.ById = {}
-	IndicatorFrame.ByKey = {} 
+	IndicatorFrame.ByKey = {}
+	
+
+	IndicatorFrame.Enemies = {}
+	IndicatorFrame.EnemyCount = 0
+    --self.Panel:RemoveAllButtons()    
 end
 
 -- устанавливаем спек:
@@ -272,7 +282,7 @@ function TBMacroCommands()
 			for slot = 1,GetContainerNumSlots(bag) do
 				local id = GetContainerItemID(bag, slot)
 				if id then
-					local name = GetItemInfo(id)
+					local name = GetItemInfo(id)				
 					if name =="Сырая шкура зверя " then
 						PickupContainerItem(bag, slot)
 						ClickSendMailItemButton(idx, false)
@@ -351,7 +361,23 @@ function TBLoSdetect(self, event,...)
 		IndicatorFrame.LoS.Banned[IndicatorFrame.LoS.targetName] = GetTime()
 	end
 end
+--[[
+function TBMouseOver()
+	local goodTarget = UnitIsDead("mouseover")==nil 
+		and UnitCanAttack("player", "mouseover") 
+		and IsSpellInRange("Удар воина Света", "mouseover") == 1 
+		and UnitAffectingCombat("mouseover")
 
+	if goodTarget then
+		IndicatorFrame.Enemies[UnitGUID("mouseover")] = GetUnitName("mouseover")
+	else
+		IndicatorFrame.Enemies[UnitGUID("mouseover")] = nil
+	end
+	
+	IndicatorFrame.EnemyCount = 0
+	for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
+end
+--]]
 
 function TBEnterCombat() 
 	IndicatorFrame.InCombat = 1	
@@ -361,7 +387,42 @@ function TBLeaveCombat()
 	IndicatorFrame.InCombat = nil	
 end
 
+--[[
+function TBAuction()
+	print("TBAuction")
+	
+	SortAuctionClearSort("list")
+	SortAuctionSetSort("list", "buyout")
+	SortAuctionApplySort("list")
+	QueryAuctionItems("Символ боя насмерть")
+end
 
+function TBOnAuctionListUpdate()
+	print("TBOnAuctionListUpdate")
+	print(GetAuctionItemInfo("list", 1))
+end
+
+TBStatistic = {}
+TBStatistic.Value = 0
+
+function TBStatisticFunc(self, event, ...)
+	
+	local curr = GetTime()
+	if TBStatistic.prev == nil then
+		TBStatistic.sum = 0
+		TBStatistic.count = 0
+		TBStatistic.Value = 0
+	else
+		local val = curr - TBStatistic.prev
+		TBStatistic.sum = TBStatistic.sum + val
+		TBStatistic.count = TBStatistic.count + 1
+		TBStatistic.Value = TBStatistic.sum / TBStatistic.count
+	end
+	TBStatistic.prev = curr
+	
+	print(TBStatistic.Value,"(",TBStatistic.sum, "/" ,TBStatistic.count,")" )
+end
+--]]
 
 
 

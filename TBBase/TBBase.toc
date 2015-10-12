@@ -1,7 +1,7 @@
 ﻿## Interface: 60000
 ## Title: TBBase 
 ## SavedVariablesPerCharacter: TBBaseData 
-## SavedVariables: TBDebuffList
+## SavedVariables: TBDebuffList, TBAttributes
 
 TBEvent.xml
 TBEvent.lua

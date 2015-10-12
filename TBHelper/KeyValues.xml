@@ -1,0 +1,60 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+
+	<Frame name="TBHelperValuesFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">	
+		<Anchors>
+			<Anchor point="CENTER"></Anchor>
+		</Anchors>
+		<Size>
+			<AbsDimension x="500" y="100" />
+		</Size>		
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTex" parentKey="Tex">	
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color g="0.1" r="0.1" b="0.1" a = "0.5"/>                    
+				</Texture>
+			</Layer>
+			<Layer>
+				<FontString name="TBHelperNamesString" inherits="GameFontNormal" text = "Название" justifyH="RIGHT">
+					<Anchors>
+						<Anchor point="TOP"/>
+						<Anchor point="BOTTOM"/>
+						<Anchor point="LEFT"/>
+					</Anchors>
+					<Size>
+						<AbsDimension x="100"/>
+					</Size>	
+				</FontString>
+				<FontString name="TBHelperValuesString" inherits="GameFontNormal" text = "Значение" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="TOP"/>
+						<Anchor point="BOTTOM"/>
+						<Anchor point="RIGHT"/>
+					</Anchors>
+					<Size>
+						<AbsDimension x="400"/>
+					</Size>					
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForDrag("RightButton")
+				TBUtilsAdd(self, "Interface\\Icons\\TRADE_ENGINEERING","vals")
+			</OnLoad> 
+            <OnDragStart>
+				self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+				self:StopMovingOrSizing()
+            </OnDragStop>
+			<OnUpdate>
+				TBKeyValuesUpdate()
+			</OnUpdate>
+		</Scripts> 
+	</Frame>
+
+</Ui>

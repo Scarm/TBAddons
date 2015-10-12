@@ -42,7 +42,6 @@ function MageFrost:OnUpdate(g, list, modes)
 		return 
 	end
 	
-	-- Попробовать вставить сюда function BaseGroup:Moving(value, duration) с duration = 3 сек
 	if GetUnitName("playerpet") == nil then
 			list:Cast( "Призыв элементаля воды", g.player:CanUse("Призыв элементаля воды"):Best() )
 	end
@@ -58,7 +57,7 @@ function MageFrost:OnUpdate(g, list, modes)
 		end
 	end
 	
-	list:Cast( "Антимагия", g.targets:CanUse("Антимагия"):CanInterrupt():Best() )
+		list:Cast( "Антимагия", g.targets:CanUse("Антимагия"):CanInterrupt():Best() )
 	
 
 	if modes.Healing == "On" then 

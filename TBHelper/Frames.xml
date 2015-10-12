@@ -1,44 +1,37 @@
 ﻿<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
 
-	<Frame name="TBHelperValuesFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">	
+	<CheckButton name="TBHelperUtilButtonTemplate" inherits="ActionButtonTemplate" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("LeftButtonUp")
+			</OnLoad>
+            <OnClick>
+				if self:GetChecked() then
+					self.frame:Show()
+				else
+					self.frame:Hide()
+				end
+            </OnClick> 
+		</Scripts>
+	</CheckButton>
+
+	<Frame name ="TBHelperUtils" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">
 		<Anchors>
 			<Anchor point="CENTER"></Anchor>
 		</Anchors>
 		<Size>
-			<AbsDimension x="500" y="100" />
+			<AbsDimension x="5" y="10" />
 		</Size>		
 		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentTex" parentKey="Tex">	
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTex" parentKey="Tex">	
 					<Anchors>
-						<Anchor point="TOPLEFT"/>
+                        <Anchor point="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT"/>
-					</Anchors>
-					<Color g="0.1" r="0.1" b="0.1" a = "0.5"/>                    
+                    </Anchors>
+                    <Color g="0" r="1" b="0" a="0.5"/>                    
 				</Texture>
-			</Layer>
-			<Layer>
-				<FontString name="TBHelperNamesString" inherits="GameFontNormal" text = "Название" justifyH="RIGHT">
-					<Anchors>
-						<Anchor point="TOP"/>
-						<Anchor point="BOTTOM"/>
-						<Anchor point="LEFT"/>
-					</Anchors>
-					<Size>
-						<AbsDimension x="100"/>
-					</Size>	
-				</FontString>
-				<FontString name="TBHelperValuesString" inherits="GameFontNormal" text = "Значение" justifyH="LEFT">
-					<Anchors>
-						<Anchor point="TOP"/>
-						<Anchor point="BOTTOM"/>
-						<Anchor point="RIGHT"/>
-					</Anchors>
-					<Size>
-						<AbsDimension x="400"/>
-					</Size>					
-				</FontString>
-			</Layer>
+                </Layer>
 		</Layers>
 		<Scripts>
 			<OnLoad>
@@ -50,122 +43,17 @@
             <OnDragStop>
 				self:StopMovingOrSizing()
             </OnDragStop>
-			<OnUpdate>
-				TBHelperUpdateValues()
-			</OnUpdate>
 		</Scripts> 
 	</Frame>
 
-	<Frame name="TBHelperFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">	
-		<Anchors>
-			<Anchor point="CENTER"></Anchor>
-		</Anchors>
-		<Size>
-			<AbsDimension x="270" y="30" />
-		</Size>		
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentTex" parentKey="Tex">	
-					<Anchors>
-						<Anchor point="TOPLEFT"/>
-						<Anchor point="BOTTOMRIGHT"/>
-					</Anchors>
-					<Color g="0.1" r="0.1" b="0.1" a = "0.5"/>                    
-				</Texture>
-			</Layer>
-		</Layers>
-		<Frames>
-			<Button name="TBHelperSpellFrame" enableMouse="true">
-				<Anchors>
-					<Anchor point="LEFT" >
-						<Offset>
-							<AbsDimension x="5"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Size>
-					<AbsDimension x="250" y="20" />
-				</Size>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture name="$parentTex" parentKey="Tex">	
-							<Anchors>
-								<Anchor point="TOPLEFT"/>
-								<Anchor point="BOTTOMRIGHT"/>
-							</Anchors>
-							<Color g="1" r="0" b="0" a = "1"/>                    
-						</Texture>
-					</Layer>
-					<Layer>
-						<FontString name="$parentText" inherits="GameFontNormal" text = "Заклинания">
-							<Size>
-								<AbsDimension y="20"/>
-							</Size>
-							<Anchors>
-								<Anchor point="LEFT"/>
-								<Anchor point="RIGHT"/>
-							</Anchors>					
-						</FontString>
-						<FontString name="$parentList" inherits="GameFontNormal" text = "Хрень">
-							<Size>
-								<AbsDimension y="20"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativepoint="BOTTOMLEFT">
-									<Offset>
-										<AbsDimension y="-10"/>
-									</Offset>
-								</Anchor>
-								<Anchor point="TOPRIGHT" relativepoint="BOTTOMRIGHT">
-									<Offset>
-										<AbsDimension x="-10"/>
-									</Offset>
-								</Anchor>
-							</Anchors>					
-						</FontString>
-					</Layer>
-				</Layers>				
-				<Scripts>
-					<OnReceiveDrag>
-						TBHelperOnReceiveDrag(self)				
-					</OnReceiveDrag>
-					<OnLoad>
-						self:RegisterForClicks("LeftButtonUp")
-					</OnLoad> 
-					 <OnClick>
-						wipe(self.SpellsTable)
-						TBLists(self)
-					</OnClick> 
-				</Scripts>		
-			</Button>
-		</Frames>
-		<Scripts>
-			<OnLoad>
-				self:RegisterForDrag("RightButton")
-				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBHelperOnPlayerLogin")
-				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBHelperOnTalentChanged")	
 
-				
-				
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBPrintEvent")	
-				TBSubscribeEvent(self,"UNIT_SPELLCAST_START", "TBPrintEvent")
-				TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBPrintEvent")
-				--TBSubscribeEvent(self,"COMBAT_LOG_EVENT_UNFILTERED", "TBPrintEvent")
-				
-			</OnLoad> 
-            <OnDragStart>
-				self:StartMoving()
-            </OnDragStart>
-            <OnDragStop>
-				self:StopMovingOrSizing()
-            </OnDragStop>
-            <OnEvent>
-				TBHelperOnEvent(self,event,...)
-			</OnEvent>
-		</Scripts> 		
-	</Frame>
 	
-<Frame name="TBHelperDebuffFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">	
+	
+	
+
+	
+	
+	<Frame name="TBHelperDebuffFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">	
 		<Anchors>
 			<Anchor point="CENTER"></Anchor>
 		</Anchors>
@@ -218,13 +106,13 @@
 					</OnClick>
 					<OnEnter>
 						if TBCurrentDebuff then
-							GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT");
-							GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2);
-							GameTooltip:SetSpellByID(TBCurrentDebuff) ;
+							GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+							GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+							GameTooltip:SetSpellByID(TBCurrentDebuff)
 						end
 					</OnEnter>
 					<OnLeave>
-						GameTooltip:Hide();
+						GameTooltip:Hide()
 					</OnLeave>					
 				</Scripts>
 			</Button>
@@ -251,9 +139,8 @@
 		<Scripts>
 			<OnLoad>
 				self:RegisterForDrag("RightButton")	
-				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBInitDebuffs")
-				
-				
+				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBInitDebuffs")		
+
 			</OnLoad> 
             <OnDragStart>
 				self:StartMoving()
@@ -261,9 +148,6 @@
             <OnDragStop>
 				self:StopMovingOrSizing()
             </OnDragStop>
-			<OnUpdate>
-				TBScanDebuffs()
-			</OnUpdate>
 		</Scripts> 		
 	</Frame>	
 </Ui>

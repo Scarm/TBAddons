@@ -26,10 +26,12 @@
 				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBAssignBot")
 				
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_START", "TBLastCastUpdate")
+				--TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_STOP", "TBLastCastUpdateFailed")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_UPDATE", "TBLastCastUpdate")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_DELAYED", "TBLastCastUpdate")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_INTERRUPTED", "TBLastCastUpdateFailed")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_START", "TBLastCastUpdate")
+				--TBSubscribeEvent(self,"UNIT_SPELLCAST_STOP", "TBLastCastUpdateFailed")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBLastCastUpdate")
 				
 				TBSubscribeEvent(self,"PLAYER_ENTER_COMBAT", "TBEnterCombat")
@@ -37,7 +39,11 @@
 				
 				--TBSubscribeEvent(self,"COMBAT_LOG_EVENT_UNFILTERED", "TBCombatLog")
 				--TBSubscribeEvent(self,"UPDATE_MOUSEOVER_UNIT", "TBMouseOver")
-							
+				
+				--TBSubscribeEvent(self,"AUCTION_ITEM_LIST_UPDATE", "TBOnAuctionListUpdate")
+				
+				--TBSubscribeEvent(self,"UNIT_SPELLCAST_START", "TBStatisticFunc")
+				
 				TBSubscribeEvent(self,"COMBAT_LOG_EVENT_UNFILTERED", "TBLoSdetect")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBLastCastData")
 			</OnLoad>

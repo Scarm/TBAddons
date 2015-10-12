@@ -1,0 +1,115 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+
+	<Frame name="TBSpecInfo" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">	
+		<Anchors>
+			<Anchor point="CENTER"></Anchor>
+		</Anchors>
+		<Size>
+			<AbsDimension x="350" y="30" />
+		</Size>		
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTex" parentKey="Tex">	
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color g="0.1" r="0.1" b="0.1" a = "0.7"/>                    
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentClear" enableMouse="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" >
+						<Offset>
+							<AbsDimension x="5" y="-5"/>
+						</Offset>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT" >
+						<Offset>
+							<AbsDimension x="-5" y="5"/>
+						</Offset>
+					</Anchor>					
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentTex" parentKey="Tex">	
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+								<Anchor point="BOTTOMRIGHT"/>
+							</Anchors>
+							<Color g="1" r="0" b="0" a = "1"/>                    
+						</Texture>
+					</Layer>
+					<Layer>
+						<FontString name="$parentText" inherits="GameFontNormal" text = "Очистить">
+							<Size>
+								<AbsDimension y="20"/>
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT"/>
+								<Anchor point="RIGHT"/>
+							</Anchors>					
+						</FontString>
+					</Layer>
+				</Layers>				
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+					</OnLoad> 
+					 <OnClick>
+						TBSpecInfoClear()
+					</OnClick> 
+				</Scripts>		
+			</Button>
+			<SimpleHTML name="TBSpecInfoList" text = "Хрень">
+				<FontString inherits="GameFontNormal"/>
+				<Size>
+					<AbsDimension y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativepoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension y="-10"/>
+						</Offset>
+					</Anchor>
+					<Anchor point="TOPRIGHT" relativepoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>		
+				<Scripts>
+					<OnHyperlinkEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT");
+						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2);
+						GameTooltip:SetHyperlink(link)
+					</OnHyperlinkEnter>
+					<OnHyperlinkLeave>
+						GameTooltip:Hide()
+					</OnHyperlinkLeave>			
+				</Scripts>
+			</SimpleHTML>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForDrag("RightButton")
+				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBSpecInfoSet")
+				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBSpecInfoSet")
+				
+				TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBSpecInfoAddSpell")
+				TBSubscribeEvent(self,"UNIT_AURA", "TBSpecInfoAddAura")
+				
+				TBUtilsAdd(self, "Interface\\Icons\\INV_MISC_NOTE_05","log")
+			</OnLoad> 
+            <OnDragStart>
+				self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+				self:StopMovingOrSizing()
+            </OnDragStop>
+		</Scripts> 		
+	</Frame>
+
+</Ui>

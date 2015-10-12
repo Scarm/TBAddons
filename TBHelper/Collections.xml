@@ -1,0 +1,422 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Frame name="TBCollectionFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">
+		<Anchors>
+			<Anchor point="CENTER"></Anchor>
+		</Anchors>
+		<Size>
+			<AbsDimension x="25" y="5" />
+		</Size>		
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTex" parentKey="Tex">	
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color g="0" r="1" b="0" a="0.5"/>                     
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="TBZoneSelection" inherits="UIDropDownMenuTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativePoint="BOTTOM"/>
+                </Anchors>
+			</Button>
+			<Button name="TBBossSelection" inherits="UIDropDownMenuTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension y="-25">
+							</AbsDimension>
+						</Offset>
+					</Anchor>
+                </Anchors>
+			</Button>
+			
+			<CheckButton name="TBNewDebuffButton" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="-55" y="-60"/>
+						</Offset>
+					</Anchor>
+				</Anchors>	
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\Icons\\TRADE_ENGINEERING")
+						self:SetChecked(true)
+					</OnLoad>
+					<OnClick>
+						if self:GetChecked() then
+							TBAddedDebuffButton:SetChecked(false)
+							TBIgnoredDebuffButton:SetChecked(false)
+							TBCollectionFrame.filter = nil
+							TBShowDebuffList()
+						end
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+						GameTooltip:SetText("Новые дебаффы")
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>						
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="TBAddedDebuffButton" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="TBNewDebuffButton" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="4" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>	
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\ICONS\\Spell_ChargePositive.blp")
+						self:SetChecked(false)
+					</OnLoad>
+					<OnClick>
+						if self:GetChecked() then
+							TBNewDebuffButton:SetChecked(false)
+							TBIgnoredDebuffButton:SetChecked(false)
+							TBCollectionFrame.filter = "added"
+							TBShowDebuffList()
+						end
+					</OnClick> 
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+						GameTooltip:SetText("Используемые дебаффы")
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>	
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="TBIgnoredDebuffButton" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="TBAddedDebuffButton" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="4" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>	
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\ICONS\\Spell_ChargeNegative.blp")
+						self:SetChecked(false)
+					</OnLoad>
+					<OnClick>
+						if self:GetChecked() then
+							TBAddedDebuffButton:SetChecked(false)
+							TBNewDebuffButton:SetChecked(false)
+							TBCollectionFrame.filter = "ignored"
+							TBShowDebuffList()
+						end
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+						GameTooltip:SetText("Игнорируемые дебаффы")
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>						
+				</Scripts>
+			</CheckButton>
+		</Frames>
+
+		<Scripts>
+			<OnLoad>
+				self:RegisterForDrag("RightButton")	
+				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBInitDropDowns")
+				TBSubscribeEvent(self,"UNIT_AURA", "TBScanDebuffs")
+				TBSubscribeEvent(self,"UNIT_TARGET", "TBScanDebuffs")
+				TBSubscribeEvent(self,"PLAYER_STARTED_MOVING", "TBCommitCombat")				
+				TBUtilsAdd(self, "Interface\\ICONS\\Spell_Nature_RemoveDisease.blp","buffs")
+			</OnLoad> 
+            <OnDragStart>
+				self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+				self:StopMovingOrSizing()
+            </OnDragStop>
+		</Scripts> 				
+	</Frame>
+	
+	<CheckButton name="TBCollectionAttributeTemplate" inherits="ActionButtonTemplate" hidden="true" virtual="true">
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+				GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+				GameTooltip:SetText(self.tooltip)
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+			<OnClick>
+				
+				if self:GetChecked() then
+					TBAttributes[self:GetParent().spellID][self.attr] = 1
+				else
+					TBAttributes[self:GetParent().spellID][self.attr] = nil
+				end
+			</OnClick>
+			<OnShow>
+				if self:GetParent().spellID and TBAttributes[self:GetParent().spellID] and TBAttributes[self:GetParent().spellID][self.attr] == 1 then
+					self:SetChecked(true)
+				else
+					self:SetChecked(false)
+				end
+			</OnShow>
+		</Scripts>
+	</CheckButton>
+	
+	
+	<Button name="TBCollectionDebuffTemplate" inherits="ActionButtonTemplate" virtual="true">
+		<Frames>
+			<Button name="$parentAdd" parentKey="addKey" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="15" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\ICONS\\Spell_ChargePositive.blp")
+					</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+						GameTooltip:SetText("Добавить дебафф")
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						self:GetParent().data.filter = "added"
+						TBAttributes[self:GetParent().spellID] = TBAttributes[self:GetParent().spellID] or {}
+						TBAttributes[self:GetParent().spellID]["incoming damage"] = 1
+						TBShowDebuffList()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentIgnore" parentKey="ignoreKey" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAdd" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\ICONS\\Spell_ChargeNegative.blp")
+					</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+						GameTooltip:SetText("Игнорировать дебафф")
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						self:GetParent().data.filter = "ignored"
+						TBShowDebuffList()
+					</OnClick>					
+				</Scripts>
+			</Button>
+			
+			<!-- /////////////////////////////////////////////////////////////////// -->
+			
+			<Button name="$parentReturn1" parentKey="returnKey1" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="15" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\ICONS\\Spell_ChargeNegative.blp")
+						self.filter = "added"
+					</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+						GameTooltip:SetText("Вернуть в новые")
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						self:GetParent().data.filter = nil
+						TBAttributes[self:GetParent().spellID] = nil
+						TBShowDebuffList()
+					</OnClick>					
+				</Scripts>
+			</Button>			
+			
+			<CheckButton name="$parentDot" parentKey="dotKey" inherits="TBCollectionAttributeTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentReturn1" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="15" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\Icons\\ABILITY_DRUID_MANGLE2")
+						self.filter = "added"
+						self.tooltip = "Большой входящий урон"
+						self.attr = "incoming damage"
+					</OnLoad>					
+				</Scripts>
+			</CheckButton>
+			
+			<CheckButton name="$parentAbsorb" parentKey="absorbKey" inherits="TBCollectionAttributeTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentDot" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\Icons\\SPELL_HOLY_POWERWORDSHIELD")
+						self.filter = "added"
+						self.tooltip = "Поглощение исцеления"
+						self.attr = "absorb heal"
+					</OnLoad>					
+				</Scripts>
+			</CheckButton>
+			
+			<CheckButton name="$parentDecurse" parentKey="decurseKey" inherits="TBCollectionAttributeTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAbsorb" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\Icons\\ABILITY_SHAMAN_CLEANSESPIRIT")
+						self.filter = "added"
+						self.tooltip = "Нельзя декурсить"
+						self.attr = "not decurse"
+					</OnLoad>					
+				</Scripts>
+			</CheckButton>	
+
+			<CheckButton name="$parentFullHeal" parentKey="fullHealKey" inherits="TBCollectionAttributeTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentDecurse" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\Icons\\SPELL_SHADOW_LIFEDRAIN")
+						self.filter = "added"
+						self.tooltip = "Полный отхил"
+						self.attr = "full heal"
+					</OnLoad>					
+				</Scripts>
+			</CheckButton>				
+			<!-- /////////////////////////////////////////////////////////////////// -->
+			
+			<Button name="$parentReturn2" parentKey="returnKey2" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="15" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\ICONS\\Spell_ChargePositive.blp")
+						self.filter = "ignored"
+					</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+						GameTooltip:SetText("Вернуть в новые")
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						self:GetParent().data.filter = nil
+						TBShowDebuffList()
+					</OnClick>					
+				</Scripts>
+			</Button>
+			
+			<Button name="$parentFullIgnore" parentKey="fullIgnoreKey" inherits="ActionButtonTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentReturn2" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("LeftButtonUp")
+						self.icon:SetTexture("Interface\\ICONS\\INV_Misc_Bone_ElfSkull_01.blp")
+						self.filter = "ignored"
+					</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+						GameTooltip:SetText("Добавить в полный игнор")
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+					<OnClick>
+						TBHelperIgnores.debuffs[self:GetParent().spellID] = self:GetParent().data.name
+						TBShowDebuffList()
+					</OnClick>						
+				</Scripts>
+			</Button>			
+		</Frames>
+		<Scripts>
+			<OnLoad>
+			</OnLoad>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+				GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
+				GameTooltip:SetSpellByID(self.spellID, false, false, true)
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>				
+		</Scripts>
+	</Button>
+	
+</Ui>
