@@ -1,7 +1,7 @@
 ﻿## Interface: 60000
 ## Title: TBBase 
 ## SavedVariablesPerCharacter: TBBaseData 
-## SavedVariables: TBDebuffList, TBAttributes
+## SavedVariables: TBDebuffList, TBAttributes, TBItemRules
 
 TBEvent.xml
 TBEvent.lua
@@ -11,6 +11,13 @@ TBPanel.lua
 TBCasting.lua
 TBIndicator.lua
 TBGroups.lua
+TBCanUse.lua
+TBAura.lua
+TBLastCast.lua
+TBLimits.lua
 TBCommonFilters.lua
 TBList.lua
+
+TBItems.xml
+TBItems.lua
 

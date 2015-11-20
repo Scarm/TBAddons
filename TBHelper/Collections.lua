@@ -1,25 +1,27 @@
+TBCollectionFrame.tmp = {}
+
 function TBCommitCombat()
 	local party = TBGroups().party
-	if party:AffectingCombat():Any() then
+	if party:AffectingCombat(true):Any() then
 		return
 	end
 
 	TBHelperCollection = TBHelperCollection or {}
 		
 	-- если не найден босс - записываем все в один комбат зоны
-	 if TBTmp.Debuffs and TBTmp.Targets then
-		 TBTmp.BossName = TBTmp.BossName or GetRealZoneText()
+	 if TBCollectionFrame.tmp.Debuffs and TBCollectionFrame.tmp.Targets then
+		 TBCollectionFrame.tmp.BossName = TBCollectionFrame.tmp.BossName or GetRealZoneText()
 	 end
 	--если нашлось хоть одно имя босса - значит это стоит записать
-	if TBTmp.BossName then
+	if TBCollectionFrame.tmp.BossName then
 		print("Начали запись результатов боя")
 		
 		-- создаем нужные таблицы
 		TBHelperCollection[GetRealZoneText()] = TBHelperCollection[GetRealZoneText()] or {}
 		local zone = TBHelperCollection[GetRealZoneText()]
 		
-		zone[TBTmp.BossName]  = zone[TBTmp.BossName] or {}
-		local boss = zone[TBTmp.BossName]
+		zone[TBCollectionFrame.tmp.BossName]  = zone[TBCollectionFrame.tmp.BossName] or {}
+		local boss = zone[TBCollectionFrame.tmp.BossName]
 		
 		boss["debuffs"] = boss["debuffs"] or {}
 		boss["targets"] = boss["targets"] or {}		
@@ -27,36 +29,36 @@ function TBCommitCombat()
 		local targets = boss["targets"]
 		
 		-- заполняем из временного хранилища значения, которых нет в главном хранилище
-		for k,v in pairs(TBTmp.Debuffs) do
+		for k,v in pairs(TBCollectionFrame.tmp.Debuffs) do
 			debuffs[k] = debuffs[k] or v
 		end
-		for k,v in pairs(TBTmp.Targets) do
+		for k,v in pairs(TBCollectionFrame.tmp.Targets) do
 			targets[k] = targets[k] or v
 		end
 		
 		-- повторно сюда не заходим
-		TBTmp.BossName = nil
-		TBTmp.Debuffs = nil
-		TBTmp.Targets = nil
+		TBCollectionFrame.tmp.BossName = nil
+		TBCollectionFrame.tmp.Debuffs = nil
+		TBCollectionFrame.tmp.Targets = nil
 	end		
 end
 
 function TBScanDebuffs(self, event, target)
 	local party = TBGroups().party	
 	-- Начинаем запись только если кто то в группе вступил в бой
-	if party:AffectingCombat():Any() then
+	if party:AffectingCombat(true):Any() then
 		
-		TBTmp.Debuffs = TBTmp.Debuffs or {}
-		TBTmp.Targets = TBTmp.Targets or {}
-		if TBTmp.BossName == nil and UnitName("boss1") then
-			TBTmp.BossName = UnitName("boss1")
+		TBCollectionFrame.tmp.Debuffs = TBCollectionFrame.tmp.Debuffs or {}
+		TBCollectionFrame.tmp.Targets = TBCollectionFrame.tmp.Targets or {}
+		if TBCollectionFrame.tmp.BossName == nil and UnitName("boss1") then
+			TBCollectionFrame.tmp.BossName = UnitName("boss1")
 		end
 		if event=="UNIT_AURA" and UnitCanAssist("player", target) then
 			for i=1,40,1 do
 				local id = select(11, UnitAura(target,i,"HARMFUL"))
-				if id and TBTmp.Debuffs[id] == nil then
-					TBTmp.Debuffs[id] = {}
-					local v = TBTmp.Debuffs[id]
+				if id and TBCollectionFrame.tmp.Debuffs[id] == nil then
+					TBCollectionFrame.tmp.Debuffs[id] = {}
+					local v = TBCollectionFrame.tmp.Debuffs[id]
 					v.name, 
 					v.rank, 
 					v.icon, 
@@ -81,8 +83,8 @@ function TBScanDebuffs(self, event, target)
 		
 		if event=="UNIT_TARGET" and  UnitCanAttack("player", target.."target") then
 			local name = UnitName(target.."target")
-			if name and TBTmp.Targets[name] == nil then
-				TBTmp.Targets[name] = 0
+			if name and TBCollectionFrame.tmp.Targets[name] == nil then
+				TBCollectionFrame.tmp.Targets[name] = 0
 				print("target logged: ", name)
 			end
 		end

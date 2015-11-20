@@ -24,20 +24,66 @@ function TBSpecInfoSet()
 			spec.Spells = {}	
 			spec.Buffs = {}	
 			
-			-- дефолтные заглушки кнопочек
-			spec.Buttons = 
-				{
-					[1] = {
-						Icon = "Interface\\Icons\\ABILITY_SEAL",
-						ToolTip = "Off",
-						GroupId = "Run",
-					},
-					[2] = {
-						Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
-						ToolTip = "On",
-						GroupId = "AoE"
+			--Interface\\ICONS\\INV_Banner_01.blp
+			--Interface\\ICONS\\INV_Misc_Bandage_08.blp
+			--Interface\\ICONS\\INV_Misc_GroupLooking.blp
+			--Interface\\ICONS\\INV_Misc_GroupNeedMore.blp
+			--INTERFACE\\ICONS\\INV_Misc_Bone_HumanSkull_02.blp
+			--Interface\\ICONS\\INV_Misc_Bone_Skull_02.blp
+			--Interface\\ICONS\\INV_Misc_EngGizmos_27.blp
+			if role == "DAMAGER" then
+				-- дефолтные заглушки кнопочек
+				spec.Buttons = 
+					{
+						[1] = {
+							Icon = "Interface\\Icons\\ABILITY_SEAL",
+							ToolTip = "Off",
+							GroupId = "Run",
+						},
+						[2] = {
+							Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
+							ToolTip = "On",
+							GroupId = "AoE"
+						},
+						[3] = {
+							["Icon"] = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
+							["ToolTip"] = "On",
+							["GroupId"] = "Burst",
+						},
+						[4] = {
+							["Icon"] = "Interface\\ICONS\\INV_Misc_GroupNeedMore.blp",
+							["ToolTip"] = "On",
+							["GroupId"] = "Party",
+							["default"] = 1
+						},	
 					}
-				}
+			end
+			if role == "TANK" then
+				-- дефолтные заглушки кнопочек
+				spec.Buttons = 
+					{
+						[1] = {
+							Icon = "Interface\\Icons\\ABILITY_SEAL",
+							ToolTip = "Off",
+							GroupId = "Run",
+						},
+						[2] = {
+							Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
+							ToolTip = "On",
+							GroupId = "AoE"
+						},
+						[3] = {
+							["Icon"] = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
+							["ToolTip"] = "On",
+							["GroupId"] = "Burst",
+						},
+						[4] = {
+							["Icon"] = "Interface\\ICONS\\INV_Misc_GroupNeedMore.blp",
+							["ToolTip"] = "On",
+							["GroupId"] = "Party",
+						},	
+					}
+			end
 		end
 	end
 
@@ -60,12 +106,15 @@ function TBSpecInfoAddSpell(self,event,unitID,spell,rank,lineID,spellID)
 	if not (IsLoggedIn() and TBSpecInfo:IsShown()) then
 		return
 	end
+	local buffs = TBSpecInfo.spec.Buffs
 	local spells = TBSpecInfo.spec.Spells
 	
 	-- у хороших спеллов lineID не нулевой, у остальных 0
 	if lineID ~= 0 then		
 		if spells[spell] == nil then
 			spells[spell] = spellID
+			
+			buffs[spell] = nil 
 		end
 	end
 	TBSpecInfoUpdateList()
@@ -89,14 +138,22 @@ function TBSpecInfoAddAura(self, event, target)
 				if buffs[name] == nil then
 					buffs[name] = id
 				end
-				-- если бафф с таким именем уже есть, тогда записываем его с постфиксом
-				if buffs[name] ~= id then
-					-- добавляем постфиксы, пока не обнаружим свободное значение
-					while buffs[name] do
-						name = name.."_"
-					end
-					buffs[name] = id
+				-- добавляем постфиксы, пока не обнаружим свободное значение
+				while buffs[name] and buffs[name]~= id do
+					name = name.."_"
 				end
+				buffs[name] = id
+				
+				-- возможна ситуация, когда сначала повесился бафф, затем его удалили спеллом (бафф был повешен до начала записи логов)
+				-- в этой ситуации где то дальше может быть дубль уже записанного спелла
+				-- надо его найти и занулить
+				while buffs[name] do
+					name = name.."_"
+					if buffs[name] == id then
+						buffs[name] = nil
+					end
+				end
+				
 			end
 		end
 	end
@@ -111,13 +168,20 @@ function TBSpecInfoAddAura(self, event, target)
 				if buffs[name] == nil then
 					buffs[name] = id
 				end
-				-- если бафф с таким именем уже есть, тогда записываем его с постфиксом
-				if buffs[name] ~= id then
-					-- добавляем постфиксы, пока не обнаружим свободное значение
-					while buffs[name] do
-						name = name.."_"
+				-- добавляем постфиксы, пока не обнаружим свободное значение
+				while buffs[name] and buffs[name]~= id do
+					name = name.."_"
+				end
+				buffs[name] = id
+				
+				-- возможна ситуация, когда сначала повесился бафф, затем его удалили спеллом (бафф был повешен до начала записи логов)
+				-- в этой ситуации где то дальше может быть дубль уже записанного спелла
+				-- надо его найти и занулить
+				while buffs[name] do
+					name = name.."_"
+					if buffs[name] == id then
+						buffs[name] = nil
 					end
-					buffs[name] = id
 				end
 			end
 		end

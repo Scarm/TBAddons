@@ -4,3 +4,4 @@
 
 Windwalker.lua
 Brewmaster.lua
+Mistweaver.lua

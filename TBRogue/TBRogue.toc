@@ -3,3 +3,5 @@
 ## Dependencies: TBBase
 
 Combat.lua
+Subtlety.lua
+Assassination.lua

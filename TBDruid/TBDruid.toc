@@ -3,5 +3,6 @@
 ## Dependencies: TBBase
 
 Balance.lua
-Restor.lua
-Guard.lua
+Restoration.lua
+Guardian.lua
+Feral.lua

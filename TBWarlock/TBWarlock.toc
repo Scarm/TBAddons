@@ -4,3 +4,4 @@
 
 Demonology.lua
 Destruction.lua
+Affliction.lua

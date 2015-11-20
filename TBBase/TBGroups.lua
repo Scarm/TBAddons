@@ -5,7 +5,8 @@ function BaseGroup:CreateDerived()
 	return result
 end
 
-
+--таблица для вспомогательных методов
+BaseGroupHelper = {}
 
 
 TBNeedFullHealList = {

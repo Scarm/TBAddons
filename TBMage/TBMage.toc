@@ -4,3 +4,4 @@
 
 Fire.lua
 Frost.lua
+Arcane.lua

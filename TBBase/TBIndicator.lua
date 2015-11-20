@@ -140,7 +140,8 @@ function TBSetMacro(text)
 end
 
 
-function TBRegisterSpell(spell)
+function TBRegisterSpell(spell,id)
+	--if spell then print(spell) end
 	-- может быть забиндено только 24 спеллов
     if IndicatorFrame.SpellCount==24 then
 		print("Ошибка регистрации спеллов!!!")

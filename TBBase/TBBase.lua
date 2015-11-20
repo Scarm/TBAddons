@@ -17,15 +17,11 @@ function TBRegister(bot)
 		print("Не задана функция OnUpdate")
 	end
 	
-	if IndicatorFrame.Bots == nil then
-		IndicatorFrame.Bots = {}
-	end
+	IndicatorFrame.Bots = IndicatorFrame.Bots or {}
+	IndicatorFrame.Bots[bot.Class] = IndicatorFrame.Bots[bot.Class] or {}
+
 	
-	if IndicatorFrame.Bots[bot.Class] == nil then
-		IndicatorFrame.Bots[bot.Class] = {}
-	end
-	
-	if IndicatorFrame.Bots[bot.Class][bot.Id] ~= nil then
+	if IndicatorFrame.Bots[bot.Class][bot.Id] then
 		print("Повторная регистрация бота для Class = ", bot.Class," и спека = ",bot.Id)
 		return
 	end
@@ -36,7 +32,6 @@ end
 
 
 function TBOnPlayerLogin(self)
-	print("OnLogin")
 	TBCreateIndicators(self)
 	TBCreatePanel(self)
 	TBAssignBot(self)
@@ -45,10 +40,6 @@ function TBOnPlayerLogin(self)
 		IndicatorFrame.LoS = {}
 		IndicatorFrame.LoS.Banned = {}
 	end
-	
-	if TBDebuffList == nil then
-		TBDebuffList = {}
-	end
 end
 
 function TBAssignBot(self)
@@ -56,12 +47,13 @@ function TBAssignBot(self)
 		return
 	end
 	-- бота чистим всегда, а устанавливаем - только если нашли подходящего
-	TBClearSpec()
+	IndicatorFrame.Spec = nil
+    TBUnregisterAllSpells() 
 	TBClearPanel()
 	
     local name,class = UnitClass("player")
     print("Загружаются боты для класса",name)
-    --self:InitSavedVariables()   
+
     if IndicatorFrame.Bots[class] == nil then
         print("Не обнаружено ботов для этого класса")
         return
@@ -74,118 +66,13 @@ function TBAssignBot(self)
 	end
 	
 	TBInitPanel(IndicatorFrame.Bots[class][currentTalents])
-	return TBSetSpec(IndicatorFrame.Bots[class][currentTalents])
-end
-
--- очистить текущий спек
-function TBClearSpec()
-    print("ClearSpec") 
-    IndicatorFrame.Spec = nil
-    TBUnregisterAllSpells()
-		
-	IndicatorFrame.ByName = {}
-	IndicatorFrame.ById = {}
-	IndicatorFrame.ByKey = {}
+	IndicatorFrame.Spec = IndicatorFrame.Bots[class][currentTalents]
 	
-
-	IndicatorFrame.Enemies = {}
-	IndicatorFrame.EnemyCount = 0
-    --self.Panel:RemoveAllButtons()    
-end
-
--- устанавливаем спек:
--- регистрируем нужные спеллы и кнопки, присваиваем поле Spec
-function TBSetSpec(spec)
-    print("SetSpec ",spec.Id)
-    IndicatorFrame.Spec = spec
-    TBCreateSpellMaps()
-	
-    for key,spell in pairs(IndicatorFrame.ById) do
-        if spell.IsSpell then
-			TBRegisterSpell(spell.BaseName)
-		end
-    end
-end
-
-function TBCreateSpellMaps()
-	if IsLoggedIn() == nil then
-		return
+	for key, id in pairs(IndicatorFrame.Spec.Spells) do
+		TBRegisterSpell(GetSpellInfo(id),id)
 	end
-	
-	if IndicatorFrame.Spec == nil then
-		return
-	end
-	
-	--print("TBCreateSpellMaps")
-
-	IndicatorFrame.ByName = {}
-	IndicatorFrame.ById = {}
-	IndicatorFrame.ByKey = {}
-	
-	for name, id in pairs(IndicatorFrame.Spec.Spells) do
-		spell = {}
-		spell.IsSpell = 1
-		spell.Key = name
-		
-		spell.BaseId = id
-		spell.BaseName = GetSpellInfo(spell.BaseId)
-		spell.RealId = id
-		spell.RealName = GetSpellInfo(spell.RealId)
-		
-		IndicatorFrame.ByName[spell.RealName] = spell		
-		IndicatorFrame.ById[spell.RealId] = spell		
-		IndicatorFrame.ByKey[name] = spell
-	end
-	
-	for name, id in pairs(IndicatorFrame.Spec.Buffs) do
-		spell = {}
-
-		spell.BaseId = id
-		spell.BaseName = GetSpellInfo(spell.BaseId)
-		spell.RealId = id
-		spell.RealName = GetSpellInfo(spell.RealId)
-		
-		IndicatorFrame.ByName[spell.RealName] = spell		
-		IndicatorFrame.ById[spell.RealId] = spell		
-		IndicatorFrame.ByKey[name] = spell
-	end	
-	
-	local _,_,offset,num = GetSpellTabInfo(2)
-    for index = offset+1, offset+num, 1 do
-		local Type,baseId = GetSpellBookItemInfo(index, "spell")
-		local link = GetSpellLink(index, "spell")
-		local realId = baseId
-		if link then
-			realId = tonumber(link:match("spell:(%d+)"))
-		else
-			realId = nil
-		end
-
-        local spell = IndicatorFrame.ById[baseId] or IndicatorFrame.ById[realId]
-		if spell then
-			spell.Type = "spell"
-			spell.TabIndex = index
-			spell.BaseId = baseId
-			spell.BaseName = GetSpellInfo(spell.BaseId)
-			spell.RealId = realId
-			spell.RealName = GetSpellInfo(spell.RealId)
-			
-			IndicatorFrame.ByName[spell.BaseName] = spell		
-			IndicatorFrame.ById[spell.BaseId] = spell
-			IndicatorFrame.ByName[spell.RealName] = spell		
-			IndicatorFrame.ById[spell.RealId] = spell
-		end
-    end
-	
-	--[[
-	print("spell enumeration begin")
-	for key, spell in pairs(IndicatorFrame.ByKey) do
-		print(key ,spell.TabIndex, spell.Type, spell.BaseId, spell.BaseName, spell.RealId, spell.RealName, spell.IsSpell)
-	end	
-	print("spell enumeration end")
-	--]]
-	
 end
+
 
 TBBagActions = {}
 
@@ -308,48 +195,12 @@ function TBOnUpdate()
 	end
 end
 
-function TBLastCastUpdate(self, event,...)
-	local unitId,_,_,lineId,spellId = select(1,...)
-	-- Если колдовали мы
-	if unitId=="player" then
-		local spell = IndicatorFrame.ById[spellId]	
-		-- И спелл, за которым надо следить
-		if spell then
-			IndicatorFrame.LastSpell = spell
-			IndicatorFrame.LastTarget = IndicatorFrame.LastSpellTargets[select(4,...)]
-		
-			local et = select(6,UnitCastingInfo("player")) or select(6, UnitChannelInfo("player"))
-			if et then
-				IndicatorFrame.LastSpellTime = (et/1000) + 2 -- время окончания плюс секунда
-			else
-				IndicatorFrame.LastSpellTime = GetTime() + 2
-			end
-		end
-	end
-end
-
-function TBLastCastUpdateFailed(self, event,...)
-	local unitId,_,_,lineId,spellId = select(1,...)
-	if unitId=="player" then	
-		IndicatorFrame.LastSpell = nil
-	end
-	--print(event, GetSpellInfo(spellId))
-end
-
-function TBLastCastData(self, event,...)
+function TBLoSData(self, event,...)
 	--Заполняем информацию для LoS
 	if (select(1,...) == "player") then
 		IndicatorFrame.LoS.SpellName = select(2,...)
 		IndicatorFrame.LoS.targetName = select(4,...)
    end
-   
-   --Заполняем инфрмацию для LastCast
-   if (select(1,...) == "player") then
-		if IndicatorFrame.LastSpellTargets == nil then
-			IndicatorFrame.LastSpellTargets = {}
-		end
-		IndicatorFrame.LastSpellTargets[ select(5,...) ] = select(4,...)
-   end  
 end
 
 function TBLoSdetect(self, event,...)
@@ -361,23 +212,6 @@ function TBLoSdetect(self, event,...)
 		IndicatorFrame.LoS.Banned[IndicatorFrame.LoS.targetName] = GetTime()
 	end
 end
---[[
-function TBMouseOver()
-	local goodTarget = UnitIsDead("mouseover")==nil 
-		and UnitCanAttack("player", "mouseover") 
-		and IsSpellInRange("Удар воина Света", "mouseover") == 1 
-		and UnitAffectingCombat("mouseover")
-
-	if goodTarget then
-		IndicatorFrame.Enemies[UnitGUID("mouseover")] = GetUnitName("mouseover")
-	else
-		IndicatorFrame.Enemies[UnitGUID("mouseover")] = nil
-	end
-	
-	IndicatorFrame.EnemyCount = 0
-	for _ in pairs(IndicatorFrame.Enemies) do IndicatorFrame.EnemyCount = IndicatorFrame.EnemyCount + 1 end
-end
---]]
 
 function TBEnterCombat() 
 	IndicatorFrame.InCombat = 1	
@@ -387,42 +221,7 @@ function TBLeaveCombat()
 	IndicatorFrame.InCombat = nil	
 end
 
---[[
-function TBAuction()
-	print("TBAuction")
-	
-	SortAuctionClearSort("list")
-	SortAuctionSetSort("list", "buyout")
-	SortAuctionApplySort("list")
-	QueryAuctionItems("Символ боя насмерть")
-end
 
-function TBOnAuctionListUpdate()
-	print("TBOnAuctionListUpdate")
-	print(GetAuctionItemInfo("list", 1))
-end
-
-TBStatistic = {}
-TBStatistic.Value = 0
-
-function TBStatisticFunc(self, event, ...)
-	
-	local curr = GetTime()
-	if TBStatistic.prev == nil then
-		TBStatistic.sum = 0
-		TBStatistic.count = 0
-		TBStatistic.Value = 0
-	else
-		local val = curr - TBStatistic.prev
-		TBStatistic.sum = TBStatistic.sum + val
-		TBStatistic.count = TBStatistic.count + 1
-		TBStatistic.Value = TBStatistic.sum / TBStatistic.count
-	end
-	TBStatistic.prev = curr
-	
-	print(TBStatistic.Value,"(",TBStatistic.sum, "/" ,TBStatistic.count,")" )
-end
---]]
 
 
 

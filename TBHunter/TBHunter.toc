@@ -4,3 +4,4 @@
 
 Marksmanship.lua
 BeastMaster.lua
+Survival.lua

@@ -62,6 +62,32 @@ function CollectGlyphInfo()
 	end
 end
 
+function TestItemLink()
+	TBHelperTrash = {}
+	for bag = 0,4 do
+		for slot = 1,GetContainerNumSlots(bag) do
+			local link = GetContainerItemLink(bag, slot)
+			if link then
+				local name = GetItemInfo(link)
+				local key = tonumber(link:match("item:%d+:%d+:%d+:%d+:%d+:%d+:%-?%d+:%-?%d+:%d+:%d+:(%d+)"))
+				
+				if key ~= 0 then
+					print(name, key)
+				end
+				
+				TBHelperTrash[name] = link
+				--TBHelperTrash[name.."-"] = select(2,GetItemInfo(GetContainerItemID(bag, slot)))
+			end
+		end
+	end
+	--/script print(GetItemInfo(129882))
+	--	["Первобытный дух"] =       "|cff1eff00|Hitem:120945:    0:0:0:0:0:0:0:100:104:  0: 0:0|h[Первобытный дух]|h|r",
+	--["Дренорская пыль"] =         "|cffffffff|Hitem:109693:    0:0:0:0:0:0:0:100:104:  0: 0:0|h[Дренорская пыль]|h|r",
+	--["Пелерина призванных душ+"] ="|cffa335ee|Hitem:124141: 5311:0:0:0:0:0:0:100:104:  0: 3:1:560|h[Пелерина призванных душ]|h|r",
+	--["Кольцо непобедимости+"] =   "|cff0070dd|Hitem:129874:    0:0:0:0:0:0:0:100:104:512:22:1:692:100|h[Кольцо непобедимости]|h|r",
+	--["Оберег пробудителя+"] =     "|cff0070dd|Hitem:129882:    0:0:0:0:0:0:0:100:104:512:22:1:692:100|h[Оберег пробудителя]|h|r",
+	--["Поножи крушащего удара+"] = "|cffa335ee|Hitem:113989:    0:0:0:0:0:0:0:100:104:  0: 5:1:566|h[Поножи крушащего удара]|h|r",
+end
 
 function TBFollowers()
 		
@@ -145,85 +171,3 @@ function TBFollowers()
 	print("required weapon upgrades", requiredWeapon)
 	print("required armor upgrades", requiredArmor)
 end
-
-function TBInitDebuffs()
-	if TBHelperDebuffIgnores == nil then
-		TBHelperDebuffIgnores = {}
-	end
-	
-	if TBHelperDebuffQueue == nil then
-		TBHelperDebuffQueue = {}
-	end
-	
-	TBAddDebuffButton:Hide()
-	TBInfoDebuffButton:Hide()
-	TBIgnoreDebuffButton:Hide()
-end
-
-TBCurrentDebuff = nil
-
-function SetDebuffButton()
-	if TBCurrentDebuff == nil then
-		for id,name in pairs(TBHelperDebuffQueue) do 
-			TBAddDebuffButton.icon:SetTexture("Interface\\ICONS\\Spell_ChargePositive.blp")		
-			TBIgnoreDebuffButton.icon:SetTexture("Interface\\ICONS\\Spell_ChargeNegative.blp")			
-			local _,_,icon = GetSpellInfo(id)
-			TBInfoDebuffButton.icon:SetTexture(icon)
-			
-			TBAddDebuffButton:Show()
-			TBInfoDebuffButton:Show()
-			TBIgnoreDebuffButton:Show()
-			
-			TBCurrentDebuff = id
-		end	
-	end
-end
-
-function TBAddDebuff()
-	if TBCurrentDebuff then
-		TBDebuffList[TBCurrentDebuff] = TBHelperDebuffQueue[TBCurrentDebuff]
-		TBHelperDebuffQueue[TBCurrentDebuff] = nil
-		
-		TBAddDebuffButton:Hide()
-		TBInfoDebuffButton:Hide()
-		TBIgnoreDebuffButton:Hide()
-		TBCurrentDebuff = nil
-		
-		SetDebuffButton()
-	end
-end
-
-function TBInfoDebuff()
-	if TBCurrentDebuff then
-		local name = UnitAura(TBCurrentDebuff)
-		print(name.." ("..TBCurrentDebuff..")")
-	end
-end
-
-function TBIgnoreDebuff()
-	if TBCurrentDebuff then
-		TBHelperDebuffIgnores[TBCurrentDebuff] = TBHelperDebuffQueue[TBCurrentDebuff]
-		TBHelperDebuffQueue[TBCurrentDebuff] = nil
-		
-		TBAddDebuffButton:Hide()
-		TBInfoDebuffButton:Hide()
-		TBIgnoreDebuffButton:Hide()
-		TBCurrentDebuff = nil
-		
-		SetDebuffButton()
-	end
-end
-
-function TBTupleToMap(...)
-	local result = {}
-	local sz = select("#", ...)
-	for i = 1, sz, 1 do
-		result["val"..i] = select(i, ...)
-	end
-	return result
-end
-
-TBTmp = {}
-
-
-

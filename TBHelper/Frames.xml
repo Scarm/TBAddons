@@ -36,6 +36,7 @@
 		<Scripts>
 			<OnLoad>
 				self:RegisterForDrag("RightButton")
+				--self:RegisterAllEvents()
 			</OnLoad> 
             <OnDragStart>
 				self:StartMoving()
@@ -43,111 +44,9 @@
             <OnDragStop>
 				self:StopMovingOrSizing()
             </OnDragStop>
+			<OnEvent>
+				--TBPrintEvent(self,event,...)
+			</OnEvent>
 		</Scripts> 
 	</Frame>
-
-
-	
-	
-	
-
-	
-	
-	<Frame name="TBHelperDebuffFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">	
-		<Anchors>
-			<Anchor point="CENTER"></Anchor>
-		</Anchors>
-		<Size>
-			<AbsDimension x="145" y="45" />
-		</Size>		
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentTex" parentKey="Tex">	
-					<Anchors>
-						<Anchor point="TOPLEFT"/>
-						<Anchor point="BOTTOMRIGHT"/>
-					</Anchors>
-					<Color g="0.1" r="0.1" b="0.1" a = "0.5"/>                    
-				</Texture>
-			</Layer>
-		</Layers>
-		<Frames>
-			<Button name="TBAddDebuffButton" inherits="ActionButtonTemplate">
-				<Anchors>
-					<Anchor point="LEFT">
-						<Offset>
-							<AbsDimension x="10"/>
-						</Offset>
-					</Anchor>
-				</Anchors>	
-				<Scripts>
-					<OnLoad>
-						self:RegisterForClicks("LeftButtonUp")
-					</OnLoad>
-					<OnClick>
-						TBAddDebuff()
-					</OnClick> 
-				</Scripts>
-			</Button>
-			<Button name="TBInfoDebuffButton" inherits="ActionButtonTemplate">
-				<Anchors>
-					<Anchor point="LEFT">
-						<Offset>
-							<AbsDimension x="52"/>
-						</Offset>
-					</Anchor>
-				</Anchors>	
-				<Scripts>
-					<OnLoad>
-						self:RegisterForClicks("LeftButtonUp")
-					</OnLoad>
-					<OnClick>
-						TBInfoDebuff()
-					</OnClick>
-					<OnEnter>
-						if TBCurrentDebuff then
-							GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-							GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
-							GameTooltip:SetSpellByID(TBCurrentDebuff)
-						end
-					</OnEnter>
-					<OnLeave>
-						GameTooltip:Hide()
-					</OnLeave>					
-				</Scripts>
-			</Button>
-			<Button name="TBIgnoreDebuffButton" inherits="ActionButtonTemplate">
-				<Anchors>
-					<Anchor point="LEFT">
-						<Offset>
-							<AbsDimension x="94"/>
-						</Offset>
-					</Anchor>
-				</Anchors>	
-				<Scripts>
-					<OnLoad>
-						self:RegisterForClicks("LeftButtonUp")
-					</OnLoad>
-					<OnClick>
-						TBIgnoreDebuff()
-					</OnClick> 
-				</Scripts>
-			</Button>
-			
-			
-		</Frames>
-		<Scripts>
-			<OnLoad>
-				self:RegisterForDrag("RightButton")	
-				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBInitDebuffs")		
-
-			</OnLoad> 
-            <OnDragStart>
-				self:StartMoving()
-            </OnDragStart>
-            <OnDragStop>
-				self:StopMovingOrSizing()
-            </OnDragStop>
-		</Scripts> 		
-	</Frame>	
 </Ui>

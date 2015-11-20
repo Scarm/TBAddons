@@ -1,7 +1,7 @@
 ﻿## Interface: 60000
 ## Title: TBHelper 
 ## Dependencies: TBBase
-## SavedVariablesPerCharacter: TBHelperData
+## SavedVariablesPerCharacter: TBHelperData, TBHelperTrash
 ## SavedVariables: TBHelperIgnores, TBHelperCollection, TBSpecInfoData
 
 

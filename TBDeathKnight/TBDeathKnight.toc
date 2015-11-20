@@ -3,3 +3,5 @@
 ## Dependencies: TBBase
 
 Frost.lua
+Blood.lua
+Unholy.lua

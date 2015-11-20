@@ -2,6 +2,6 @@
 ## Title: TB Paladin 
 ## Dependencies: TBBase
 
-Retri.lua
-Prot.lua
+Retribution.lua
+Protection.lua
 Holy.lua

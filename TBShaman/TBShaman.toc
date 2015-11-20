@@ -2,5 +2,6 @@
 ## Title: TB Shaman 
 ## Dependencies: TBBase
 
-Elem.lua
-Restor.lua
+Elemental.lua
+Restoration.lua
+Enhancement.lua

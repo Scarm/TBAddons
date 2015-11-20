@@ -81,6 +81,9 @@
 					</Anchor>
 				</Anchors>		
 				<Scripts>
+					<OnLoad>
+						self:SetHyperlinksEnabled(true)
+					</OnLoad>
 					<OnHyperlinkEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT");
 						GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2);
@@ -88,7 +91,7 @@
 					</OnHyperlinkEnter>
 					<OnHyperlinkLeave>
 						GameTooltip:Hide()
-					</OnHyperlinkLeave>			
+					</OnHyperlinkLeave>	
 				</Scripts>
 			</SimpleHTML>
 		</Frames>
