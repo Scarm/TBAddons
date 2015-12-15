@@ -15,7 +15,7 @@ function TBKeyValuesFill(values)
 	values["UnitThreatSituation"] = ToString(UnitThreatSituation("player","target"))
 	
 	values["LastSpell"] = ToString(BaseGroupHelper.LastCast.LastSpell)
-
+	
 	--[[
 	for i=1,40,1 do
 		local name = UnitAura("target",i)

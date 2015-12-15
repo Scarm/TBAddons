@@ -26,8 +26,10 @@ function ToString(value)
 	if type(value) == "boolean" then
 		if value == true then
 			return "true"
-		else
+		elseif value == false then
 			return "false"
+		else 
+			return "???"
 		end
 	end
 	
@@ -171,3 +173,4 @@ function TBFollowers()
 	print("required weapon upgrades", requiredWeapon)
 	print("required armor upgrades", requiredArmor)
 end
+

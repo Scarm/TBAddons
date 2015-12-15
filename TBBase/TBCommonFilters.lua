@@ -179,15 +179,15 @@ function BaseGroup:CanAssist()
 	return result	
 end
 
-function BaseGroup:AffectingCombat(value)
-	local result = self:CreateDerived()
-	
-	if value == nil then
+function BaseGroup:AffectingCombat(val)
+	if val == nil then
 		return nil
 	end
 	
+	local result = self:CreateDerived()
+	
 	for key,value in pairs(self) do
-		if (UnitAffectingCombat(key) == 1) == value then
+		if UnitAffectingCombat(key) == val then
 			result[key] = value
 		end
 	end

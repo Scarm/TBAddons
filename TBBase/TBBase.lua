@@ -79,7 +79,7 @@ TBBagActions = {}
 
 function TBMacroCommands()
 	--TBSetMacro("/cast Измельчение\n/use Награндский стрелоцвет")
-
+	
 	if TBBagActions.Milling then
 		local Herbs = {}
 		Herbs["Морозноцвет"] = 0
@@ -117,7 +117,6 @@ function TBMacroCommands()
 	end
 	
 	if TBBagActions.Salvage then
-
 		for bag = 1,4 do
 			for slot = 1,GetContainerNumSlots(bag) do
 				local id = GetContainerItemID(bag, slot)
@@ -126,6 +125,11 @@ function TBMacroCommands()
 					local name,_,quality, ilvl = GetItemInfo(id)
 					local itemSpell = GetItemSpell(id)
 					local equipSlot = select(9, GetItemInfo(id))
+					local link = GetContainerItemLink(bag, slot)
+					local key = 0
+					if link then
+						key = tonumber(link:match("item:%d+:%d+:%d+:%d+:%d+:%d+:%-?%d+:%-?%d+:%d+:%d+:(%d+)"))
+					end
 					
 					if quality == 0 then
 						PickupContainerItem(bag, slot)
@@ -137,7 +141,7 @@ function TBMacroCommands()
 						PickupMerchantItem()
 					end
 					
-					if quality == 3 and ilvl < 500 and equipSlot and equipSlot~="" and equipSlot~="INVTYPE_BAG" then
+					if quality == 3 and ilvl < 500 and key ~= 512 and equipSlot and equipSlot~="" and equipSlot~="INVTYPE_BAG" then
 						PickupContainerItem(bag, slot)
 						PickupMerchantItem()
 					end
@@ -192,6 +196,13 @@ function TBOnUpdate()
 			IndicatorFrame.LastCommand = cmd
 		end
 		TBCommand(cmd)
+	else
+		local cmd = TBMacroCommands()
+		if cmd then
+			IndicatorFrame.LastCommand = cmd
+		end
+		TBCommand(cmd)
+		
 	end
 end
 

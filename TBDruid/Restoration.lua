@@ -80,163 +80,224 @@ function DruidRestor:OnUpdate(g, list, modes)
 	--декурсинг	
 	list:Cast( "Природный целитель", g.party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )	
 
-	if UnitAffectingCombat("player") then
+	if g.player:AffectingCombat(true):MinHP() or g.tanks:AffectingCombat(true):MinHP() then
+
 		list:Cast( "Жизнецвет",   g.mainTank:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", "inverse", {skip=5}):MinHP() )
 		list:Cast( "Железная кора", g.mainTank:HP("<",60):CanUse("Железная кора"):MinHP() )
 		list:Cast( "Природная стремительность", g.mainTank:HP("<",60):CanUse("Природная стремительность"):MinHP() )	
 		
-		if modes.Burst == "On" then
-			list:Cast( "Буйный рост", g.party:CanUse("Буйный рост"):BastForAoE(5,30) )
-		end
+		list:Cast( "Восстановление", 
+					g.mainTank
+					:HP("<",85)
+					:Moving(false)
+					:CanUse("Восстановление")
+					:Aura("Ясность мысли", "mine", "self", {left=6})
+					:LastCast("Восстановление", false, "total")
+					:MinHP() )
 		
-		list:Cast( "Восстановление", g.mainTank:HP("<",85)
-															:Moving(false)
-															:CanUse("Восстановление")
-															:Aura("Ясность мысли", "mine", "self", {left=3})
-															:LastCast("Восстановление", false, "total")
-															:MinHP() )
+		if modes.Burst == "On" then	
+			list:Cast( "Буйный рост", 
+						g.party
+						:Moving(false)
+						:CanUse("Буйный рост")
+						:HP("<",75)
+						:BastForAoE(3,30) )
+						
+			list:Cast( "Буйный рост", 
+						g.party
+						:Moving(false)
+						:CanUse("Буйный рост")
+						:HP("<",85)
+						:BastForAoE(4,30) )
+						
 
-		list:Cast( "Восстановление", g.party:Moving(false)
-															:CanUse("Восстановление")
-															:Aura("Ясность мысли", "mine", "self", {left=3})
-															:LastCast("Восстановление", false, "total")
-															:MinHP() )															
-		
-		list:Cast( "Быстрое восстановление", g.party:HP("<",70)
-															:CanUse("Быстрое восстановление")
-															:Aura("Омоложение", "mine")
-															:Aura("Зарождение", "mine")
-															:LastCast("Восстановление", false)
-															:LastCast("Целительное прикосновение", false)
-															:MinHP() )
-															
-		list:Cast( "Восстановление", g.mainTank:HP("<",50):Moving(false):CanUse("Восстановление"):MinHP() )
-		list:Cast( "Восстановление", g.player:HP("<",50):Moving(false):CanUse("Восстановление"):MinHP() )
-		list:Cast( "Восстановление", g.mainTank:HP("<",70):Moving(false):CanUse("Восстановление"):LastCast("Восстановление", false, "total"):MinHP() )
-		list:Cast( "Восстановление", g.player:HP("<",70):Moving(false):CanUse("Восстановление"):LastCast("Восстановление", false, "total"):MinHP() )
-
-		
-		list:Cast( "Омоложение",   g.mainTank:CanUse("Омоложение"):Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
-		list:Cast( "Омоложение",   g.mainTank:CanUse("Омоложение"):Aura("Зарождение", "mine", "inverse", {skip=6}):MinHP() )			
-
-		list:Cast( "Омоложение",   g.tanks:CanUse("Омоложение"):Aura("Зарождение", "mine", "inverse", {skip=6}):Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
-
-		list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение")
-															:Aura("Гармония", "mine", "self", "inverse", 3)
-															:Moving(false)
-															:LastCast("Целительное прикосновение", false, "total")
-															:MinHP() )
-														
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):NeedFullHeal():Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):NeedFullHeal():Aura("Зарождение", "mine", "inverse", {skip=6}):MinHP() )
-		list:Cast( "Восстановление", g.party:NeedFullHeal():Moving(false):HP("<",50):CanUse("Восстановление"):MinHP() )
-		list:Cast( "Восстановление", g.party:NeedFullHeal():Moving(false):HP("<",70):CanUse("Восстановление"):LastCast("Восстановление", false):MinHP() )
-		list:Cast( "Целительное прикосновение", g.party:NeedFullHeal():Moving(false):CanUse("Целительное прикосновение"):MinHP() )													
-	end
-	
-	if modes.Burst == "On" then
-		if modes.Mushroom == "On" then
-			list:Cast( "Дикий гриб", g.party:hasMushroom():CanUse("Дикий гриб"):BastForAoE(5,10) )
-		end
-		
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение")
-				:Aura("Омоложение", "mine", nil, "inverse", 3)
-				:Aura("Зарождение", "mine", nil, "inverse", 3)
-				:MinHP() )
-
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение")
-				:Aura("Омоложение", "mine", nil, "inverse", 3)
-				:MinHP() )
-				
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение")
-				:Aura("Зарождение", "mine", nil, "inverse", 3)
-				:MinHP() )
-		
-	else
-		if modes.Mushroom == "On" and UnitAffectingCombat("player") then
-			list:Cast( "Дикий гриб", g.party:hasMushroom():HP("<",99):CanUse("Дикий гриб"):BastForAoE(3,10) )
-			list:Cast( "Дикий гриб", g.party:hasMushroom():CanUse("Дикий гриб"):BastForAoE(5,10) )
-		end
+			if modes.Mushroom == "On"then
+				list:Cast( "Дикий гриб", g.party:hasMushroom():CanUse("Дикий гриб"):BastForAoE(3,10) )
+			end						
 			
-		list:Cast( "Омоложение", g.party:CanUse("Омоложение")
-				:HP("<",85)
-				:Aura("Омоложение", "mine", "inverse", {skip=3})
-				:Aura("Зарождение", "mine","inverse", {skip=3})
-				:MinHP())
+			list:Cast( "Быстрое восстановление", 
+						g.party
+						:HP("<",70)
+						:CanUse("Быстрое восстановление")
+						:Aura("Зарождение", "mine")
+						:LastCast("Восстановление", false)
+						:LastCast("Целительное прикосновение", false)
+						:MinHP() )
+			
+			list:Cast( "Быстрое восстановление", 
+						g.party
+						:HP("<",70)
+						:CanUse("Быстрое восстановление")
+						:Aura("Омоложение", "mine")
+						:LastCast("Восстановление", false)
+						:LastCast("Целительное прикосновение", false)
+						:MinHP() )
+						
+			list:Cast( "Восстановление", g.mainTank:HP("<",50):Moving(false):CanUse("Восстановление"):MinHP() )
+			list:Cast( "Восстановление", g.player:HP("<",50):Moving(false):CanUse("Восстановление"):MinHP() )
+			
+			list:Cast( "Омоложение",   g.mainTank:CanUse("Омоложение"):HP("<",90):Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
+			list:Cast( "Омоложение",   g.mainTank:CanUse("Омоложение"):HP("<",90):Aura("Зарождение", "mine", "inverse", {skip=6}):MinHP() )			
+			list:Cast( "Омоложение",   g.tanks:CanUse("Омоложение"):Aura("Зарождение", "mine", "inverse", {skip=6}):Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
+			list:Cast( "Омоложение",   g.player:CanUse("Омоложение"):HP("<",90):Aura("Зарождение", "mine", "inverse", {skip=6}):Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
+			
+			list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение")
+																:Aura("Гармония", "mine", "self", "inverse", {skip=3})
+																:Moving(false)
+																:LastCast("Целительное прикосновение", false, "total")
+																:MinHP() )
+			
+			list:Cast( "Восстановление", g.mainTank:HP("<",65):Moving(false):CanUse("Восстановление"):LastCast("Восстановление", false, "total"):MinHP() )
+			list:Cast( "Восстановление", g.player:HP("<",65):Moving(false):CanUse("Восстановление"):LastCast("Восстановление", false, "total"):MinHP() )
+			
+			list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):NeedFullHeal():Aura("Зарождение", "mine", "inverse", {skip=6}):Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
+			list:Cast( "Восстановление", g.party:NeedFullHeal():Moving(false):HP("<",80):CanUse("Восстановление"):MinHP() )
+			list:Cast( "Восстановление", g.party:NeedFullHeal():Moving(false):HP("<",90):CanUse("Восстановление"):LastCast("Восстановление", false):MinHP() )
+			list:Cast( "Целительное прикосновение", g.party:NeedFullHeal():Moving(false):CanUse("Целительное прикосновение"):MinHP() )	
+			
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",50)
+					:Aura("Омоложение", "mine", "inverse", {skip=3})
+					:Aura("Зарождение", "mine","inverse", {skip=3})
+					:MinHP())
+					
+			list:Cast( "Восстановление", g.party:HP("<",50):Moving(false):CanUse("Восстановление"):MinHP() )
+
+			
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",70)
+					:Aura("Омоложение", "mine", "inverse", {skip=3})
+					:Aura("Зарождение", "mine","inverse", {skip=3})
+					:MinHP())
+					
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",50)
+					:Aura("Омоложение", "mine", "inverse", {skip=3})
+					:MinHP())
+					
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",50)
+					:Aura("Зарождение", "mine", "inverse", {skip=3})
+					:MinHP())
+
+			list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",70):Moving(false):MinHP() )
+			
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",90)
+					:Aura("Омоложение", "mine", "inverse", {skip=3})
+					:Aura("Зарождение", "mine","inverse", {skip=3})
+					:MinHP())
+					
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",80)
+					:Aura("Омоложение", "mine", "inverse", {skip=3})
+					:MinHP())
+					
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",80)
+					:Aura("Зарождение", "mine", "inverse", {skip=3})
+					:MinHP())
+					
+			list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение"):HP("<",75):Moving(false):MinHP() )					
+			list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение"):HP("<",85):Moving(false):LastCast("Восстановление", false):LastCast("Целительное прикосновение", false):MinHP() )
+			
+		else
+			list:Cast( "Буйный рост", 
+						g.party
+						:Moving(false)
+						:CanUse("Буйный рост")
+						:HP("<",85)
+						:BastForAoE(4,30) )
+						
+			list:Cast( "Буйный рост", 
+						g.party
+						:Moving(false)
+						:CanUse("Буйный рост")
+						:HP("<",70)
+						:BastForAoE(3,30) )
+		
+			if modes.Mushroom == "On" then
+				list:Cast( "Дикий гриб", g.party:hasMushroom():HP("<",99):CanUse("Дикий гриб"):BastForAoE(2,10) )
+				list:Cast( "Дикий гриб", g.party:hasMushroom():CanUse("Дикий гриб"):BastForAoE(4,10) )
+			end
+
+			list:Cast( "Восстановление", 
+						g.party
+						:HP("<",70)
+						:Moving(false)
+						:CanUse("Восстановление")
+						:Aura("Ясность мысли", "mine", "self", {left=4})
+						:LastCast("Восстановление", false, "total")
+						:MinHP() )
+
+			list:Cast( "Восстановление", 
+					g.mainTank
+					:Moving(false)
+					:CanUse("Восстановление")
+					:Aura("Ясность мысли", "mine", "self", {left=4})
+					:LastCast("Восстановление", false, "total")
+					:MinHP() )
+			
+			list:Cast( "Быстрое восстановление", 
+						g.party
+						:HP("<",70)
+						:CanUse("Быстрое восстановление")
+						:Aura("Зарождение", "mine")
+						:LastCast("Восстановление", false)
+						:LastCast("Целительное прикосновение", false)
+						:MinHP() )
+			
+			list:Cast( "Быстрое восстановление", 
+						g.party
+						:HP("<",70)
+						:CanUse("Быстрое восстановление")
+						:Aura("Омоложение", "mine")
+						:LastCast("Восстановление", false)
+						:LastCast("Целительное прикосновение", false)
+						:MinHP() )
+		
+			list:Cast( "Восстановление", g.mainTank:HP("<",50):Moving(false):CanUse("Восстановление"):MinHP() )
+			list:Cast( "Восстановление", g.player:HP("<",50):Moving(false):CanUse("Восстановление"):MinHP() )
+			list:Cast( "Восстановление", g.mainTank:HP("<",70):Moving(false):CanUse("Восстановление"):LastCast("Восстановление", false, "total"):MinHP() )
+			list:Cast( "Восстановление", g.player:HP("<",70):Moving(false):CanUse("Восстановление"):LastCast("Восстановление", false, "total"):MinHP() )
 				
-		list:Cast( "Омоложение", g.party:CanUse("Омоложение")
-				:HP("<",75)
-				:Aura("Омоложение", "mine", "inverse", {skip=3})
-				:MinHP())
+			list:Cast( "Омоложение",   g.mainTank:CanUse("Омоложение"):Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
+			list:Cast( "Омоложение",   g.mainTank:CanUse("Омоложение"):Aura("Зарождение", "mine", "inverse", {skip=6}):MinHP() )			
+			list:Cast( "Омоложение",   g.tanks:CanUse("Омоложение"):Aura("Зарождение", "mine", "inverse", {skip=6}):Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
+			
+			list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение")
+																:Aura("Гармония", "mine", "self", "inverse", {skip=3})
+																:Moving(false)
+																:LastCast("Целительное прикосновение", false, "total")
+																:MinHP() )
 				
-		list:Cast( "Омоложение", g.party:CanUse("Омоложение")
-				:HP("<",75)
-				:Aura("Зарождение", "mine", "inverse", {skip=3})
-				:MinHP())
-	end
-	
-	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",50):Moving(false):MinHP() )
-	
-	if UnitAffectingCombat("player") then
+			list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):NeedFullHeal():Aura("Зарождение", "mine", "inverse", {skip=6}):Aura("Омоложение", "mine", "inverse", {skip=6}):MinHP() )
+			list:Cast( "Восстановление", g.party:NeedFullHeal():Moving(false):HP("<",80):CanUse("Восстановление"):MinHP() )
+			list:Cast( "Восстановление", g.party:NeedFullHeal():Moving(false):HP("<",90):CanUse("Восстановление"):LastCast("Восстановление", false):MinHP() )
+			list:Cast( "Целительное прикосновение", g.party:NeedFullHeal():Moving(false):CanUse("Целительное прикосновение"):MinHP() )	
+				
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",85)
+					:Aura("Омоложение", "mine", "inverse", {skip=3})
+					:Aura("Зарождение", "mine","inverse", {skip=3})
+					:MinHP())
+					
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",75)
+					:Aura("Омоложение", "mine", "inverse", {skip=3})
+					:MinHP())
+					
+			list:Cast( "Омоложение", g.party:CanUse("Омоложение")
+					:HP("<",75)
+					:Aura("Зарождение", "mine", "inverse", {skip=3})
+					:MinHP())
+			
+			list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",60):Moving(false):MinHP() )
+		end
 		list:Cast( "Гнев", g.mainTank:CanUse("Гнев"):Best() )
-	end
---[[
-	
-	list:Cast( "Омоложение",   g.tanks:CanUse("Омоложение"):HP("<",95):Aura("Зарождение", "mine", nil, "inverse", 3):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
-
-	
-	if modes.Burst == "On" then
-		--list:Cast( "Буйный рост", g.party:CanUse("Буйный рост"):BastForAoE(5,30) )
+	end	
 		
-		if modes.Mushroom == "On" then
-			list:Cast( "Дикий гриб", g.party:hasMushroom():CanUse("Дикий гриб"):BastForAoE(5,10) )
-		end
-		
-		--сначала весим по одной хотке на цели с дотами и с неполным ХП
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):HasBossDebuff():Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):HP("<",90):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 
-
-		--затем захотываем двумя хотами всех, кто с дебаффом
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):HasBossDebuff():Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):HasBossDebuff():Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )	
-		
-		--и в завершение захотываем двумя хотами вообще всех
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )	
-	
-		list:Cast( "Восстановление",   g.party:Moving("false"):CanUse("Восстановление"):MinHP() )
-		
-	else
-		if modes.Mushroom == "On" and UnitAffectingCombat("player") then
-			list:Cast( "Дикий гриб", g.party:hasMushroom():HP("<",99):CanUse("Дикий гриб"):BastForAoE(3,10) )
-			list:Cast( "Дикий гриб", g.party:hasMushroom():CanUse("Дикий гриб"):BastForAoE(5,10) )
-		end
-		
-		-- Если маны много - хотаем не сильно просевших и с дебаффом
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):ManaLimit(90):HasBossDebuff():Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 				
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):ManaLimit(90):HP("<",85):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 		
-
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):ManaLimit(60):HP("<",85):HasBossDebuff():Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 		
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):ManaLimit(60):HP("<",70):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 		
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):ManaLimit(60):HP("<",50):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):ManaLimit(60):HP("<",50):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )	
-
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):HP("<",70):HasBossDebuff():Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 		
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):HP("<",50):Aura("Омоложение", "mine", nil, "inverse", 3):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() ) 
-		
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):HP("<",40):Aura("Омоложение", "mine", nil, "inverse", 3):MinHP() )
-		list:Cast( "Омоложение",   g.party:CanUse("Омоложение"):HP("<",40):Aura("Зарождение", "mine", nil, "inverse", 3):MinHP() )	
-		
-		list:Cast( "Целительное прикосновение", g.party:HP("<",50):HealingTouch() )
-		
-		if UnitAffectingCombat("player") then
-			list:Cast( "Гнев", g.focus:CanUse("Гнев"):Best() )
-			list:Cast( "Гнев", g.mainTank:CanUse("Гнев"):Best() )
-		end
-	end
-	
---]]	
-		return list:Execute()
+	return list:Execute()
 
 end
 		

@@ -52,11 +52,6 @@
 					["Icon"] = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
 					["GroupId"] = "Burst",
 				}, -- [3]
-				{
-					["ToolTip"] = "On",
-					["Icon"] = "Interface\\ICONS\\INV_Misc_GroupNeedMore.blp",
-					["GroupId"] = "Party",
-				}, -- [4]
 			},
 		}
 

@@ -87,7 +87,8 @@ function bot:OnUpdate(g, list, modes)
 	end
 	
 	list:Cast( "Смертоносный яд", g.player:CanUse("Быстродействующий яд"):Aura("Быстродействующий яд", "mine", "self", "inverse"):LastCast("Быстродействующий яд",false,"total"):Best() )
-	list:Cast( "Калечащий яд", g.player:CanUse("Калечащий яд"):Aura("Калечащий яд", "mine", "self", "inverse"):LastCast("Калечащий яд",false,"total"):Best() )
+	list:Cast( "Похищающий жизнь яд", g.player:CanUse("Похищающий жизнь яд"):Aura("Похищающий жизнь яд", "mine", "self", "inverse"):Aura("Калечащий яд", "mine", "self", "inverse"):LastCast("Похищающий жизнь яд",false,"total"):LastCast("Калечащий яд",false,"total"):Best() )
+	list:Cast( "Калечащий яд", g.player:CanUse("Калечащий яд"):Aura("Похищающий жизнь яд", "mine", "self", "inverse"):Aura("Калечащий яд", "mine", "self", "inverse"):LastCast("Похищающий жизнь яд",false,"total"):LastCast("Калечащий яд",false,"total"):Best() )
 	
 	if modes.Burst == "On" then
 		list:Cast( "Череда убийств", targets:CanUse("Череда убийств"):Aura("Глубокое понимание", "mine", "self"):Aura("Выброс адреналина", "mine", "self","inverse"):Energy("<",60):Best() )
@@ -101,9 +102,9 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Метка смерти", targets:CanUse("Метка смерти"):Best() )		
 	list:Cast( "Мясорубка", g.player:CanUse("Мясорубка"):Aura("Мясорубка", "mine", "self", "inverse", {skip=4}):Best() )
 
-	if modes.Healing == "On" then
-		list:Cast( "Заживление ран", g.player:CanUse("Заживление ран"):HP("<", 80, "self"):Aura("Заживление ран", "mine", "self", "inverse", 3):Best() )
-		list:Cast( "Отравляющий укол", g.player:CanUse("Отравляющий укол"):HP("<", 80, "self"):Aura("Похищающий жизнь яд", "mine", "self"):Best() )
+	if modes.Heal == "On" then
+		list:Cast( "Заживление ран", g.player:CanUse("Заживление ран"):HP("<", 90):Aura("Заживление ран", "mine", "self", "inverse"):Best() )
+		list:Cast( "Отравляющий укол", g.targets:CanUse("Отравляющий укол"):HP("<", 90,"self"):Aura("Похищающий жизнь яд", "mine", "self"):Best() )
 	end
 	
 	if modes.AoE == "On" then
