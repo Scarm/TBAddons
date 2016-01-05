@@ -16,6 +16,14 @@ function TBKeyValuesFill(values)
 	
 	values["LastSpell"] = ToString(BaseGroupHelper.LastCast.LastSpell)
 	
+	values["rune1"] = ToString(GetRuneCount(1))
+	values["rune2"] = ToString(GetRuneCount(2))
+	values["rune3"] = ToString(GetRuneCount(3))
+	values["rune4"] = ToString(GetRuneCount(4))
+	values["rune5"] = ToString(GetRuneCount(5))
+	values["rune6"] = ToString(GetRuneCount(6))
+
+	
 	--[[
 	for i=1,40,1 do
 		local name = UnitAura("target",i)

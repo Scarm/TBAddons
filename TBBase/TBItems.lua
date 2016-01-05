@@ -33,7 +33,7 @@ function TBItemRulesUpdateList()
 	local _,height = TBItemRulesList:GetFont()
 	local text = ""
 	local strings = 0
-	for id,value in pairs(TBItemRules.Rules) do
+	for id,value in pairs(TBItemRules.Rules or {}) do
 		if text~="" then
 			text = text.."\n"
 		end

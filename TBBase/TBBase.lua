@@ -167,6 +167,25 @@ function TBMacroCommands()
 		return "macro"
 	end
 	
+	if TBBagActions.Click then
+		TBBagActions.Click = nil
+		local macrotext = "/use "
+		for bag = 0,4 do
+			for slot = 1,GetContainerNumSlots(bag) do
+				local id = GetContainerItemID(bag, slot)
+				if id then
+					local name = GetItemInfo(id)
+					if name == "Расколотый кристалл времени" and TBBagActions.Click == nil  then
+						macrotext = macrotext..name
+						TBSetMacro(macrotext)
+						TBBagActions.Click = 1
+					end
+				end
+			end
+		end
+		return "macro"
+	end
+	
 	if TBBagActions.Mail then
 		local idx = 1
 		for bag = 0,4 do

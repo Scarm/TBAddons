@@ -78,6 +78,8 @@ function DruidRestor:OnUpdate(g, list, modes)
 	end
 	
 	--декурсинг	
+	list:Cast( "Природный целитель", g.player:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )	
+	list:Cast( "Природный целитель", g.tanks:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )	
 	list:Cast( "Природный целитель", g.party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )	
 
 	if g.player:AffectingCombat(true):MinHP() or g.tanks:AffectingCombat(true):MinHP() then
