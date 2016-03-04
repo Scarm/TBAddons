@@ -71,13 +71,15 @@ function bot:OnUpdate(g, list, modes)
 	if g.target:CanUse("Мощный удар щитом"):Any() then
 		list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):Aura("Оборонительная стойка", "mine", "self"):Aura("Блок щитом", "mine", "self", "inverse"):MinHP() )
 	end
-	list:Cast( "Непроницаемый щит", g.player:CanUse("Непроницаемый щит"):Energy(">", 120):Aura("Оборонительная стойка", "mine", "self"):Aura("Непроницаемый щит", "mine", "self", "inverse"):MinHP() )
+	list:Cast( "Непроницаемый щит", g.player:CanUse("Непроницаемый щит"):Energy(">", 100):Aura("Оборонительная стойка", "mine", "self"):Aura("Непроницаемый щит", "mine", "self", "inverse"):MinHP() )
+	list:Cast( "Непроницаемый щит", g.player:CanUse("Непроницаемый щит"):Energy(">", 60):HP("<", 75, "self"):Aura("Оборонительная стойка", "mine", "self"):Aura("Непроницаемый щит", "mine", "self", "inverse"):MinHP() )
+	list:Cast( "Непроницаемый щит", g.player:CanUse("Непроницаемый щит"):HP("<", 50, "self"):Aura("Оборонительная стойка", "mine", "self"):Aura("Непроницаемый щит", "mine", "self", "inverse"):MinHP() )
+	list:Cast( "Безудержное восстановление", g.player:CanUse("Безудержное восстановление"):HP("<", 50, "self"):Aura("Безудержное восстановление", "mine", "self", "inverse"):MinHP() )
 	
 	if modes.ShockWave == "On" then
 		list:Cast( "Ударная волна", g.player:CanUse("Ударная волна"):Best() )
 	end
 	
-	list:Cast( "Героический бросок", g.target:CanUse("Героический бросок"):Best() )
 	
 	if modes.Burst == "On" then
 		list:Cast( "Вихрь клинков", g.player:CanUse("Вихрь клинков"):Best() )	
@@ -96,6 +98,8 @@ function bot:OnUpdate(g, list, modes)
 		list:Cast( "Удар героя", g.target:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )
 		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )	
 	end
+	
+	list:Cast( "Героический бросок", g.target:CanUse("Героический бросок"):Best() )
 	
 		
 	return list:Execute()

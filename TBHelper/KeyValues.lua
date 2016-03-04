@@ -4,26 +4,29 @@ function TBKeyValuesFill(values)
 	
 	local gr = TBGroups()
 	
-	values["LastCommand"] = IndicatorFrame.LastCommand
+	--values["LastCommand"] = IndicatorFrame.LastCommand
 	
-	values["LastCastTarget"] = IndicatorFrame.LastTarget
+	--values["LastCastTarget"] = IndicatorFrame.LastTarget
 	
-	values["UnitAffectingCombat"] = ToString(UnitAffectingCombat("target"))
+	--values["UnitAffectingCombat"] = ToString(UnitAffectingCombat("target"))
 	
-	values["focusname"] = ToString(GetUnitName("focus"))
+	--values["focusname"] = ToString(GetUnitName("focus"))
 	
-	values["UnitThreatSituation"] = ToString(UnitThreatSituation("player","target"))
+	--values["UnitThreatSituation"] = ToString(UnitThreatSituation("player","target"))
 	
-	values["LastSpell"] = ToString(BaseGroupHelper.LastCast.LastSpell)
+	--values["LastSpell"] = ToString(BaseGroupHelper.LastCast.LastSpell)
+		
+	values["Частица"] = ToString(gr.party:Aura("Частица Света", "mine"):MinHP())	
 	
-	values["rune1"] = ToString(GetRuneCount(1))
-	values["rune2"] = ToString(GetRuneCount(2))
-	values["rune3"] = ToString(GetRuneCount(3))
-	values["rune4"] = ToString(GetRuneCount(4))
-	values["rune5"] = ToString(GetRuneCount(5))
-	values["rune6"] = ToString(GetRuneCount(6))
-
+	for i = 1,GetNumSavedInstances(),1 do
+		local nm,_,_,diff,locked = GetSavedInstanceInfo(i)		
+		if diff == 23 and not locked then
+			values[nm] = ToString(diff).."("..ToString(locked)..")"
+		end
+	end
 	
+	GetShapeshiftForm()
+	values["ShapeshiftForm"] = ToString(GetShapeshiftForm())
 	--[[
 	for i=1,40,1 do
 		local name = UnitAura("target",i)

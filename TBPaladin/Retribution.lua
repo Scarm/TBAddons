@@ -1,48 +1,84 @@
 ﻿PaladinRetri = {
-			["Unique"] = {
+			["Name"] = "Воздаяние",
+			["Buttons"] = {
+				{
+					["ToolTip"] = "Off",
+					["Icon"] = "Interface\\Icons\\ABILITY_SEAL",
+					["GroupId"] = "Run",
+				}, -- [1]
+				{
+					["ToolTip"] = "On",
+					["Icon"] = "Interface\\Icons\\Ability_Warrior_Bladestorm",
+					["GroupId"] = "AoE",
+				}, -- [2]
+				{
+					["ToolTip"] = "On",
+					["Icon"] = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
+					["GroupId"] = "Burst",
+				}, -- [3]
 			},
 			["Id"] = 3,
 			["Spells"] = {
-				["Вердикт храмовника"] = 85256,
+				["Вспышка Света"] = 19750,
+				["Молот гнева"] = 158392,
 				["Удар воина Света"] = 35395,
 				["Правосудие"] = 20271,
-				["Укор"] = 96231,
+				["Окончательный приговор"] = 157048,
+				["Печать правды"] = 31801,
 				["Печать праведности"] = 20154,
 				["Экзорцизм"] = 879,
-				["Печать повиновения"] = 105361,
+				["Укор"] = 96231,
 				["Божественная буря"] = 53385,
-				["Молот гнева"] = 24275,
-				["Молот праведника"] = 53595,
+				["Гнев карателя"] = 31884,
 			},
 			["Buffs"] = {
 				["Воин богов"] = 144595,
+				["Священный гнев"] = 114232,
+				["Порицание"] = 31803,
+				["Самоотверженный целитель"] = 114250,
 			},
 			["Class"] = "PALADIN",
 		}
 	
-
-
-function BaseGroup:InPaladinRange()	
-	if IsSpellInRange("Удар воина Света", "target") then
-		return self
-	end
-	return self:CreateDerived()
-end
-
-function BaseGroup:HolyPower(points)	
-	if UnitPower("player", 9) >= points then
-		return self
-	end
-	return self:CreateDerived()
-end
-		
 function PaladinRetri:OnUpdate(g, list, modes)
 	if IsMounted() then return end
 	
-	if modes.AgroType == "Off" then 
+	if modes.Run == "Off" then 
 		return 
 	end
 	
+	list:Cast( "Укор", g.target:CanUse("Укор"):CanInterrupt():Best() )
+	list:Cast( "Вспышка Света", g.player:CanUse("Вспышка Света"):HP("<", 80, "self"):Aura("Самоотверженный целитель", "mine", "self", {stacks=3}):Best() )
+	
+	if modes.AoE == "On" then
+		if GetShapeshiftForm() ~= 2 then
+			list:Cast( "Печать праведности", g.player:CanUse("Печать праведности"):Best() )
+		end
+		
+		list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):HolyPower(5):InSpellRange("Удар воина Света"):Best() )
+		list:Cast( "Молот гнева", g.target:CanUse("Молот гнева"):Best() )
+		list:Cast( "Экзорцизм", g.target:CanUse("Экзорцизм"):Best() )
+		list:Cast( "Молот праведника", g.target:CanUse("Молот праведника"):Best() )
+		list:Cast( "Правосудие", g.target:CanUse("Правосудие"):Best() )	
+		list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):InSpellRange("Удар воина Света"):Best() )
+	else
+		if GetShapeshiftForm() ~= 1 then
+			list:Cast( "Печать правды", g.player:CanUse("Печать правды"):Best() )
+		end
+		
+		list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self"):InSpellRange("Удар воина Света"):HolyPower(5):Best() )
+		list:Cast( "Окончательный приговор", g.target:CanUse("Окончательный приговор"):HolyPower(5):Best() )
+		
+		list:Cast( "Молот гнева", g.target:CanUse("Молот гнева"):Best() )
+		list:Cast( "Экзорцизм", g.target:CanUse("Экзорцизм"):Best() )
+		list:Cast( "Удар воина Света", g.target:CanUse("Удар воина Света"):Best() )
+		list:Cast( "Правосудие", g.target:CanUse("Правосудие"):Best() )	
+		
+		list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self"):InSpellRange("Удар воина Света"):Best() )
+		list:Cast( "Окончательный приговор", g.target:CanUse("Окончательный приговор"):Best() )
+	end
+	
+	--[[
 	local sealIdx = 1
 	local sealName = "Печать правды"
 	local spamStrike = "Удар воина Света"
@@ -61,16 +97,16 @@ function PaladinRetri:OnUpdate(g, list, modes)
 	list:Cast( "Укор", g.target:CanUse("Укор"):CanInterrupt():Best() )
 	
 	if modes.Rotation == "Single" then
-		list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):InPaladinRange():HolyPower(5):Best() )
-		list:Cast( energyStrike, g.target:CanUse(energyStrike):HolyPower(5):Best() )
+		--list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):InPaladinRange():HolyPower(5):Best() )
+		--list:Cast( energyStrike, g.target:CanUse(energyStrike):HolyPower(5):Best() )
 		list:Cast( "Молот гнева", g.target:CanUse("Молот гнева"):Best() )
 		list:Cast( "Правосудие", g.target:CanUse("Правосудие"):Aura("Гнев карателя", "mine", "self", nil):Best() )
-		list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):Aura("Гнев карателя", "mine", "self", nil):InPaladinRange():Best() )
-		list:Cast( "Экзорцизм", g.target:CanUse("Экзорцизм"):Best() )	
-		list:Cast( spamStrike, g.target:CanUse(spamStrike):Best() )
-		list:Cast( "Правосудие", g.target:CanUse("Правосудие"):Best() )	
-		list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):InPaladinRange():Best() )
-		list:Cast( energyStrike, g.target:CanUse(energyStrike):HolyPower(3):Best() )
+		--list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):Aura("Гнев карателя", "mine", "self", nil):InPaladinRange():Best() )
+		--list:Cast( "Экзорцизм", g.target:CanUse("Экзорцизм"):Best() )	
+		--list:Cast( spamStrike, g.target:CanUse(spamStrike):Best() )
+		--list:Cast( "Правосудие", g.target:CanUse("Правосудие"):Best() )	
+		--list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):InPaladinRange():Best() )
+		--list:Cast( energyStrike, g.target:CanUse(energyStrike):HolyPower(3):Best() )
 		else
 		list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Aura("Воин богов", "mine", "self", nil):InPaladinRange():HolyPower(5):Best() )
 		list:Cast( energyStrike, g.target:CanUse(energyStrike):HolyPower(5):InPaladinRange():Best() )
@@ -80,6 +116,8 @@ function PaladinRetri:OnUpdate(g, list, modes)
 		list:Cast( "Правосудие", g.target:CanUse("Правосудие"):Best() )	
 		list:Cast( energyStrike, g.target:CanUse(energyStrike):InPaladinRange():HolyPower(3):Best() )
 	end
+	
+	--]]
 	return list:Execute()
 end
 

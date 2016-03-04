@@ -36,6 +36,12 @@ function BaseGroup:Energy(bound, energy)
 	return self:CreateDerived()
 end
 
+function BaseGroup:HolyPower(points)	
+	if UnitPower("player", 9) >= points then
+		return self
+	end
+	return self:CreateDerived()
+end
 
 function BaseGroup:ComboPoints(points)
 	for key,value in pairs(self) do

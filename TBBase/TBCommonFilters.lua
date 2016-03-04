@@ -95,12 +95,25 @@ function BaseGroup:Moving(value)
 	return self:CreateDerived()
 end
 
-function BaseGroup:CanInterrupt()
+function BaseGroup:CanInterrupt(key)
+	local function IsCast(key)
+		local et = select(6,UnitCastingInfo(key))
+		local ni = select(9,UnitCastingInfo(key))
+		return et and (GetTime() + 0.5 > et / 1000) and not ni
+	end
+	
+	local function IsChannel(key)
+		local ni = select(8,UnitChannelInfo(key))
+		local name = UnitChannelInfo(key)
+		return name and not ni
+	end
+
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
-		local notInterruptible1 = select(9,UnitCastingInfo(key))
-		local notInterruptible2 = select(8,UnitChannelInfo(key))
-		if (UnitCastingInfo(key) and not notInterruptible1) or (UnitChannelInfo(key) and not notInterruptible2) then
+		--local notInterruptible1 = select(9,UnitCastingInfo(key))
+		--local notInterruptible2 = select(8,UnitChannelInfo(key))
+		--if (UnitCastingInfo(key) and not notInterruptible1) or (UnitChannelInfo(key) and not notInterruptible2) then
+		if IsCast(key) or IsChannel(key) then
 			result[key] = value
 		end
 	end

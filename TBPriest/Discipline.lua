@@ -17,6 +17,7 @@
 				["Очищение"] = 527,
 				["Молитва исцеления"] = 596,
 				["Скакун Тираэля"] = 107203,
+				["Божественная звезда"] = 110744,
 			},
 			["Class"] = "PRIEST",
 			["Buffs"] = {
@@ -76,57 +77,83 @@ function bot:OnUpdate(g, list, modes)
 	if g.player:AffectingCombat(true):MinHP() or g.tanks:AffectingCombat(true):MinHP() then
 	
 		if modes.Burst == "On" then	
-			list:Cast( "Слово силы: Щит",   g.tanks:Mana(">", 20):CanUse("Слово силы: Щит"):Aura("Ослабленная душа", "inverse"):MinHP() )		
-			list:Cast( "Исповедь", g.tanks:CanAssist():HP("<", 70):CanUse("Исповедь"):MinHP() )		
+			list:Cast( "Слово силы: Щит",   g.tanks:Mana(">", 20):CanUse("Слово силы: Щит"):Aura("Ослабленная душа","inverse"):Aura("Слово силы: Щит","inverse"):MinHP() )		
+			list:Cast( "Слово силы: Щит",   g.player:Mana(">", 20):CanUse("Слово силы: Щит"):Aura("Ослабленная душа","inverse"):Aura("Слово силы: Щит","inverse"):MinHP() )		
+			
+			list:Cast( "Исповедь", g.tanks:CanAssist():HP("<", 70):CanUse("Исповедь"):MinHP() )
+			list:Cast( "Исповедь", g.player:CanAssist():HP("<", 70):CanUse("Исповедь"):MinHP() )	
+			list:Cast( "Исповедь", g.party:CanAssist():HP("<", 70):CanUse("Исповедь"):MinHP() )	
 
-			list:Cast( "Буйный рост", 
+			list:Cast( "Слово силы: Утешение", g.mainTank:CanUse("Слово силы: Утешение"):Best() )
+			
+			list:Cast( "Быстрое исцеление", g.tanks:Moving(false):HP("<", 50):CanUse("Быстрое исцеление"):MinHP() )
+			list:Cast( "Быстрое исцеление", g.player:Moving(false):HP("<", 50):CanUse("Быстрое исцеление"):MinHP() )
+			list:Cast( "Быстрое исцеление", g.party:Moving(false):HP("<", 50):CanUse("Быстрое исцеление"):MinHP() )
+			
+			list:Cast( "Ясность воли",   g.tanks:CanUse("Ясность воли"):Moving(false):Aura("Ясность воли", "mine", "inverse",{skip=5}):LastCast("Ясность воли", false):MinHP() )
+
+
+
+			list:Cast( "Слово силы: Щит",   g.party:Mana(">", 20):HP("<", 80):CanUse("Слово силы: Щит"):Aura("Ослабленная душа","inverse"):Aura("Слово силы: Щит","inverse"):MinHP() )		
+			list:Cast( "Ясность воли",   g.tanks:CanUse("Ясность воли"):Moving(false):ClarityOfWill(50):LastCast("Ясность воли", false):MinHP() )	
+			
+			list:Cast( "Молитва исцеления", 
 						g.party
 						:Moving(false)
-						:CanUse("Буйный рост")
-						:HP("<",85)
-						:BastForAoE(4,30) )
+						:CanUse("Молитва исцеления")
+						:HP("<",90)
+						:BastForAoE(4,30) )	
+						
+			list:Cast( "Исцеление", g.party:HP("<", 70):Moving(false):CanUse("Исцеление"):MinHP() )
+			
+			list:Cast( "Ясность воли",   g.tanks:CanUse("Ясность воли"):Moving(false):ClarityOfWill(30):MinHP() )
+			list:Cast( "Кара", g.mainTank:CanUse("Кара"):Moving(false):Aura("Архангел", "mine", "self", "inverse"):Aura("Приверженность", "mine", "self", "inverse", {skip=5}):LastCast("Кара", false, "total"):Best() )
+			
 		else
-		list:Cast( "Архангел",   g.player:CanUse("Архангел"):Aura("Приверженность", "mine", "self", {stacks=5}):MinHP() )
-		
-		list:Cast( "Слово силы: Щит",   g.tanks:Mana(">", 20):CanUse("Слово силы: Щит"):Aura("Ослабленная душа","inverse"):MinHP() )		
-		--поддерживаем на себе лишнее время
-		list:Cast( "Слово силы: Щит",   g.party:Mana(">", 20):CanUse("Слово силы: Щит"):Aura("Лишнее время", "mine", "self", "inverse"):Aura("Ослабленная душа", "inverse"):MinHP() )	
+			list:Cast( "Слово силы: Щит",   g.tanks:Mana(">", 20):CanUse("Слово силы: Щит"):Aura("Ослабленная душа","inverse"):MinHP() )		
+			--поддерживаем на себе лишнее время
+			list:Cast( "Слово силы: Щит",   g.player:Mana(">", 20):CanUse("Слово силы: Щит"):Aura("Лишнее время", "mine", "self", "inverse"):Aura("Ослабленная душа", "inverse"):MinHP() )	
+			
+			list:Cast( "Исповедь", g.tanks:CanAssist():HP("<", 70):CanUse("Исповедь"):MinHP() )
+			list:Cast( "Быстрое исцеление", g.tanks:Moving(false):HP("<", 50):CanUse("Быстрое исцеление"):MinHP() )
+			list:Cast( "Быстрое исцеление", g.player:Moving(false):HP("<", 50):CanUse("Быстрое исцеление"):MinHP() )
+			list:Cast( "Быстрое исцеление", g.party:Moving(false):HP("<", 50):CanUse("Быстрое исцеление"):MinHP() )
+			
+			list:Cast( "Ясность воли",   g.tanks:CanUse("Ясность воли"):Moving(false):Aura("Ясность воли", "mine", "inverse",{skip=5}):LastCast("Ясность воли", false):MinHP() )				
+			list:Cast( "Быстрое исцеление", g.tanks:Moving(false):HP("<", 70):CanUse("Быстрое исцеление"):LastCast("Быстрое исцеление", false):MinHP() )		
+			
+						
+			list:Cast( "Исповедь", g.player:CanAssist():HP("<", 70):CanUse("Исповедь"):MinHP() )	
+			list:Cast( "Исповедь", g.party:CanAssist():HP("<", 70):CanUse("Исповедь"):MinHP() )	
 
-		list:Cast( "Быстрое исцеление", g.tanks:Moving(false):HP("<", 80):CanUse("Быстрое исцеление"):Aura("Всесильный архангел", "mine", "self"):LastCast("Быстрое исцеление",false):MinHP() )		
-		list:Cast( "Исповедь", g.tanks:CanAssist():HP("<", 70):CanUse("Исповедь"):MinHP() )
-		list:Cast( "Ясность воли",   g.tanks:CanUse("Ясность воли"):Moving(false):HP("<", 70):Aura("Ясность воли", "mine", "inverse",{skip=5}):LastCast("Ясность воли", false):MinHP() )		
-		
-		list:Cast( "Быстрое исцеление", g.tanks:Moving(false):HP("<", 50):CanUse("Быстрое исцеление"):MinHP() )
-		list:Cast( "Быстрое исцеление", g.tanks:Moving(false):HP("<", 70):CanUse("Быстрое исцеление"):LastCast("Быстрое исцеление", false):MinHP() )
-		list:Cast( "Быстрое исцеление", g.player:Moving(false):HP("<", 50):CanUse("Быстрое исцеление"):MinHP() )
-		
-		list:Cast( "Слово силы: Утешение", g.mainTank:CanUse("Слово силы: Утешение"):Best() )
-		
-		list:Cast( "Исповедь", g.party:CanAssist():HP("<", 70):CanUse("Исповедь"):MinHP() )
-		list:Cast( "Быстрое исцеление", g.player:Moving(false):HP("<", 40):CanUse("Быстрое исцеление"):MinHP() )
-
-		list:Cast( "Молитва исцеления", 
-					g.party
-					:Moving(false)
-					:CanUse("Молитва исцеления")
-					:HP("<",60)
-					:BastForAoE(3,30) )	
+			
+			list:Cast( "Молитва исцеления", 
+						g.party
+						:Moving(false)
+						:CanUse("Молитва исцеления")
+						:HP("<",60)
+						:BastForAoE(3,30) )	
 					
-		list:Cast( "Исцеление", g.party:HP("<", 60):Moving(false):CanUse("Исцеление"):MinHP() )		
-		
-		list:Cast( "Божественная вспышка", g.party:HP("<",85):CanUse("Божественная вспышка"):BastForAoE(4,30) )
-	
-		-- DD
-		list:Cast( "Кара", g.mainTank:CanUse("Кара"):Moving(false):Aura("Архангел", "mine", "self", "inverse"):Aura("Приверженность", "mine", "self", "inverse", nil, {stacks=5}):LastCast("Кара", false, "total"):Best() )		
-		list:Cast( "Кара", g.mainTank:CanUse("Кара"):Moving(false):Aura("Архангел", "mine", "self", "inverse"):Aura("Приверженность", "mine", "self", "inverse", {skip=5}):Best() )
+			list:Cast( "Быстрое исцеление", g.player:Moving(false):HP("<", 60):CanUse("Быстрое исцеление"):LastCast("Быстрое исцеление", false):MinHP() )
+			list:Cast( "Быстрое исцеление", g.party:Moving(false):HP("<", 60):CanUse("Быстрое исцеление"):LastCast("Быстрое исцеление", false):MinHP() )
+				
+			list:Cast( "Слово силы: Утешение", g.mainTank:CanUse("Слово силы: Утешение"):Best() )
 
-		list:Cast( "Исцеление", g.party:HP("<", 70):Moving(false):CanUse("Исцеление"):MinHP() )		
- 		
-		list:Cast( "Ясность воли",   g.tanks:CanUse("Ясность воли"):Moving(false):Aura("Ясность воли", "mine", "inverse",{skip=5}):LastCast("Ясность воли", false):MinHP() )				
-		list:Cast( "Ясность воли",   g.tanks:CanUse("Ясность воли"):Moving(false):Aura("Архангел", "mine", "self"):ClarityOfWill(40):MinHP() )	
-
-		list:Cast( "Исцеление", g.party:HP("<", 80):Moving(false):CanUse("Исцеление"):LastCast("Исцеление", false):MinHP() )		
 		
+			
+			list:Cast( "Кара", g.mainTank:CanUse("Кара"):Moving(false):Aura("Архангел", "mine", "self", "inverse"):Aura("Приверженность", "mine", "self", "inverse", {skip=5}):LastCast("Кара", false, "total"):Best() )
+			
+			list:Cast( "Ясность воли",   g.tanks:CanUse("Ясность воли"):Moving(false):ClarityOfWill(50):LastCast("Ясность воли", false):MinHP() )	
+			
+			list:Cast( "Молитва восстановления",   g.party:CanUse("Молитва восстановления"):Aura("Молитва восстановления", "mine", "inverse"):MinHP() )		
+			
+			list:Cast( "Исцеление", g.party:HP("<", 70):Moving(false):CanUse("Исцеление"):MinHP() )
+			list:Cast( "Исцеление", g.party:HP("<", 85):Moving(false):CanUse("Исцеление"):LastCast("Исцеление", false):MinHP() )	
+				
+				
+			list:Cast( "Ясность воли",   g.tanks:CanUse("Ясность воли"):Moving(false):ClarityOfWill(30):MinHP() )
+			
+			list:Cast( "Кара", g.mainTank:CanUse("Кара"):Moving(false):Aura("Архангел", "mine", "self", "inverse"):Aura("Приверженность", "mine", "self", "inverse", {stacks=5}):LastCast("Кара", false, "total"):Best() )			
 		end
 	end
 	

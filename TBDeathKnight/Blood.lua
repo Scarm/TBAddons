@@ -80,7 +80,6 @@ function BaseGroup:UnholyRunes(bound, runes)
 	return self:CreateDerived()
 end
 
-	
 function bot:OnUpdate(g, list, modes)
 	
 	if IsMounted() then return end	
@@ -96,23 +95,45 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Удар чумы", g.target:CanUse("Удар чумы"):Aura("Кровавая чума", "mine", "inverse"):Best() )
 	list:Cast( "Ледяное прикосновение", g.target:CanUse("Ледяное прикосновение"):Aura("Озноб", "mine", "inverse"):Best() )
 	
-	list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):HP("<", 80, "self"):Best() )
-	list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):FrostRunes(">", 2):Best())
-	list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):UnholyRunes(">", 2):Best())
-	list:Cast( "Вытягивание чумы", g.target:CanUse("Вытягивание чумы"):HP("<", 80, "self"):FrostRunes("<", 0):UnholyRunes("<", 0):Best() )
-	
-	
-	list:Cast( "Лик смерти", g.target:CanUse("Лик смерти"):Energy(">", 50):Best() )
-	
-	list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):BloodRunes(">", 2):Best() )
-	list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):Aura("Алая Плеть", "mine", "self"):Best() )
-	list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):BloodRunes(">", 1):Aura("Заряд крови", "mine", "self", {stacks=11}):Best() )
-	
-	list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):BloodRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
-	
-	
+	if modes.AoE == "On" then
+		list:Cast( "Лик смерти", g.target:CanUse("Лик смерти"):Energy(">", 80):Best() )
+		
+		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):HP("<", 80, "self"):Best() )
+		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):FrostRunes(">", 2):Best())
+		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):UnholyRunes(">", 2):Best())
+		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):CanUse("Вытягивание чумы"):HP("<", 80, "self"):Best())
+		
+		list:Cast( "Вытягивание чумы", g.target:CanUse("Вытягивание чумы"):FrostRunes("<", 0):UnholyRunes("<", 0):HP("<", 80, "self"):Best() )
+		list:Cast( "Лик смерти", g.target:CanUse("Лик смерти"):Energy(">", 50):Best() )
+		
+		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):Aura("Алая Плеть", "mine", "self"):Best() )
+		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):Best() )
+		
+		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):BloodRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
+		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):FrostRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
+		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):UnholyRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )		
+	else
+		list:Cast( "Лик смерти", g.target:CanUse("Лик смерти"):Energy(">", 80):Best() )
+		
+		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):HP("<", 80, "self"):Best() )
+		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):FrostRunes(">", 2):Best())
+		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):UnholyRunes(">", 2):Best())
+		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):CanUse("Вытягивание чумы"):Best())
+		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):Aura("Заряд крови", "mine", "self", {stacks=10}):Best() )
 
+		
+		list:Cast( "Вытягивание чумы", g.target:CanUse("Вытягивание чумы"):FrostRunes("<", 0):UnholyRunes("<", 0):Best() )
+		list:Cast( "Лик смерти", g.target:CanUse("Лик смерти"):Energy(">", 50):Best() )
+		
+		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):BloodRunes(">", 2):Best() )
+		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):Aura("Алая Плеть", "mine", "self"):Best() )
+		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):BloodRunes(">", 1):Aura("Заряд крови", "mine", "self", {stacks=11}):Best() )
+		
+		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):BloodRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
+		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):FrostRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
+		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):UnholyRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
 	
+	end
 		
 	return list:Execute()
 end	
