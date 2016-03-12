@@ -59,19 +59,43 @@ function PaladinHoly:OnUpdate(g, list, modes)
 	if g.player:AffectingCombat(true):MinHP() or g.tanks:AffectingCombat(true):MinHP() then
 	
 		if IsInRaid() then
-			return self:PartyHeal(g, list, modes)
+			if modes.Burst == "On" then
+				return self:NormalHeal(g, list, modes)
+			else
+				return self:NormalHeal(g, list, modes)
+			end
 		else
 			return self:PartyHeal(g, list, modes)
 		end	
 	else
-		return self:PreHeal(g, list, modes)
+		if modes.preheal == "On" then
+			return self:PreHeal(g, list, modes)
+		end
 	end
 		
 	
 end	
 
 function PaladinHoly:PreHeal(g, list, modes)
+	list:Cast( "Очищение", g.party:CanUse("Очищение"):NeedDecurse("Disease","Magic","Poison"):MinHP() )
 
+	if g.tanks:Aura("Частица Света", "mine"):MinHP() == nil then
+		list:Cast( "Частица Света", g.tanks:CanUse("Частица Света"):Aura("Частица веры", "mine", "inverse"):MinHP() )	
+	end
+	if g.tanks:Aura("Частица веры", "mine"):MinHP() == nil then
+		list:Cast( "Частица веры", g.tanks:CanUse("Частица Света"):Aura("Частица Света", "mine", "inverse"):MinHP() )	
+	end
+	if g.party:Aura("Частица Света", "mine"):MinHP() == nil then
+		list:Cast( "Частица Света", g.player:CanUse("Частица Света"):Aura("Частица веры", "mine", "inverse"):MinHP() )	
+	end
+	if g.party:Aura("Частица веры", "mine"):MinHP() == nil then
+		list:Cast( "Частица веры", g.player:CanUse("Частица Света"):Aura("Частица Света", "mine", "inverse"):MinHP() )			
+	end
+	
+	list:Cast( "Торжество",   g.party:CanUse("Торжество"):HP("<",85):HolyPower(5):LastCast("Свет зари", false, "total"):LastCast("Торжество", false, "total"):LastCast("Свет небес", false):MinHP() )
+	list:Cast( "Шок небес", g.party:HP("<", 95):CanUse("Шок небес"):MinHP() )
+	
+	list:Cast( "Свет небес", g.party:HP("<", 85):Moving(false):CanUse("Свет небес"):LastCast("Свет небес", false):MinHP() )	
 	return list:Execute()
 end
 
@@ -98,8 +122,10 @@ function PaladinHoly:PartyHeal(g, list, modes)
 	list:Cast( "Торжество",   g.tanks:CanUse("Торжество"):HP("<",85):HolyPower(5):LastCast("Свет зари", false, "total"):LastCast("Торжество", false, "total"):LastCast("Свет небес", false):MinHP() )
 	list:Cast( "Торжество",   g.party:CanUse("Торжество"):HP("<",85):HolyPower(5):LastCast("Свет зари", false, "total"):LastCast("Торжество", false, "total"):LastCast("Свет небес", false):MinHP() )
 
-	
 	list:Cast( "Шок небес", g.party:HP("<", 95):CanUse("Шок небес"):MinHP() )
+
+	list:Cast( "Божественная призма", g.mainTank:CanAttack():CanUse("Божественная призма"):MinHP() )
+
 	
 	list:Cast( "Свет небес", g.tanks:CanUse("Свет небес"):HP("<", 50):Moving(false):Aura("Прилив Света", "mine", "self"):MinHP() )	
 	list:Cast( "Свет небес", g.player:CanUse("Свет небес"):HP("<", 50):Moving(false):Aura("Прилив Света", "mine", "self"):MinHP() )	
@@ -110,10 +136,63 @@ function PaladinHoly:PartyHeal(g, list, modes)
 	list:Cast( "Вспышка Света", g.party:HP("<", 40):Moving(false):CanUse("Вспышка Света"):MinHP() )	
 	list:Cast( "Вспышка Света", g.party:HP("<", 50):Moving(false):CanUse("Вспышка Света"):LastCast("Вспышка Света", false):MinHP() )	
 	
-	--list:Cast( "Свет небес", g.player:HP("<", 75):Moving(false):CanUse("Свет небес"):MinHP() )	
 	list:Cast( "Свет небес", g.party:HP("<", 75):Moving(false):CanUse("Свет небес"):MinHP() )	
-	--list:Cast( "Свет небес", g.player:HP("<", 85):Moving(false):CanUse("Свет небес"):LastCast("Свет небес", false):MinHP() )	
 	list:Cast( "Свет небес", g.party:HP("<", 85):Moving(false):CanUse("Свет небес"):LastCast("Свет небес", false):MinHP() )	
+
+	-- В частицу спам стоит меньше регена маны
+	list:Cast( "Свет небес", g.party:CanUse("Свет небес"):HP("<", 85):Moving(false):Aura("Частица Света", "mine"):LastCast("Свет небес", false):MinHP() )
+	list:Cast( "Свет небес", g.party:CanUse("Свет небес"):HP("<", 85):Moving(false):Aura("Частица веры", "mine"):LastCast("Свет небес", false):MinHP() )
+	
+	return list:Execute()
+end
+
+function PaladinHoly:NormalHeal(g, list, modes)
+	--декурсинг	
+	list:Cast( "Очищение", g.player:CanUse("Очищение"):NeedDecurse("Disease","Magic","Poison"):MinHP() )	
+	list:Cast( "Очищение", g.tanks:CanUse("Очищение"):NeedDecurse("Disease","Magic","Poison"):MinHP() )	
+	list:Cast( "Очищение", g.party:CanUse("Очищение"):NeedDecurse("Disease","Magic","Poison"):MinHP() )
+
+	if g.tanks:Aura("Частица Света", "mine"):MinHP() == nil then
+		list:Cast( "Частица Света", g.tanks:CanUse("Частица Света"):Aura("Частица веры", "mine", "inverse"):MinHP() )	
+	end
+	if g.tanks:Aura("Частица веры", "mine"):MinHP() == nil then
+		list:Cast( "Частица веры", g.tanks:CanUse("Частица Света"):Aura("Частица Света", "mine", "inverse"):MinHP() )	
+	end
+	if g.party:Aura("Частица Света", "mine"):MinHP() == nil then
+		list:Cast( "Частица Света", g.player:CanUse("Частица Света"):Aura("Частица веры", "mine", "inverse"):MinHP() )	
+	end
+	if g.party:Aura("Частица веры", "mine"):MinHP() == nil then
+		list:Cast( "Частица веры", g.player:CanUse("Частица Света"):Aura("Частица Света", "mine", "inverse"):MinHP() )			
+	end
+	
+	list:Cast( "Священный щит", g.tanks:CanUse("Священный щит"):Aura("Священный щит", "mine", "inverse"):MinHP() )	
+	list:Cast( "Священный щит", g.player:CanUse("Священный щит"):Aura("Священный щит", "mine", "inverse"):MinHP() )	
+
+	list:Cast( "Свет зари",   g.party:CanUse("Свет зари"):HolyPower(3):HP("<",90):LastCast("Свет зари", false, "total"):BastForAoE(4,30))
+	list:Cast( "Свет зари",   g.party:CanUse("Свет зари"):HolyPower(3):HP("<",95):LastCast("Свет зари", false, "total"):BastForAoE(5,30))
+	list:Cast( "Торжество",   g.tanks:CanUse("Торжество"):HP("<",85):HolyPower(5):LastCast("Свет зари", false, "total"):LastCast("Торжество", false, "total"):LastCast("Свет небес", false):MinHP() )
+	list:Cast( "Торжество",   g.party:CanUse("Торжество"):HP("<",85):HolyPower(5):LastCast("Свет зари", false, "total"):LastCast("Торжество", false, "total"):LastCast("Свет небес", false):MinHP() )
+
+	list:Cast( "Шок небес", g.party:HP("<", 95):CanUse("Шок небес"):MinHP() )
+
+	list:Cast( "Божественная призма", g.mainTank:CanAttack():CanUse("Божественная призма"):MinHP() )
+
+	
+	list:Cast( "Свет небес", g.tanks:CanUse("Свет небес"):HP("<", 50):Moving(false):Aura("Прилив Света", "mine", "self"):MinHP() )	
+	list:Cast( "Свет небес", g.player:CanUse("Свет небес"):HP("<", 50):Moving(false):Aura("Прилив Света", "mine", "self"):MinHP() )	
+	list:Cast( "Вспышка Света", g.tanks:CanUse("Вспышка Света"):HP("<", 50):Moving(false):MinHP() )
+	list:Cast( "Вспышка Света", g.player:CanUse("Вспышка Света"):HP("<", 50):Moving(false):MinHP() )	
+
+	list:Cast( "Святое сияние",   g.party:CanUse("Святое сияние"):HP("<",95):Mana(">", 70):LastCast("Святое сияние", false, "total"):BastForAoE(7,10))
+	
+	--list:Cast( "Вспышка Света", g.party:HP("<", 40):Moving(false):CanUse("Вспышка Света"):MinHP() )	
+	--list:Cast( "Вспышка Света", g.party:HP("<", 50):Moving(false):CanUse("Вспышка Света"):LastCast("Вспышка Света", false):MinHP() )	
+
+	list:Cast( "Свет небес", g.party:HP("<", 50):Moving(false):CanUse("Свет небес"):MinHP() )	
+	list:Cast( "Свет небес", g.party:HP("<", 65):Moving(false):CanUse("Свет небес"):LastCast("Свет небес", false):MinHP() )	
+	
+	list:Cast( "Свет небес", g.party:HP("<", 70):Moving(false):Mana(">", 70):CanUse("Свет небес"):MinHP() )	
+	list:Cast( "Свет небес", g.party:HP("<", 85):Moving(false):Mana(">", 70):CanUse("Свет небес"):LastCast("Свет небес", false):MinHP() )	
 
 	-- В частицу спам стоит меньше регена маны
 	list:Cast( "Свет небес", g.party:CanUse("Свет небес"):HP("<", 85):Moving(false):Aura("Частица Света", "mine"):LastCast("Свет небес", false):MinHP() )
