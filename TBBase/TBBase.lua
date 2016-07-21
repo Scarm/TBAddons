@@ -34,6 +34,7 @@ end
 function TBOnPlayerLogin(self)
 	TBCreateIndicators(self)
 	TBCreatePanel(self)
+	AdvancedPanelFrame:Init()
 	TBAssignBot(self)
 	
 	if IndicatorFrame.LoS == nil then
@@ -42,16 +43,8 @@ function TBOnPlayerLogin(self)
 	end
 end
 
-function TBAssignBot(self)
-	if IsLoggedIn() == false then
-		return
-	end
-	-- бота чистим всегда, а устанавливаем - только если нашли подходящего
-	IndicatorFrame.Spec = nil
-    TBUnregisterAllSpells() 
-	TBClearPanel()
-	
-    local name,class = UnitClass("player")
+function TBGetSpec()
+	local name,class = UnitClass("player")
     print("Загружаются боты для класса",name)
 
     if IndicatorFrame.Bots[class] == nil then
@@ -65,11 +58,25 @@ function TBAssignBot(self)
         return
 	end
 	
-	TBInitPanel(IndicatorFrame.Bots[class][currentTalents])
-	IndicatorFrame.Spec = IndicatorFrame.Bots[class][currentTalents]
+	return IndicatorFrame.Bots[class][currentTalents]
+end
+
+function TBAssignBot(self)
+	if IsLoggedIn() == false then
+		return
+	end
+	-- бота чистим всегда, а устанавливаем - только если нашли подходящего
+	IndicatorFrame.Spec = nil
+    TBUnregisterAllSpells() 
+	IndicatorFrame.Spec = TBGetSpec()
 	
-	for key, id in pairs(IndicatorFrame.Spec.Spells) do
-		TBRegisterSpell(GetSpellInfo(id),id)
+	TBInitPanel(IndicatorFrame.Spec)
+	AdvancedPanelFrame:AssignSpec(IndicatorFrame.Spec)
+	
+	if IndicatorFrame.Spec then
+		for key, id in pairs(IndicatorFrame.Spec.Spells) do
+			TBRegisterSpell(GetSpellInfo(id),id)
+		end
 	end
 end
 
@@ -175,7 +182,8 @@ function TBMacroCommands()
 				local id = GetContainerItemID(bag, slot)
 				if id then
 					local name = GetItemInfo(id)
-					if name == "Расколотый кристалл времени" and TBBagActions.Click == nil  then
+					--if name == "Расколотый кристалл времени" and TBBagActions.Click == nil  then
+					if name == "Карта Знамения" and TBBagActions.Click == nil  then
 						macrotext = macrotext..name
 						TBSetMacro(macrotext)
 						TBBagActions.Click = 1
@@ -210,7 +218,12 @@ end
 
 function TBOnUpdate()
 	if IndicatorFrame.Spec then
-		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), PanelFrame.Groups) or TBMacroCommands()
+		local groups = PanelFrame.Groups
+		if IndicatorFrame.Spec.advanced then
+			groups = AdvancedPanelFrame.Groups
+		end		
+	
+		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), groups) or TBMacroCommands()
 		if cmd then
 			IndicatorFrame.LastCommand = cmd
 		end

@@ -16,7 +16,7 @@ function TBKeyValuesFill(values)
 	
 	--values["LastSpell"] = ToString(BaseGroupHelper.LastCast.LastSpell)
 		
-	values["Частица"] = ToString(gr.party:Aura("Частица Света", "mine"):MinHP())	
+	--values["Частица"] = ToString(gr.party:Aura("Частица Света", "mine"):MinHP())	
 	
 	for i = 1,GetNumSavedInstances(),1 do
 		local nm,_,_,diff,locked = GetSavedInstanceInfo(i)		

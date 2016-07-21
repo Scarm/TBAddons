@@ -1,4 +1,5 @@
 ﻿DruidRestor = {
+			--advanced = true,
 			["Unique"] = {
 			},
 			["Id"] = 4,
@@ -25,6 +26,7 @@
 				
 				["Аура презрения"] = 179987
 			},
+			
 			["Buttons"] = {
 					[1] = {
 						Icon = "Interface\\Icons\\ABILITY_SEAL",
@@ -50,6 +52,41 @@
 						default = 1
 					},					
 				},
+			--[[
+			["Buttons"] = {
+				[1] = {
+					Type = "trigger",
+					Icon = "Interface\\Icons\\ABILITY_SEAL",
+					Name = "Stop",
+				},
+				[2] = {
+					Type = "trigger",
+					Icon = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
+					Name = "Burst",
+				},
+				
+				[3] = {
+					Type = "trigger",
+					Icon = "Interface\\ICONS\\Spell_Holy_SummonLightwell.blp",
+					Name = "preheal",
+				},						
+				
+				[4] = {
+					Type = "trigger",
+					Icon = "Interface\\Icons\\DRUID_ABILITY_WILDMUSHROOM_A",
+					Name = "Mushroom",
+					default = 1
+				},
+				[5] = {
+					Type = "spell",
+					Spell = 132158, -- Природная стремительность
+				},
+				[6] = {
+					Type = "spell",
+					Spell = 18562, -- Быстрое восстановление
+				},
+			}
+			--]]
 		}
 
 	
@@ -73,7 +110,7 @@ function DruidRestor:OnUpdate(g, list, modes)
 
 	if IsMounted() then return end
 
-	if modes.Run == "Off" then 
+	if modes.Stop then 
 		return 
 	end
 	
@@ -97,7 +134,7 @@ function DruidRestor:OnUpdate(g, list, modes)
 					:LastCast("Восстановление", false, "total")
 					:MinHP() )
 		
-		if modes.Burst == "On" then	
+		if modes.Burst then	
 			list:Cast( "Буйный рост", 
 						g.party
 						:Moving(false)
@@ -113,7 +150,7 @@ function DruidRestor:OnUpdate(g, list, modes)
 						:BastForAoE(4,30) )
 						
 
-			if modes.Mushroom == "On"then
+			if modes.Mushroom then
 				list:Cast( "Дикий гриб", g.party:hasMushroom():CanUse("Дикий гриб"):BastForAoE(3,10) )
 			end						
 			
@@ -218,7 +255,7 @@ function DruidRestor:OnUpdate(g, list, modes)
 						:HP("<",70)
 						:BastForAoE(3,30) )
 		
-			if modes.Mushroom == "On" then
+			if modes.Mushroom then
 				list:Cast( "Дикий гриб", g.party:hasMushroom():HP("<",99):CanUse("Дикий гриб"):BastForAoE(2,10) )
 				list:Cast( "Дикий гриб", g.party:hasMushroom():CanUse("Дикий гриб"):BastForAoE(4,10) )
 			end

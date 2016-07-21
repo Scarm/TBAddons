@@ -72,7 +72,9 @@
 	<CheckButton name="TBButtonTemplate" inherits="ActionButtonTemplate" virtual="true">
 		<Scripts>
 			<OnLoad>
-				self:RegisterForClicks("LeftButtonUp")
+				--self:RegisterForClicks("LeftButtonUp")
+				--self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				--AutoCastShine_AutoCastStart(self.Shine)
 			</OnLoad>
             <OnClick>
                 print("Click!")
@@ -80,6 +82,7 @@
 		</Scripts>
 	</CheckButton>
 	
+
 	<Frame name="PanelFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">
 		<Anchors>
 			<Anchor point="CENTER"></Anchor>
@@ -108,9 +111,88 @@
             <OnDragStop>
 				self:StopMovingOrSizing()
             </OnDragStop>
-			<OnUpdate>
-
-			</OnUpdate>
+		</Scripts> 
+	</Frame>
+	
+	
+	
+	
+	<CheckButton name="TBAdvancedButtonTemplate" inherits="ActionButtonTemplate" virtual="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentAutoCastable" parentKey="AutoCastable" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
+					<Size>
+						<AbsDimension x="58" y="58"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>		
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentShine" inherits="AutoCastShineTemplate" parentKey="Shine">
+				<Anchors>
+					<Anchor point="CENTER">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="28" y="28"/>
+				</Size>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				--self:RegisterForClicks("LeftButtonUp")
+				--self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				--AutoCastShine_AutoCastStart(self.Shine)
+				TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBAdvancedButtonTemplate_OnSpellCast")
+				TBSubscribeEvent(self,"SPELL_UPDATE_COOLDOWN", "TBAdvancedButtonTemplate_OnUpdateCooldown")
+			</OnLoad>
+            <OnClick>
+                TBAdvancedButtonTemplate_OnClick(self, button)
+            </OnClick> 
+		</Scripts>
+	</CheckButton>	
+	
+	
+<Frame name="AdvancedPanelFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">
+		<Anchors>
+			<Anchor point="CENTER"></Anchor>
+		</Anchors>
+		<Size>
+			<AbsDimension x="5" y="10" />
+		</Size>		
+		<Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTex" parentKey="Tex">	
+					<Anchors>
+                        <Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+                    <Color g="0" r="1" b="0" a="0.5"/>                    
+				</Texture>
+                </Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForDrag("RightButton")
+				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "SpellCast")
+				--TBSubscribeEvent(self,"SPELL_UPDATE_COOLDOWN", "UpdateCooldown")
+			</OnLoad> 
+            <OnDragStart>
+				self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+				self:StopMovingOrSizing()
+            </OnDragStop>
 		</Scripts> 
 	</Frame>
 </Ui>

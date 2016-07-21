@@ -7,4 +7,14 @@
 	<Binding name="CLICK TBButton6:LeftButton"/>
 	<Binding name="CLICK TBButton7:LeftButton"/>
 	<Binding name="CLICK TBButton8:LeftButton"/>
+	
+	<Binding name="CLICK TBAdvancedButton1:LeftButton"/>
+	<Binding name="CLICK TBAdvancedButton2:LeftButton"/>
+	<Binding name="CLICK TBAdvancedButton3:LeftButton"/>
+	<Binding name="CLICK TBAdvancedButton4:LeftButton"/>
+	<Binding name="CLICK TBAdvancedButton5:LeftButton"/>
+	<Binding name="CLICK TBAdvancedButton6:LeftButton"/>
+	<Binding name="CLICK TBAdvancedButton7:LeftButton"/>
+	<Binding name="CLICK TBAdvancedButton8:LeftButton"/>
+	
 </Bindings>

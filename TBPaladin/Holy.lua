@@ -117,10 +117,10 @@ function PaladinHoly:PartyHeal(g, list, modes)
 	list:Cast( "Священный щит", g.tanks:CanUse("Священный щит"):Aura("Священный щит", "mine", "inverse"):MinHP() )	
 	list:Cast( "Священный щит", g.player:CanUse("Священный щит"):Aura("Священный щит", "mine", "inverse"):MinHP() )	
 
-	list:Cast( "Свет зари",   g.party:CanUse("Свет зари"):HolyPower(3):HP("<",90):LastCast("Свет зари", false, "total"):BastForAoE(4,30))
-	list:Cast( "Свет зари",   g.party:CanUse("Свет зари"):HolyPower(3):HP("<",95):LastCast("Свет зари", false, "total"):BastForAoE(5,30))
-	list:Cast( "Торжество",   g.tanks:CanUse("Торжество"):HP("<",85):HolyPower(5):LastCast("Свет зари", false, "total"):LastCast("Торжество", false, "total"):LastCast("Свет небес", false):MinHP() )
-	list:Cast( "Торжество",   g.party:CanUse("Торжество"):HP("<",85):HolyPower(5):LastCast("Свет зари", false, "total"):LastCast("Торжество", false, "total"):LastCast("Свет небес", false):MinHP() )
+	list:Cast( "Свет зари",   g.party:CanUse("Свет зари"):Moving(false):HolyPower(3):HP("<",90):LastCast("Свет зари", false, "total"):BastForAoE(4,30))
+	list:Cast( "Свет зари",   g.party:CanUse("Свет зари"):Moving(false):HolyPower(3):HP("<",95):LastCast("Свет зари", false, "total"):BastForAoE(5,30))
+	list:Cast( "Торжество",   g.tanks:CanUse("Торжество"):Moving(false):HP("<",85):HolyPower(5):LastCast("Свет зари", false, "total"):LastCast("Торжество", false, "total"):LastCast("Свет небес", false):MinHP() )
+	list:Cast( "Торжество",   g.party:CanUse("Торжество"):Moving(false):HP("<",85):HolyPower(5):LastCast("Свет зари", false, "total"):LastCast("Торжество", false, "total"):LastCast("Свет небес", false):MinHP() )
 
 	list:Cast( "Шок небес", g.party:HP("<", 95):CanUse("Шок небес"):MinHP() )
 
@@ -188,8 +188,8 @@ function PaladinHoly:NormalHeal(g, list, modes)
 	--list:Cast( "Вспышка Света", g.party:HP("<", 40):Moving(false):CanUse("Вспышка Света"):MinHP() )	
 	--list:Cast( "Вспышка Света", g.party:HP("<", 50):Moving(false):CanUse("Вспышка Света"):LastCast("Вспышка Света", false):MinHP() )	
 
-	list:Cast( "Свет небес", g.party:HP("<", 50):Moving(false):CanUse("Свет небес"):MinHP() )	
-	list:Cast( "Свет небес", g.party:HP("<", 65):Moving(false):CanUse("Свет небес"):LastCast("Свет небес", false):MinHP() )	
+	list:Cast( "Свет небес", g.party:HP("<", 40):Moving(false):CanUse("Свет небес"):MinHP() )	
+	list:Cast( "Свет небес", g.party:HP("<", 50):Moving(false):CanUse("Свет небес"):LastCast("Свет небес", false):MinHP() )	
 	
 	list:Cast( "Свет небес", g.party:HP("<", 70):Moving(false):Mana(">", 70):CanUse("Свет небес"):MinHP() )	
 	list:Cast( "Свет небес", g.party:HP("<", 85):Moving(false):Mana(">", 70):CanUse("Свет небес"):LastCast("Свет небес", false):MinHP() )	

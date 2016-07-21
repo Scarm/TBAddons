@@ -21,11 +21,10 @@ function TBCreatePanel()
 	end	
 end
 
+
 function TBUpdateBindings(button)
 	local key = GetBindingKey("CLICK "..button:GetName()..":LeftButton");
-	--print(key)
-	
-	if (key ) then
+	if (key) then
         button.hotkey:SetText(key);
         button.hotkey:Show();
     else
@@ -68,24 +67,31 @@ function TBClearPanel()
 end
 
 function TBInitPanel(bot)
-	--print()
-	local role = select(6,GetSpecializationInfo(GetSpecialization()))
-	--print(role)
-	
-	local buttons = bot.Buttons
+	TBClearPanel()
 
-	if (buttons) then
-		for idx, value in pairs(buttons) do
-			button = PanelFrame.Buttons[idx]
-			button:Show()
-			button.icon:SetTexture(value.Icon)
-			button.GroupId = value.GroupId
-			button.GroupValue = value.ToolTip
-			button:SetScript("OnClick", TBGroupControl)
-			if value.default then
-				button:SetChecked(true)
-				TBGroupControl(button)
-			end
-		end	
+	if bot and not bot.advanced then
+		PanelFrame:Show()
+		local role = select(6,GetSpecializationInfo(GetSpecialization()))
+
+		
+		local buttons = bot.Buttons
+
+		if (buttons) then
+			for idx, value in pairs(buttons) do
+				button = PanelFrame.Buttons[idx]
+				button:Show()
+				button:RegisterForClicks("LeftButtonUp")
+				button.icon:SetTexture(value.Icon)
+				button.GroupId = value.GroupId
+				button.GroupValue = value.ToolTip
+				button:SetScript("OnClick", TBGroupControl)
+				if value.default then
+					button:SetChecked(true)
+					TBGroupControl(button)
+				end
+			end	
+		end
+	else
+		PanelFrame:Hide()
 	end
 end
