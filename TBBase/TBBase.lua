@@ -1,5 +1,8 @@
 ﻿print("TBBase.lua")
 
+-- Таблица для выведения часто обновляемых значений
+TBLogValues = {}
+
 function TBRegister(bot)
 	if bot == nil then
 		print("Передан пустой бот")
@@ -33,7 +36,6 @@ end
 
 function TBOnPlayerLogin(self)
 	TBCreateIndicators(self)
-	TBCreatePanel(self)
 	AdvancedPanelFrame:Init()
 	TBAssignBot(self)
 	
@@ -69,8 +71,6 @@ function TBAssignBot(self)
 	IndicatorFrame.Spec = nil
     TBUnregisterAllSpells() 
 	IndicatorFrame.Spec = TBGetSpec()
-	
-	TBInitPanel(IndicatorFrame.Spec)
 	AdvancedPanelFrame:AssignSpec(IndicatorFrame.Spec)
 	
 	if IndicatorFrame.Spec then
@@ -218,12 +218,9 @@ end
 
 function TBOnUpdate()
 	if IndicatorFrame.Spec then
-		local groups = PanelFrame.Groups
-		if IndicatorFrame.Spec.advanced then
-			groups = AdvancedPanelFrame.Groups
-		end		
 	
-		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), groups) or TBMacroCommands()
+		BaseGroupHelper.modes = AdvancedPanelFrame:Modes()
+		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), BaseGroupHelper.modes) or TBMacroCommands()
 		if cmd then
 			IndicatorFrame.LastCommand = cmd
 		end
@@ -264,7 +261,14 @@ function TBLeaveCombat()
 	IndicatorFrame.InCombat = nil	
 end
 
+function TBShowSpells()
+	local _,_,offset = GetSpellTabInfo(3)
+	
+    for index = 1, offset, 1 do
+		print(GetSpellInfo(index, "spell"))
+	end
 
+end 
 
 
 

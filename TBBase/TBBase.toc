@@ -7,9 +7,7 @@ TBEvent.xml
 TBEvent.lua
 TBBase.xml
 TBBase.lua
-TBPanel.lua
 TBPanelAdvanced.lua
-TBCasting.lua
 TBIndicator.lua
 TBGroups.lua
 TBCanUse.lua

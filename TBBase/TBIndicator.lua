@@ -28,10 +28,10 @@
 end
 
 function TBClearControls()
+	
     for i = 0, IndicatorFrame.Rows * 2 - 1, 1 do
-        IndicatorFrame.Frames[i].Tex:SetTexture(0.0, 0.0, 0.0, 1.0);
+        IndicatorFrame.Frames[i].Tex:SetVertexColor(0, 0, 0)
     end
-	--IndicatorFrame.DebugIndicatorName = nil
 end
 
 function TBSetBindings()	
@@ -166,6 +166,6 @@ function TBCommand(name)
 	local id = IndicatorFrame.Spells[name] or IndicatorFrame.Targets[name]
 	
 	if id then
-		IndicatorFrame.Frames[ id ].Tex:SetTexture(1.0, 1.0, 1.0, 1.0);
+		IndicatorFrame.Frames[ id ].Tex:SetVertexColor(1, 1, 1)
 	end
 end

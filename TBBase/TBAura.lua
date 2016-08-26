@@ -1,5 +1,12 @@
 function BaseGroupHelper:ParseAuraParams(...)
 	local result = {}
+	TBLogValues["stacks filled"] = nil
+	
+	result.time = 0
+	result.timeBound = ">"
+	result.stacks = 0
+	result.stacksBound = ">"	
+	
 	--перечисляем все параметры
 	local params = select("#", ...)
 	for i = 1,params,1 do
@@ -14,18 +21,24 @@ function BaseGroupHelper:ParseAuraParams(...)
 			result.inverse = 1
 		end
 		
-		if type(val) == "table" then
-			if val.left then
-				result.left = val.left
-			end
-			
+		if type(val) == "table" then			
 			if val.stacks then
 				result.stacks = val.stacks
+				result.stacksBound = val.bound
+				TBLogValues["stacks filled"] = 1
 			end
 			
+			if val.time then
+				result.time = val.time
+				result.timeBound = val.bound
+			end	
+			
+			if val.left then
+				print("ERROR: found lagacy param <left>")
+			end
 			if val.skip then
-				result.skip = val.skip
-			end			
+				print("ERROR: found lagacy param <skip>")
+			end
 		end
 	end
 	-- если не указано - считаем за 0
@@ -47,28 +60,20 @@ function BaseGroupHelper:UnitHasAuraMask(target, spellID, params, mask)
 			if et == 0 then
 				cond = 1
 			end
-			
-			if params.left then
-				if GetTime() > et - params.left then 
-					cond = 1
-				end
-			else
-				if GetTime() < et - params.skip then 
-					cond = 1
-				end
+
+			local t = et - GetTime()
+			if (params.timeBound == "<" and t <= params.time) or (params.timeBound == ">" and t >= params.time) then
+				cond = 1
 			end
 
 			if cond then
 				-- если указано требование к количеству стаков - считаем их количество
-				if params.stacks then
-					
-					local stacks = select(4, UnitAura(target, i, mask))
-					if  stacks >= params.stacks then
-						return 1
-					else
-						return nil
-					end
-				else
+				local stacks = select(4, UnitAura(target, i, mask)) or 0
+				TBLogValues["stacks count"] = stacks
+				TBLogValues["stacks condition"] = params.stacks
+				TBLogValues["stacks bound"] = params.stacksBound
+				
+				if (params.stacksBound == "<" and stacks <= params.stacks) or (params.stacksBound == ">" and stacks >= params.stacks) then
 					return 1
 				end
 			end

@@ -1,142 +1,123 @@
 ﻿local bot = {
+			["Talents"] = {
+				["Трепещи!"] = 19226,
+				["Призрачное отражение"] = 19220,
+				["Надгробный камень"] = 22015,
+				["Захват рун"] = 19231,
+				["Воля мертвых"] = 19230,
+				["Склеп"] = 19221,
+				["Антимагический барьер"] = 22135,
+				["Кровавое зеркало"] = 21208,
+				["Кровавые черви"] = 19165,
+				["Разбитое сердце"] = 19166,
+				["Кровавая метка"] = 22013,
+				["Пожирание душ"] = 19219,
+				["Буря костей"] = 21207,
+				["Марш проклятых"] = 19228,
+				["Чистилище"] = 21209,
+				["Нечестивый оплот"] = 19232,
+				["Быстрое разложение"] = 19218,
+				["Кровопийца"] = 19217,
+				["Красная жажда"] = 22014,
+				["Жесткая хватка"] = 19227,
+				["Кровоотвод"] = 22134,
+			},
 			["Name"] = "Кровь",
 			["Buttons"] = {
 				{
-					["ToolTip"] = "Off",
+					["Type"] = "trigger",
 					["Icon"] = "Interface\\Icons\\ABILITY_SEAL",
-					["GroupId"] = "Run",
+					["Name"] = "Stop",
 				}, -- [1]
 				{
-					["ToolTip"] = "On",
+					["Type"] = "trigger",
 					["Icon"] = "Interface\\Icons\\Ability_Warrior_Bladestorm",
-					["GroupId"] = "AoE",
+					["Name"] = "AoE",
 				}, -- [2]
 				{
-					["ToolTip"] = "On",
-					["Icon"] = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
-					["GroupId"] = "Burst",
-				}, -- [3]
-				{
-					["ToolTip"] = "On",
-					["Icon"] = "Interface\\ICONS\\INV_Misc_GroupNeedMore.blp",
-					["GroupId"] = "Party",
-				}, -- [4]
+					Type = "spell",
+					Spell = 43265, -- Смерть и разложение
+				},
 			},
 			["Id"] = 1,
 			["Spells"] = {
-				["Темная власть"] = 56222,
+				["Дробление хребта"] = 195182,
+				["Смерть и разложение"] = 43265,
+				["Кровавая метка"] = 206940,
+				["Асфиксия"] = 221562,
+				["Антимагический панцирь"] = 48707,
 				["Заморозка разума"] = 47528,
 				["Вскипание крови"] = 50842,
 				["Удар смерти"] = 49998,
-				["Вытягивание чумы"] = 123693,
+				["Удар в сердце"] = 206930,
 				["Хватка смерти"] = 49576,
-				["Вспышка болезни"] = 77575,
-				["Кровоотвод"] = 45529,
-				["Лик смерти"] = 47541,
-				["Ледяное прикосновение"] = 45477,
-				["Удар чумы"] = 45462,
+				["Прикосновение смерти"] = 195292,
+				["Кровопийца"] = 206931,
+				["Кровавое зеркало"] = 206977,
+				["Кровь вампира"] = 55233,
+				["Темная власть"] = 56222,
 			},
 			["Buffs"] = {
-				["Решимость"] = 158300,
+				["Смерть и разложение"] = 188290,
 				["Кровавая чума"] = 55078,
-				["Хватка смерти"] = 51399,
-				["Власть крови"] = 48263,
-				["Алая Плеть"] = 81141,
-				["Тень смерти"] = 164047,
+				["Нечестивая сила"] = 53365,
 				["Щит крови"] = 77535,
-				["Озноб"] = 55095,
-				["Запах крови"] = 50421,
-				["Заряд крови"] = 114851,
+				["Алая Плеть"] = 81141,
+				["Камень Шаманов: Дух Волка"] = 155347,
+				["Хватка смерти"] = 51399,
+				["Склеп"] = 219788,
+				["Защитник рамкахенов"] = 93337,
+				["Костяной щит"] = 195181,
 			},
 			["Class"] = "DEATHKNIGHT",
 		}
+
+function BaseGroup:RunesReady(count, dt)
+	local ready = 0
+	for i= 1,6,1 do
+		local start, duration, runeReady = GetRuneCooldown(i)
+		
+		if runeReady then
+			ready = ready + 1
+		else
+			local et = start + duration - GetTime()
+			if et < dt then
+				ready = ready +1
+			end
+		end
+	end	
 	
-
-
-function BaseGroup:BloodRunes(bound, runes)
-	local r = GetRuneCount(1) + GetRuneCount(2)
-
-	if (bound == "<" and r <= runes) or (bound == ">" and r >= runes) then
+	if ready >= count then
 		return self
 	end
+	
 	return self:CreateDerived()
 end
-
-function BaseGroup:FrostRunes(bound, runes)
-	local r = GetRuneCount(3) + GetRuneCount(4)
-
-	if (bound == "<" and r <= runes) or (bound == ">" and r >= runes) then
-		return self
-	end
-	return self:CreateDerived()
-end
-
-function BaseGroup:UnholyRunes(bound, runes)
-	local r = GetRuneCount(5) + GetRuneCount(6)
-
-	if (bound == "<" and r <= runes) or (bound == ">" and r >= runes) then
-		return self
-	end
-	return self:CreateDerived()
-end
-
+		
 function bot:OnUpdate(g, list, modes)
-	
 	if IsMounted() then return end	
-	if modes.Run == "Off" then 
-		return 
+	if modes.toggle.Stop then 
+		return
 	end
 	
 	list:Cast( "Заморозка разума", g.target:CanUse("Заморозка разума"):CanInterrupt():Best() )
 	
-	list:Cast( "Вспышка болезни", g.target:CanUse("Вспышка болезни"):Aura("Кровавая чума", "mine", "inverse"):Best() )
-	list:Cast( "Вспышка болезни", g.target:CanUse("Вспышка болезни"):Aura("Озноб", "mine", "inverse"):Best() )
+	list:Cast( "Смерть и разложение", g.target:CanUse("Смерть и разложение"):Enabled("Смерть и разложение"):Best() )
 	
-	list:Cast( "Удар чумы", g.target:CanUse("Удар чумы"):Aura("Кровавая чума", "mine", "inverse"):Best() )
-	list:Cast( "Ледяное прикосновение", g.target:CanUse("Ледяное прикосновение"):Aura("Озноб", "mine", "inverse"):Best() )
+	list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):Energy(">", 100):Best() )
+	list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):HP("<", 70, "self"):Best() )
 	
-	if modes.AoE == "On" then
-		list:Cast( "Лик смерти", g.target:CanUse("Лик смерти"):Energy(">", 80):Best() )
-		
-		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):HP("<", 80, "self"):Best() )
-		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):FrostRunes(">", 2):Best())
-		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):UnholyRunes(">", 2):Best())
-		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):CanUse("Вытягивание чумы"):HP("<", 80, "self"):Best())
-		
-		list:Cast( "Вытягивание чумы", g.target:CanUse("Вытягивание чумы"):FrostRunes("<", 0):UnholyRunes("<", 0):HP("<", 80, "self"):Best() )
-		list:Cast( "Лик смерти", g.target:CanUse("Лик смерти"):Energy(">", 50):Best() )
-		
-		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):Aura("Алая Плеть", "mine", "self"):Best() )
-		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):Best() )
-		
-		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):BloodRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
-		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):FrostRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
-		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):UnholyRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )		
-	else
-		list:Cast( "Лик смерти", g.target:CanUse("Лик смерти"):Energy(">", 80):Best() )
-		
-		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):HP("<", 80, "self"):Best() )
-		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):FrostRunes(">", 2):Best())
-		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):UnholyRunes(">", 2):Best())
-		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):CanUse("Вытягивание чумы"):Best())
-		list:Cast( "Удар смерти", g.target:CanUse("Удар смерти"):Aura("Заряд крови", "mine", "self", {stacks=10}):Best() )
+	list:Cast( "Прикосновение смерти", g.target:CanUse("Прикосновение смерти"):Talent("Пожирание душ"):Aura("Кровавая чума", "mine", "inverse", {time=5, bound=">"}):Best() )
+	
+	list:Cast( "Дробление хребта", g.target:CanUse("Дробление хребта"):Aura("Костяной щит", "mine","self","inverse", {stacks=8, bound=">"}):Best() )
+	list:Cast( "Дробление хребта", g.target:CanUse("Дробление хребта"):Aura("Костяной щит", "mine","self", {time=3, bound="<"}):Best() )
+	list:Cast( "Удар в сердце", g.target:CanUse("Удар в сердце"):RunesReady(4, 2):Best() )
+	
+	
+	list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар в сердце"):Best() )
 
-		
-		list:Cast( "Вытягивание чумы", g.target:CanUse("Вытягивание чумы"):FrostRunes("<", 0):UnholyRunes("<", 0):Best() )
-		list:Cast( "Лик смерти", g.target:CanUse("Лик смерти"):Energy(">", 50):Best() )
-		
-		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):BloodRunes(">", 2):Best() )
-		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):Aura("Алая Плеть", "mine", "self"):Best() )
-		list:Cast( "Вскипание крови", g.target:CanUse("Вскипание крови"):InSpellRange("Удар смерти"):BloodRunes(">", 1):Aura("Заряд крови", "mine", "self", {stacks=11}):Best() )
-		
-		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):BloodRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
-		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):FrostRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
-		list:Cast( "Кровоотвод", g.player:CanUse("Кровоотвод"):UnholyRunes("<", 0):Aura("Заряд крови", "mine", "self", {stacks=5}):Best() )
-	
-	end
-		
 	return list:Execute()
-end	
+end
 
 		
 TBRegister(bot)

@@ -1,9 +1,10 @@
+local TBCorrectSpells = {}
+
 function TBSpecInfoSet()
 	if not IsLoggedIn() then
 		return
 	end
 	
-
 	TBSpecInfoData = TBSpecInfoData or {}
 	
 	local _,class = UnitClass("player")
@@ -23,6 +24,14 @@ function TBSpecInfoSet()
 			spec.Name = name
 			spec.Spells = {}	
 			spec.Buffs = {}	
+			spec.Talents = {}
+			
+			for col = 1,3,1 do
+				for row = 1,7,1 do
+					local id,nm = GetTalentInfo(row, col, 1)
+					spec.Talents[nm] = id
+				end
+			end
 			
 			--Interface\\ICONS\\INV_Banner_01.blp
 			--Interface\\ICONS\\INV_Misc_Bandage_08.blp
@@ -36,54 +45,50 @@ function TBSpecInfoSet()
 				spec.Buttons = 
 					{
 						[1] = {
+							Type = "trigger",
 							Icon = "Interface\\Icons\\ABILITY_SEAL",
-							ToolTip = "Off",
-							GroupId = "Run",
+							Name = "Stop",
 						},
 						[2] = {
+							Type = "trigger",
 							Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
-							ToolTip = "On",
-							GroupId = "AoE"
-						},
+							Name = "AoE",
+						},				
 						[3] = {
-							["Icon"] = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
-							["ToolTip"] = "On",
-							["GroupId"] = "Burst",
+							Type = "trigger",
+							Icon = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
+							Name = "Burst",
 						},
-						[4] = {
-							["Icon"] = "Interface\\ICONS\\INV_Misc_GroupNeedMore.blp",
-							["ToolTip"] = "On",
-							["GroupId"] = "Party",
-							["default"] = 1
-						},	
 					}
 			end
 			if role == "TANK" then
 				-- дефолтные заглушки кнопочек
 				spec.Buttons = 
 					{
-						[1] = {
-							Icon = "Interface\\Icons\\ABILITY_SEAL",
-							ToolTip = "Off",
-							GroupId = "Run",
-						},
-						[2] = {
-							Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
-							ToolTip = "On",
-							GroupId = "AoE"
-						},
-						[3] = {
-							["Icon"] = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
-							["ToolTip"] = "On",
-							["GroupId"] = "Burst",
-						},
-						[4] = {
-							["Icon"] = "Interface\\ICONS\\INV_Misc_GroupNeedMore.blp",
-							["ToolTip"] = "On",
-							["GroupId"] = "Party",
-						},	
+
 					}
 			end
+			if role == "HEALER" then
+				-- дефолтные заглушки кнопочек
+				spec.Buttons = 
+					{
+						[1] = {
+							Type = "trigger",
+							Icon = "Interface\\Icons\\ABILITY_SEAL",
+							Name = "Stop",
+						},	
+						[2] = {
+							Type = "trigger",
+							Icon = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
+							Name = "Burst",
+						},
+						[3] = {
+							Type = "trigger",
+							Icon = "Interface\\ICONS\\Spell_Holy_SummonLightwell.blp",
+							Name = "Preheal",
+						},					
+					}
+			end			
 		end
 	end
 
@@ -92,6 +97,21 @@ function TBSpecInfoSet()
 	
 	TBSpecInfo.spec = TBSpecInfoData[class][name]
 	TBSpecInfoUpdateList()
+	TBCreateCorrectSpellList()	
+end
+
+function TBCreateCorrectSpellList()
+	local _,_,offset = GetSpellTabInfo(3)
+	
+	TBCorrectSpells = {}
+    for index = 1, offset, 1 do
+		local id = select(7,GetSpellInfo(index, "spell"))
+		local name = GetSpellInfo(index, "spell")
+		if id then -- сраный косяк близов
+			TBCorrectSpells[id] = name
+		end
+	end
+	
 end
 
 function TBSpecInfoClear()
@@ -109,11 +129,9 @@ function TBSpecInfoAddSpell(self,event,unitID,spell,rank,lineID,spellID)
 	local buffs = TBSpecInfo.spec.Buffs
 	local spells = TBSpecInfo.spec.Spells
 	
-	-- у хороших спеллов lineID не нулевой, у остальных 0
-	if lineID ~= 0 then		
+	if TBCorrectSpells[spellID] then		
 		if spells[spell] == nil then
 			spells[spell] = spellID
-			
 			buffs[spell] = nil 
 		end
 	end

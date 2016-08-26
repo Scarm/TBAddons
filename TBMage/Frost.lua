@@ -1,6 +1,40 @@
 local bot = {
 			["Name"] = "Лед",
 			["Buttons"] = {
+				[1] = {
+					Type = "trigger",
+					Icon = "Interface\\Icons\\ABILITY_SEAL",
+					Name = "Stop",
+				},
+				[2] = {
+					Type = "trigger",
+					Icon = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
+					Name = "Burst",
+				},
+			},
+			["Id"] = 3,
+			["Spells"] = {
+			},
+			["Class"] = "MAGE",
+			["Buffs"] = {
+			},
+		}
+		
+function bot:OnUpdate(g, list, modes)
+	if IsMounted() then return end	
+	if modes.toggle.Stop then 
+		return
+	end
+	
+	return list:Execute()
+end
+
+		
+TBRegister(bot)
+--[[
+local bot = {
+			["Name"] = "Лед",
+			["Buttons"] = {
 				{
 					["ToolTip"] = "Off",
 					["Icon"] = "Interface\\Icons\\ABILITY_SEAL",
@@ -132,3 +166,4 @@ end
 
 		
 TBRegister(bot)
+--]]

@@ -1,5 +1,5 @@
 ﻿<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
-	<Frame name="IndicatorFrame" parent="UIParent" FrameStrata="HIGH">
+	<Frame name="IndicatorFrame" parent="UIParent">
 		<Anchors>
 			<Anchor point="TOPLEFT"></Anchor>
 		</Anchors>
@@ -23,29 +23,17 @@
 				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBOnPlayerLogin")
 				--TBSubscribeEvent(self,"SPELLS_CHANGED", "TBCreateSpellMaps")
 				
-				TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBClearControls")
 				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBAssignBot")
-				
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_START", "TBLastCastUpdate")
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_CHANNEL_UPDATE", "TBLastCastUpdate")
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_DELAYED", "TBLastCastUpdate")
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_INTERRUPTED", "TBLastCastUpdateFailed")
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_START", "TBLastCastUpdate")
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBLastCastUpdate")
-				
+			
 				TBSubscribeEvent(self,"PLAYER_ENTER_COMBAT", "TBEnterCombat")
 				TBSubscribeEvent(self,"PLAYER_LEAVE_COMBAT", "TBLeaveCombat")
 				
 				TBSubscribeEvent(self,"COMBAT_LOG_EVENT_UNFILTERED", "TBLoSdetect")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBLoSData")
 				
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBPrintEvent")
-				--TBSubscribeEvent(self,"UNIT_SPELLCAST_START", "TBPrintEvent")
 				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBPrintEvent")
-				
-				--TBSubscribeEvent(self,"MAIL_SHOW", "TBPrintEvent")
-				--TBSubscribeEvent(self,"MAIL_CLOSED", "TBPrintEvent")
-				
+				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBPrintEvent")
+			
 			</OnLoad>
 			<OnUpdate>
 				TBOnUpdate()
@@ -53,7 +41,7 @@
 		</Scripts>
 	</Frame>
 	
-	<Button name="AutomatonFrameTemplate" virtual="true" inherits="SecureActionButtonTemplate" FrameStrata="HIGH">
+	<Button name="AutomatonFrameTemplate" virtual="true" inherits="SecureActionButtonTemplate">
         <Size>
             <AbsDimension x="5" y="5"/>
         </Size>
@@ -64,6 +52,7 @@
                         <Anchor point="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT"/>
                     </Anchors>
+					<Color g="1" r="1" b="1"/>  
 				</Texture>
             </Layer>
 		</Layers>
@@ -82,7 +71,7 @@
 		</Scripts>
 	</CheckButton>
 	
-
+<!--
 	<Frame name="PanelFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">
 		<Anchors>
 			<Anchor point="CENTER"></Anchor>
@@ -114,7 +103,7 @@
 		</Scripts> 
 	</Frame>
 	
-	
+-->	
 	
 	
 	<CheckButton name="TBAdvancedButtonTemplate" inherits="ActionButtonTemplate" virtual="true">

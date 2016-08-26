@@ -5,6 +5,55 @@ function BaseGroup:Condition(value)
 	return self:CreateDerived()
 end
 
+function BaseGroup:Toggle(mode)
+	if BaseGroupHelper.modes then
+		if BaseGroupHelper.modes.toggle[mode] then
+			return self
+		else
+			return self:CreateDerived()
+		end
+	end
+	
+	return nil
+end
+
+function BaseGroup:Enabled(key, activationType)
+	if BaseGroupHelper.modes  then
+		local spellID = IndicatorFrame.Spec.Spells[key]
+		if activationType then
+			if BaseGroupHelper.modes[activationType] == nil then
+				return nil
+			end
+			
+			if BaseGroupHelper.modes[activationType][spellID] then
+				return self
+			else
+				return self:CreateDerived()
+			end
+		else
+			-- Любой вид активации			
+			if BaseGroupHelper.modes.auto[spellID] or BaseGroupHelper.modes.manual[spellID] then
+				return self
+			else
+				return self:CreateDerived()
+			end
+		end
+	end
+	
+	return nil
+end
+
+function BaseGroup:Talent(key, value)
+	local talentID = IndicatorFrame.Spec.Talents[key]
+	local enabled = select(4,GetTalentInfoByID(talentID,1))
+	
+	value = value or true
+	if (enabled and value) or (not enabled and not value) then
+		return self
+	end
+	
+	return self:CreateDerived()
+end
 
 -- Проверяем, что до восстановления спелла осталось value сек
 function BaseGroup:SpellCooldown(key, value, bound)
@@ -40,7 +89,7 @@ function BaseGroup:InSpellRange(key, inverse)
 	
 	return result
 end
-
+--[[
 function BaseGroup:ZeroThread()
 	local result = self:CreateDerived()
 	
@@ -54,7 +103,7 @@ function BaseGroup:ZeroThread()
 	return result
 end
 
---[[
+
 function BaseGroup:HasBossDebuff()
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
@@ -72,6 +121,23 @@ function BaseGroup:HasBossDebuff()
 end
 --]]
 
+function BaseGroup:AuraGroup(group)
+local result = self:CreateDerived()
+	for key,value in pairs(self) do
+		for i=1,40,1 do
+			local name = UnitAura(key,i,"HARMFUL")
+			local id = select(11, UnitAura(key,i,"HARMFUL"))
+			
+			if id and name then
+				if TBAttributes[id] and TBAttributes[id][group] then
+					result[key] = value
+				end
+			end
+		end	
+	end
+	
+	return result	
+end
 
 function BaseGroup:Moving(value)
 	local speed = GetUnitSpeed("player")
@@ -110,9 +176,6 @@ function BaseGroup:CanInterrupt(key)
 
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
-		--local notInterruptible1 = select(9,UnitCastingInfo(key))
-		--local notInterruptible2 = select(8,UnitChannelInfo(key))
-		--if (UnitCastingInfo(key) and not notInterruptible1) or (UnitChannelInfo(key) and not notInterruptible2) then
 		if IsCast(key) or IsChannel(key) then
 			result[key] = value
 		end
@@ -157,10 +220,18 @@ end
 
 
 
-function BaseGroup:Charges(key, charges)
+function BaseGroup:Charges(key, charges, dt)
 	local spellID = IndicatorFrame.Spec.Spells[key]
 	
-	local ch = GetSpellCharges(spellID)
+	local ch, maxCh, start, duration = GetSpellCharges(spellID)
+	dt = dt or 0
+	
+	if ch and ch < maxCh and ch > 0 then
+		if GetTime() > start + duration - dt then
+			ch = ch + 1
+		end
+	end
+	
 	if ch and charges and ch >= charges then
 		return self
 	end

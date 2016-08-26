@@ -1,4 +1,4 @@
-AdvancedPanelFrame.buttonsCount = 8
+AdvancedPanelFrame.buttonsCount = 12
 
 function UpdateHotkey(button)
 	local key = GetBindingKey("CLICK "..button:GetName()..":LeftButton");
@@ -12,7 +12,6 @@ function UpdateHotkey(button)
 end
 
 function AdvancedPanelFrame:Init()
-	print("AdvancedPanelFrame:Init()")
 	lastFrame = self	
 	self.Buttons = {}
 	
@@ -26,8 +25,7 @@ function AdvancedPanelFrame:Init()
 		
 		button:SetPoint("LEFT", lastFrame,"RIGHT", offset, 0)
 		button.hotkey = _G[button:GetName().."HotKey"];
-		--button.cooldown:SetEdgeTexture("Interface\\Cooldown\\edge");
-		--button.cooldown:SetSwipeColor(0, 0, 0);
+		button.cooldown:SetSwipeColor(0, 0, 0)
 		TBSubscribeEvent(button,"UPDATE_BINDINGS", "UpdateHotkey")
 		lastFrame = button
 		
@@ -36,9 +34,9 @@ function AdvancedPanelFrame:Init()
 	end	
 end
 
-function TBAdvancedButtonTemplate_OnSpellCast(self,event,unitID,spell,rank,lineID,spellID)
+function TBAdvancedButtonTemplate_OnSpellCast(self,...)
 	if self.controller then
-		self.controller:OnSpellCast(self,event,unitID,spell,rank,lineID,spellID)
+		self.controller:OnSpellCast(self,...)
 	end
 end
 
@@ -65,6 +63,10 @@ end
 function Controller:OnSpellCast(self,event,unitID,spell,rank,lineID,spellID)
 	print("Controller:OnSpellCast()")
 end
+function Controller:State(data) -- заполнить информацию о себе
+	print("Controller:State()")
+end
+
 function Controller:Assign(button)
 	button.controller = self
 	self.button = button
@@ -83,7 +85,12 @@ function TriggerController:OnClick(button, key)
 	button:SetChecked(self.checked == 1)
 end
 function TriggerController:OnUpdateCooldown(button) end
-function TriggerController:OnSpellCast(button,event,unitID,spell,rank,lineID,spellID) end
+function TriggerController:OnSpellCast(button,event,unit,spell,xxx,lineID,spellID) end
+
+function TriggerController:State(data) -- заполнить информацию о себе
+	data.toggle = data.toggle or {}
+	data.toggle[self.Name] = self.checked
+end
 
 function TriggerController:Create(info)
 	if info.Type == "trigger" then
@@ -99,128 +106,117 @@ function TriggerController:Assign(button)
 	button:RegisterForClicks("LeftButtonUp")
 end
 
-
-
-
-
-
-
-
---[[
-
-function AdvancedPanelFrame:SpellCast(event,unitID,spell,rank,lineID,spellID)
-	if lineID ~= 0 then	
-		if AdvancedPanelFrame.Manual[spellID] then
-			AdvancedPanelFrame.Manual[spellID]:SetChecked(false)
-			AdvancedPanelFrame.Manual[spellID] = nil
-		end
-	end
-end
-
-function AdvancedPanelFrame:UpdateCooldown()
-	for idx = 1, self.buttonsCount do
-		button = self.Buttons[idx]
-		if button.Type == "spell" then
-			local start, duration, enable = GetSpellCooldown(button.Spell);
-			CooldownFrame_SetTimer(button.cooldown, start, duration, enable);
-		end
-	end
-end
-
-AdvancedPanelFrame.Types = {}
-AdvancedPanelFrame.Types["trigger"] = {}
-AdvancedPanelFrame.Types["trigger"].Handler = function(self)
-	if self:GetChecked() then
-		AdvancedPanelFrame.Groups[self.Name] = self
-	else
-		AdvancedPanelFrame.Groups[self.Name] = nil
-	end
-	print("trigger handler", self.Name, AdvancedPanelFrame.Groups[self.Name])
-end
-AdvancedPanelFrame.Types["trigger"].Setter = function(self, button)
-	self:Show()
-	self.icon:SetTexture(button.Icon)
-	self.AutoCastable:Hide()
-	self.Name = button.Name
-	self:RegisterForClicks("LeftButtonUp")
-end
-
-AdvancedPanelFrame.Types["spell"] = {}
-AdvancedPanelFrame.Types["spell"].Handler = function(self, button)
-	if button == "RightButton" then
-		
-		if AdvancedPanelFrame.Auto[self.Spell] then
-			AdvancedPanelFrame.Auto[self.Spell] = nil
-			AutoCastShine_AutoCastStop(self.Shine)
+-- Контроллер для спелов
+SpellController = {}
+setmetatable(SpellController, {__index = Controller})
+function SpellController:OnClick(button, key)
+	if key == "LeftButton" then
+		if self.checked then
+			self.checked = nil
 		else
-			AdvancedPanelFrame.Auto[self.Spell] = self
-			AutoCastShine_AutoCastStart(self.Shine)
+			self.checked = 1
 		end
-		
-		self:SetChecked(self:GetChecked() == nil )
-	else
-		
-		if AdvancedPanelFrame.Manual[self.Spell] then
-			AdvancedPanelFrame.Manual[self.Spell] = nil
-			self:SetChecked(false)
+	end
+	
+	if key == "RightButton" then
+		if self.auto then
+			self.auto = nil
+			AutoCastShine_AutoCastStop(button.Shine)
 		else
-			AdvancedPanelFrame.Manual[self.Spell] = self
-			self:SetChecked(true)
+			self.auto = 1
+			AutoCastShine_AutoCastStart(button.Shine)
 		end
-		
 	end	
+	
+	button:SetChecked(self.checked == 1)
 end
-AdvancedPanelFrame.Types["spell"].Setter = function(self, button)
-	self:Show()
-	self.icon:SetTexture(GetSpellTexture(button.Spell))
-	self.AutoCastable:Show()
-	self.Spell = button.Spell
-	self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+function SpellController:OnUpdateCooldown(button)
+	local start, duration, enable = GetSpellCooldown(self.Spell)
+	CooldownFrame_Set(button.cooldown, start, duration, enable)
 end
---]]
+function SpellController:OnSpellCast(button,event,unit,spell,xxx,lineID,spellID)
+	if spellID == self.Spell then
+		self.checked = nil
+		button:SetChecked(self.checked == 1)
+	end
+end
+
+function SpellController:State(data) -- заполнить информацию о себе
+	data.auto = data.auto or {}
+	data.manual = data.manual or {}
+	data.auto[self.Spell] = self.auto
+	data.manual[self.Spell] = self.checked
+end
+
+function SpellController:Create(info)
+	if info.Type == "spell" then
+		
+		if info.talent then
+			local enabled = select(4,GetTalentInfoByID(info.talent,1))
+			if enabled then	
+				setmetatable(info, {__index = SpellController})
+				return info
+			end
+		else
+			setmetatable(info, {__index = SpellController})
+			return info
+		end
+	end
+end
+function SpellController:Assign(button)
+	button.controller = self
+	button:Show()
+	button.icon:SetTexture(GetSpellTexture(self.Spell))
+	button.AutoCastable:Show()
+	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	local start, duration, enable = GetSpellCooldown(self.Spell)
+	CooldownFrame_Set(button.cooldown, start, duration, enable)
+end
 
 function AdvancedPanelFrame:AssignSpec(spec)
-	self.Groups = {}
-	
-	
 	for idx = 1, self.buttonsCount do
 		button = self.Buttons[idx]
 		button:Hide()
 		button.Controller = nil
 	end
-	
-	
-	self.Auto = {}
-	self.Manual = {}
-	
-	if spec and spec.advanced then
+
+	if spec then
 		self:Show()
-		for idx, value in pairs(spec.Buttons or {}) do
+		
+		local idx = 1
+		local pos = 1
+		local buttons = spec.Buttons or {}
+		while buttons[idx] do
 			
 			if idx <= self.buttonsCount then
-				button = self.Buttons[idx]
-							
-				local controller = TriggerController:Create(value) or Controller
-				
-				controller:Assign(button)
-				
-				--button:Show()
+				button = self.Buttons[pos]
+				local value = buttons[idx]
+				local controller = TriggerController:Create(value) or SpellController:Create(value)
+				if controller then
+					controller:Assign(button)
+					pos = pos + 1
+				end
 			else
-				print("Не понятный тип кнопки:", value.Type or "nil")
-			end			
-			--[[
-			if value.Type and self.Types[value.Type] and idx <= self.buttonsCount then
-				button = self.Buttons[idx]
-				self.Types[value.Type].Setter(button, value)
-				button:SetScript("OnClick", self.Types[value.Type].Handler)
-				button.Type = value.Type
-			else
-				print("Не понятный тип кнопки:", value.Type or "nil")
-			end
-			--]]
-		end	
+				print("Слишком много кнопок!")
+			end		
+			
+			idx = idx + 1
+		end
+		
 	else
 		self:Hide()
-	end
-	
+	end	
 end
+
+function AdvancedPanelFrame:Modes()
+	local result = {}
+	
+	for i = 1, self.buttonsCount do
+		local button = self.Buttons[i]
+		if button.controller then
+			button.controller:State(result)
+		end
+	end
+	return result
+end
+

@@ -4,11 +4,17 @@ function TBKeyValuesFill(values)
 	
 	local gr = TBGroups()
 	
-	--values["LastCommand"] = IndicatorFrame.LastCommand
+	values["LastCommand"] = IndicatorFrame.LastCommand
+	
+	
+
+	--[[
+	for k,v in pairs(TBLogValues) do
+		values[k] = ToString(v)
+	end
+	--]]
 	
 	--values["LastCastTarget"] = IndicatorFrame.LastTarget
-	
-	--values["UnitAffectingCombat"] = ToString(UnitAffectingCombat("target"))
 	
 	--values["focusname"] = ToString(GetUnitName("focus"))
 	
@@ -18,15 +24,32 @@ function TBKeyValuesFill(values)
 		
 	--values["Частица"] = ToString(gr.party:Aura("Частица Света", "mine"):MinHP())	
 	
+	--[[
 	for i = 1,GetNumSavedInstances(),1 do
 		local nm,_,_,diff,locked = GetSavedInstanceInfo(i)		
 		if diff == 23 and not locked then
 			values[nm] = ToString(diff).."("..ToString(locked)..")"
 		end
 	end
+	--]]
+	--[[
+	for i= 1,6,1 do
+		local start, duration, runeReady = GetRuneCooldown(i)
+		local et = start + duration - GetTime()
+		if runeReady then
+			et = 0
+		end
+		
+		values["rune"..i] = ToString( et )
+	end
+	--]]
 	
 	GetShapeshiftForm()
 	values["ShapeshiftForm"] = ToString(GetShapeshiftForm())
+	values["in raid"] = ToString(IsInRaid())
+	values["in party"] = ToString(IsInGroup())
+	values["mode"] = ToString(TBLogValues.mode)
+	
 	--[[
 	for i=1,40,1 do
 		local name = UnitAura("target",i)

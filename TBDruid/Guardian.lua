@@ -1,101 +1,97 @@
 ﻿local bot = {
+			["Talents"] = {
+				["Родство с исцелением"] = 22159,
+				["Острые колючки"] = 22419,
+				["Массовое оплетение"] = 18576,
+				["Душа леса"] = 21709,
+				["Родство с силой зверя"] = 22156,
+				["Кровавое бешенство"] = 22420,
+				["Хранитель земли"] = 22423,
+				["Раздавить"] = 22425,
+				["Родство с балансом"] = 22163,
+				["Яростное разрывание"] = 22426,
+				["Стремительный рывок"] = 18571,
+				["Галактический страж"] = 22421,
+				["Астральный скачок"] = 18570,
+				["Воплощение: Страж Урсока"] = 21706,
+				["Гортанный рык"] = 22424,
+				["Мощное оглушение"] = 21778,
+				["Лунный луч"] = 22427,
+				["Колючий мех"] = 22418,
+				["Выживает сильнейший"] = 22422,
+				["Страж Элуны"] = 21712,
+				["Тайфун"] = 18577,
+			},
 			["Name"] = "Страж",
+			["Buttons"] = {
+				[1] = {
+					Type = "trigger",
+					Icon = "Interface\\Icons\\ABILITY_SEAL",
+					Name = "Stop",
+				},
+				[2] = {
+					Type = "trigger",
+					Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
+					Name = "AoE",
+				},
+			},
 			["Id"] = 3,
 			["Spells"] = {
-				["Дикая защита"] = 62606,
+				["Метка Урсола"] = 192083,
+				["Массовое оплетение"] = 102359,
 				["Неистовое восстановление"] = 22842,
-				["Мощное оглушение"] = 5211,
-				["Лобовая атака"] = 106839,
-				["Щит Кенария"] = 102351,
-				["Облик медведя"] = 5487,
-				["Растерзать"] = 33745,
-				["Рык"] = 6795,
-				["Раздавить"] = 80313,
-				["Берсерк"] = 50334,
+				["Лунный огонь"] = 8921,
 				["Целительное прикосновение"] = 5185,
+				["Снятие порчи"] = 2782,
+				["Облик медведя"] = 5487,
 				["Взбучка"] = 77758,
-				["Дубовая кожа"] = 22812,
-				["Увечье"] = 33917,
-				["Волшебный огонь"] = 770,
-				["Инстинкты выживания"] = 61336,
 				["Трепка"] = 6807,
+				["Железный мех"] = 192081,
+				["Размах"] = 213771,
+				["Увечье"] = 33917,
+				["Раздавить"] = 80313,
+				["Лобовая атака"] = 106839,
+			},
+			["Buffs"] = {
+				["Обездвиживание"] = 45334,
+				["Лунный огонь"] = 164812,
+				["Камень Шаманов: Дух Волка"] = 155347,
+				["Хранитель земли"] = 203975,
+				["Страж Элуны"] = 213680,
+				["Взбучка"] = 192090,
+				["Знак Призрачной Луны"] = 159678,
+				["Защитник гильдии"] = 97341,
+				["Training Gear"] = 182422,
+				["Увечье!"] = 93622,
+				["Раздавить"] = 158792,
 			},
 			["Class"] = "DRUID",
-			["Buffs"] = {
-				["Решимость"] = 158300,
-				["Зубы и когти_"] = 135286,
-				["Дикая защита"] = 132402,
-				["Первобытное упорство"] = 155784,
-				["Азарт"] = 142073,
-				["Зубы и когти"] = 135601,
-				["Сон Кенария"] = 145162,
-				["Камень Шаманов: Дух Волка"] = 155347,
-				["Большая Медведица"] = 159233,
-				["Защитник гильдии"] = 97341,
-				["Зараженные раны"] = 58180,
-				["Раздавить"] = 158792,
-				["Сытость"] = 180748,
-			},
-			["Buttons"] = {
-				{
-					["ToolTip"] = "Off",
-					["Icon"] = "Interface\\Icons\\ABILITY_SEAL",
-					["GroupId"] = "Run",
-				}, -- [1]
-				{
-					["ToolTip"] = "On",
-					["Icon"] = "Interface\\Icons\\Ability_Warrior_Bladestorm",
-					["GroupId"] = "AoE",
-				}, -- [2]
-				{
-					["ToolTip"] = "On",
-					["Icon"] = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
-					["GroupId"] = "Burst",
-				}, -- [3]
-			},
 		}
 
 function bot:OnUpdate(g, list, modes)
-	
 	if IsMounted() then return end	
-	if modes.Run == "Off" then 
-		return 
-	end
-		
-	if GetUnitName("focus") == nil or UnitIsDead("focus") then
-		if modes.Party == nil then
-			list:Focus(g.target:CanAttack():Best())
-		end
+	if modes.toggle.Stop then 
+		return
 	end
 	
-	local targets = g.targets:Acceptable(g.party)
+	list:Cast( "Лобовая атака", g.target:CanUse("Лобовая атака"):CanInterrupt():Best() )
 	
-	list:Cast( "Лобовая атака", targets:CanUse("Лобовая атака"):CanInterrupt():Best() )
+	if g.player:AffectingCombat(true):MinHP() then	
+		list:Cast( "Железный мех", g.player:CanUse("Железный мех"):Energy(">", 80):Best() )
+		list:Cast( "Неистовое восстановление", g.player:CanUse("Неистовое восстановление"):Charges("Неистовое восстановление",2,1):HP("<", 90, "self"):Best() )
+		list:Cast( "Неистовое восстановление", g.player:CanUse("Неистовое восстановление"):Charges("Неистовое восстановление",2,5):HP("<", 80, "self"):Best() )
+		list:Cast( "Неистовое восстановление", g.player:CanUse("Неистовое восстановление"):Charges("Неистовое восстановление",2,10):HP("<", 70, "self"):Best() )
+		list:Cast( "Неистовое восстановление", g.player:CanUse("Неистовое восстановление"):HP("<", 50, "self"):Best() )
+	end
 
-	list:Cast( "Целительное прикосновение", g.player:CanUse("Целительное прикосновение"):Aura("Сон Кенария", "mine", "self"):HP("<", 70, "self"):Best() )
-	list:Cast( "Щит Кенария", g.player:CanUse("Щит Кенария"):HP("<", 70, "self"):Best() )	
-	list:Cast( "Неистовое восстановление", g.player:CanUse("Неистовое восстановление"):HP("<", 60, "self"):Best() )	
-	
-	list:Cast( "Волшебный огонь", targets:CanUse("Волшебный огонь"):InSpellRange("Растерзать","inverse"):ZeroThread():Best() )
-	
-	if modes.AoE == "On" then
-		list:Cast( "Дикая защита", g.player:CanUse("Дикая защита"):Aura("Дикая защита", "mine", "self", "inverse"):MinHP() )
-		list:Cast( "Трепка", targets:CanUse("Трепка"):Energy(">", 80):Aura("Зубы и когти", "mine", "self"):Aura("Взбучка", "mine"):Best() )
-	else
-		list:Cast( "Трепка", targets:CanUse("Трепка"):Energy(">", 60):Aura("Зубы и когти", "mine", "self"):Aura("Взбучка", "mine"):Best() )
-		list:Cast( "Дикая защита", g.player:CanUse("Дикая защита"):Aura("Дикая защита", "mine", "self", "inverse"):Energy(">", 90):LastCast("Трепка",false,"total"):MinHP() )
-	end
-	list:Cast( "Взбучка", targets:CanUse("Взбучка"):InSpellRange("Растерзать"):Aura("Взбучка", "mine", "inverse"):Best() )		
-	list:Cast( "Раздавить", targets:CanUse("Раздавить"):Best() )
-	list:Cast( "Увечье", targets:CanUse("Увечье"):Best() )	
-	list:Cast( "Взбучка", targets:CanUse("Взбучка"):Condition(modes.AoE == "On"):Best() )	
-	list:Cast( "Растерзать", targets:CanUse("Растерзать"):Condition(modes.AoE == nil):Best() )					
-	list:Cast( "Трепка", targets:CanUse("Трепка"):Energy(">", 80):Aura("Взбучка", "mine"):Best() )
-	list:Cast( "Трепка", targets:CanUse("Трепка"):Energy(">", 80):Aura("Растерзать", "mine"):Best() )
-	list:Cast( "Волшебный огонь", targets:CanUse("Волшебный огонь"):Best() )
+	list:Cast( "Увечье", g.target:CanUse("Увечье"):Best() )
+	list:Cast( "Раздавить", g.target:CanUse("Раздавить"):Best() )
+	list:Cast( "Взбучка", g.target:CanUse("Взбучка"):InSpellRange("Увечье"):Best() )
+	list:Cast( "Размах", g.target:CanUse("Размах"):InSpellRange("Увечье"):Best() )
+
 	
 	return list:Execute()
-end	
+end
 
 		
-TBRegister(bot)
+TBRegister(bot)		
