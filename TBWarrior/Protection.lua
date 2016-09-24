@@ -29,6 +29,7 @@
 				["Деморализующий крик"] = 1160,
 				["Блок щитом"] = 2565,
 				["Удар грома"] = 6343,
+				["Героический бросок"] = 57755,
 			},
 			["Class"] = "WARRIOR",
 			["Buffs"] = {
@@ -71,6 +72,7 @@ function bot:OnUpdate(g, list, modes)
 		list:Cast( "Деморализующий крик", g.target:CanUse("Деморализующий крик"):InSpellRange("Сокрушение"):HP("<", 50, "self"):Best() )
 		
 		list:Cast( "Верная победа", g.target:CanUse("Верная победа"):HP("<", 70, "self"):Best() )
+		list:Cast( "Верная победа", g.target:CanUse("Верная победа"):HP("<", 20):Best() )
 		list:Cast( "Победный раж", g.target:CanUse("Победный раж"):HP("<", 70, "self"):Best() )
 	end
 	
@@ -80,6 +82,7 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Реванш", g.player:CanUse("Реванш"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )
 	
 	list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
+	list:Cast( "Героический бросок", g.target:CanUse("Героический бросок"):Best() )
 
 	
 	return list:Execute()

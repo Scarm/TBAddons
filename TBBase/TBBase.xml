@@ -5,42 +5,42 @@
 		</Anchors>
 		<Size>
 			<AbsDimension x="245" y="10" />
-		</Size>		
+		</Size>
 		<Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentTex" parentKey="Tex">	
+                <Texture name="$parentTex" parentKey="Tex">
 					<Anchors>
                         <Anchor point="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT"/>
                     </Anchors>
-                    <Color g="0" r="1" b="0"/>                    
+                    <Color g="0" r="1" b="0"/>
 				</Texture>
             </Layer>
 		</Layers>
-        
+
 		<Scripts>
 			<OnLoad>
 				TBSubscribeEvent(self,"PLAYER_LOGIN", "TBOnPlayerLogin")
 				--TBSubscribeEvent(self,"SPELLS_CHANGED", "TBCreateSpellMaps")
-				
+
 				TBSubscribeEvent(self,"ACTIVE_TALENT_GROUP_CHANGED", "TBAssignBot")
-			
+
 				TBSubscribeEvent(self,"PLAYER_ENTER_COMBAT", "TBEnterCombat")
 				TBSubscribeEvent(self,"PLAYER_LEAVE_COMBAT", "TBLeaveCombat")
-				
+
 				TBSubscribeEvent(self,"COMBAT_LOG_EVENT_UNFILTERED", "TBLoSdetect")
 				TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBLoSData")
-				
+
 				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "TBPrintEvent")
 				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SENT", "TBPrintEvent")
-			
+
 			</OnLoad>
 			<OnUpdate>
 				TBOnUpdate()
 			</OnUpdate>
 		</Scripts>
 	</Frame>
-	
+
 	<Button name="AutomatonFrameTemplate" virtual="true" inherits="SecureActionButtonTemplate">
         <Size>
             <AbsDimension x="5" y="5"/>
@@ -52,12 +52,12 @@
                         <Anchor point="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT"/>
                     </Anchors>
-					<Color g="1" r="1" b="1"/>  
+					<Color g="1" r="1" b="1"/>
 				</Texture>
             </Layer>
 		</Layers>
 	</Button>
-	
+
 	<CheckButton name="TBButtonTemplate" inherits="ActionButtonTemplate" virtual="true">
 		<Scripts>
 			<OnLoad>
@@ -67,10 +67,10 @@
 			</OnLoad>
             <OnClick>
                 print("Click!")
-            </OnClick> 
+            </OnClick>
 		</Scripts>
 	</CheckButton>
-	
+
 <!--
 	<Frame name="PanelFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">
 		<Anchors>
@@ -78,34 +78,34 @@
 		</Anchors>
 		<Size>
 			<AbsDimension x="5" y="10" />
-		</Size>		
+		</Size>
 		<Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentTex" parentKey="Tex">	
+                <Texture name="$parentTex" parentKey="Tex">
 					<Anchors>
                         <Anchor point="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT"/>
                     </Anchors>
-                    <Color g="0" r="1" b="0" a="0.5"/>                    
+                    <Color g="0" r="1" b="0" a="0.5"/>
 				</Texture>
                 </Layer>
 		</Layers>
 		<Scripts>
 			<OnLoad>
 				self:RegisterForDrag("RightButton")
-			</OnLoad> 
+			</OnLoad>
             <OnDragStart>
 				self:StartMoving()
             </OnDragStart>
             <OnDragStop>
 				self:StopMovingOrSizing()
             </OnDragStop>
-		</Scripts> 
+		</Scripts>
 	</Frame>
-	
--->	
-	
-	
+
+-->
+
+
 	<CheckButton name="TBAdvancedButtonTemplate" inherits="ActionButtonTemplate" virtual="true">
 		<Layers>
 			<Layer level="OVERLAY">
@@ -120,7 +120,7 @@
 							</Offset>
 						</Anchor>
 					</Anchors>
-				</Texture>		
+				</Texture>
 			</Layer>
 		</Layers>
 		<Frames>
@@ -147,26 +147,26 @@
 			</OnLoad>
             <OnClick>
                 TBAdvancedButtonTemplate_OnClick(self, button)
-            </OnClick> 
+            </OnClick>
 		</Scripts>
-	</CheckButton>	
-	
-	
+	</CheckButton>
+
+
 <Frame name="AdvancedPanelFrame" parent="UIParent" FrameStrata="HIGH" toplevel="true" enableMouse="true" Movable="true">
 		<Anchors>
 			<Anchor point="CENTER"></Anchor>
 		</Anchors>
 		<Size>
 			<AbsDimension x="5" y="10" />
-		</Size>		
+		</Size>
 		<Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentTex" parentKey="Tex">	
+                <Texture name="$parentTex" parentKey="Tex">
 					<Anchors>
                         <Anchor point="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT"/>
                     </Anchors>
-                    <Color g="0" r="1" b="0" a="0.5"/>                    
+                    <Color g="0" r="1" b="0" a="0.5"/>
 				</Texture>
                 </Layer>
 		</Layers>
@@ -175,13 +175,13 @@
 				self:RegisterForDrag("RightButton")
 				--TBSubscribeEvent(self,"UNIT_SPELLCAST_SUCCEEDED", "SpellCast")
 				--TBSubscribeEvent(self,"SPELL_UPDATE_COOLDOWN", "UpdateCooldown")
-			</OnLoad> 
+			</OnLoad>
             <OnDragStart>
 				self:StartMoving()
             </OnDragStart>
             <OnDragStop>
 				self:StopMovingOrSizing()
             </OnDragStop>
-		</Scripts> 
+		</Scripts>
 	</Frame>
 </Ui>

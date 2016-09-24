@@ -93,20 +93,18 @@ function bot:OnUpdate(g, list, modes)
 	if GetShapeshiftForm() == 4 then
 
 		--list:Cast( "Звездопад", g.target:CanUse("Звездопад"):Enabled("Звездопад"):LastCast("Звездопад", false):Best() )
-		--list:Cast( "Воин Элуны", g.player:CanUse("Воин Элуны"):Enabled("Воин Элуны"):Best() )
+		list:Cast( "Воин Элуны", g.player:CanUse("Воин Элуны"):Enabled("Воин Элуны"):Best() )
 
 		
-		--list:Cast( "Звездный поток", g.target:CanUse("Звездный поток"):Moving(false):Best() )
-		--list:Cast( "Звездная вспышка", g.target:CanUse("Звездная вспышка"):Aura("Звездная вспышка", "mine", "inverse"):LastCast("Звездная вспышка", false):Best() )		
-		--list:Cast( "Лунный огонь", g.target:CanUse("Лунный огонь"):Aura("Лунный огонь", "mine", "inverse"):Best() )
-		--list:Cast( "Солнечный огонь", g.target:CanUse("Солнечный огонь"):Aura("Солнечный огонь", "mine", "inverse"):Best() )
-		--list:Cast( "Солнечный гнев", g.target:CanUse("Солнечный гнев"):Aura("Солнечное могущество", "mine", "self"):LastCast("Солнечный гнев", false):Moving(false):Best() )
-		--list:Cast( "Лунный удар", g.target:CanUse("Лунный удар"):Aura("Лунное могущество", "mine", "self"):LastCast("Лунный удар", false):Moving(false):Best() )
-		--list:Cast( "Солнечный гнев", g.target:CanUse("Солнечный гнев"):Moving(false):Best() )
-		--list:Cast( "Лунный удар", g.target:CanUse("Лунный удар"):Moving(false):Best() )
-		
-		list:Cast( "Солнечный гнев", g.target:CanUse("Солнечный гнев"):LastCast("Солнечный гнев", false):Moving(false):Best() )
-		list:Cast( "Лунный удар", g.target:CanUse("Лунный удар"):LastCast("Лунный удар", false):Moving(false):Best() )
+		list:Cast( "Звездный поток", g.target:CanUse("Звездный поток"):Moving(false):Best() )
+		list:Cast( "Звездная вспышка", g.target:CanUse("Звездная вспышка"):Aura("Звездная вспышка", "mine", "inverse"):LastCast("Звездная вспышка", false):Best() )		
+		list:Cast( "Лунный огонь", g.target:CanUse("Лунный огонь"):Aura("Лунный огонь", "mine", "inverse"):Best() )
+		list:Cast( "Солнечный огонь", g.target:CanUse("Солнечный огонь"):Aura("Солнечный огонь", "mine", "inverse"):Best() )
+		list:Cast( "Солнечный гнев", g.target:CanUse("Солнечный гнев"):Aura("Солнечное могущество", "mine", "self"):LastCast("Солнечный гнев", false):Moving(false):Best() )
+		list:Cast( "Лунный удар", g.target:CanUse("Лунный удар"):Aura("Лунное могущество", "mine", "self"):LastCast("Лунный удар", false):Moving(false):Best() )
+		list:Cast( "Солнечный гнев", g.target:CanUse("Солнечный гнев"):Moving(false):Best() )
+		list:Cast( "Лунный удар", g.target:CanUse("Лунный удар"):Moving(false):Best() )
+
 
 	end
 	

@@ -47,7 +47,10 @@ function BaseGroup:Talent(key, value)
 	local talentID = IndicatorFrame.Spec.Talents[key]
 	local enabled = select(4,GetTalentInfoByID(talentID,1))
 	
-	value = value or true
+	if value == nil then
+		value = true
+	end
+	
 	if (enabled and value) or (not enabled and not value) then
 		return self
 	end

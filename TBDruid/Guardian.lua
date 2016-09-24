@@ -87,8 +87,9 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Увечье", g.target:CanUse("Увечье"):Best() )
 	list:Cast( "Раздавить", g.target:CanUse("Раздавить"):Best() )
 	list:Cast( "Взбучка", g.target:CanUse("Взбучка"):InSpellRange("Увечье"):Best() )
+	list:Cast( "Лунный огонь", g.target:CanUse("Лунный огонь"):Aura("Лунный огонь", "mine", "inverse"):Best() )
 	list:Cast( "Размах", g.target:CanUse("Размах"):InSpellRange("Увечье"):Best() )
-
+	
 	
 	return list:Execute()
 end

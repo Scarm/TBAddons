@@ -43,6 +43,13 @@ function BaseGroup:HolyPower(points)
 	return self:CreateDerived()
 end
 
+function BaseGroup:SoulShards(points)	
+	if UnitPower("player", 7) >= points then
+		return self
+	end
+	return self:CreateDerived()
+end
+
 function BaseGroup:ComboPoints(points)
 	for key,value in pairs(self) do
 		if GetComboPoints("player", key)>=points then
