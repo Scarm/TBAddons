@@ -50,6 +50,10 @@ local bot = {
 				},
 				{
 					Type = "spell",
+					Spell = 205065, -- Поток Бездны
+				},
+				{
+					Type = "spell",
 					Spell = 17, -- Слово силы: Щит
 				},
 			},
@@ -81,18 +85,20 @@ local bot = {
     		return
     	end
 
-    	list:Cast( "Исчадие Тьмы", g.target:CanUse("Исчадие Тьмы"):Enabled("Исчадие Тьмы"):Best() )
-			list:Cast( "Придание сил", g.player:CanUse("Придание сил"):Enabled("Придание сил"):Best() )
+    	list:Cast( "Исчадие Тьмы", g.target:CanUse("Исчадие Тьмы", {"Пытка разума", "Иссушение разума"}):Enabled("Исчадие Тьмы"):Best() )
+			list:Cast( "Придание сил", g.player:CanUse("Придание сил", {"Пытка разума", "Иссушение разума"}):Enabled("Придание сил"):Best() )
 			list:Cast( "Слово силы: Щит", g.player:CanUse("Слово силы: Щит"):Aura("Слово силы: Щит", "mine", "inverse", "self"):Enabled("Слово силы: Щит"):Best() )
 
-      list:Cast( "Извержение Бездны", g.target:CanUse("Извержение Бездны", true):Energy(">", 85):Best() )
-      list:Cast( "Извержение Бездны", g.target:CanUse("Стрела бездны", true):Best() )
+			list:Cast( "Поток Бездны", g.target:CanUse("Поток Бездны", {"Пытка разума", "Иссушение разума"}):Enabled("Поток Бездны"):Best() )
 
-      list:Cast( "Слово Тьмы: Смерть", g.target:CanUse("Слово Тьмы: Смерть", true):Best() )
-      list:Cast( "Взрыв разума", g.target:CanUse("Взрыв разума", true):Best() )
-      list:Cast( "Прикосновение вампира", g.target:Moving(false):CanUse("Прикосновение вампира", true):Aura("Прикосновение вампира", "mine", "inverse", {time=4, bound=">"}):LastCast("Прикосновение вампира", false):Best() )
-      list:Cast( "Слово Тьмы: Боль", g.target:CanUse("Слово Тьмы: Боль", true):Aura("Слово Тьмы: Боль", "mine", "inverse"):Best() )
-			list:Cast( "Пытка разума", g.target:Toggle("AoE"):CanUse("Пытка разума"):Best() )
+      list:Cast( "Извержение Бездны", g.target:CanUse("Извержение Бездны", {"Пытка разума", "Иссушение разума"}):Energy(">", 85):Best() )
+      list:Cast( "Извержение Бездны", g.target:CanUse("Стрела бездны", {"Пытка разума", "Иссушение разума"}):Best() )
+
+      list:Cast( "Слово Тьмы: Смерть", g.target:CanUse("Слово Тьмы: Смерть", {"Пытка разума", "Иссушение разума"}):Best() )
+      list:Cast( "Взрыв разума", g.target:CanUse("Взрыв разума", {"Пытка разума", "Иссушение разума"}):Best() )
+      list:Cast( "Прикосновение вампира", g.target:Moving(false):CanUse("Прикосновение вампира", {"Пытка разума", "Иссушение разума"}):Aura("Прикосновение вампира", "mine", "inverse", {time=4, bound=">"}):LastCast("Прикосновение вампира", false):Best() )
+      list:Cast( "Слово Тьмы: Боль", g.target:CanUse("Слово Тьмы: Боль", {"Пытка разума", "Иссушение разума"}):Aura("Слово Тьмы: Боль", "mine", "inverse"):Best() )
+			list:Cast( "Иссушение разума", g.target:Toggle("AoE"):CanUse("Иссушение разума"):Best() )
 		  list:Cast( "Пытка разума", g.target:CanUse("Пытка разума"):Best() )
 
     	return list:Execute()

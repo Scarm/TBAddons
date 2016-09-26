@@ -65,6 +65,7 @@ function TBGetSpell(key)
 			result.spellID = spellID
 			result.idx = index
 			result.book = "spell"
+			result.name = GetSpellInfo(index, "spell")
 			return result
 		end
 	end
@@ -77,7 +78,7 @@ TBSkipIsUsableSpellCkeck =
 }
 
 
-function BaseGroup:CanUse(key, ignoreChannel)
+function BaseGroup:CanUse(key, ignoredChannels)
 
 	local result = self:CreateDerived()
     local caster = "player"
@@ -134,15 +135,25 @@ function BaseGroup:CanUse(key, ignoreChannel)
 		end
 	end
 
-    local et = select(6,UnitCastingInfo(caster))
-    if et and GetTime() < (et / 1000.0) - delay  then
-		TBLogValues["can use fail"] = "Casting"
-        return result
-    end
+  local et = select(6,UnitCastingInfo(caster))
+  if et and GetTime() < (et / 1000.0) - delay  then
+	TBLogValues["can use fail"] = "Casting"
+      return result
+  end
 
-	if ignoreChannel == nil then
-		local et = select(6, UnitChannelInfo(caster))
-		if et and GetTime() < (et / 1000) - delay then
+
+	local et = select(6, UnitChannelInfo(caster))
+	local channelName = UnitChannelInfo(caster)
+	if et and GetTime() < (et / 1000) - delay then
+		local needIgnore = false
+		for k,v in pairs(ignoredChannels or {}) do
+				local sp = TBGetSpell(v)
+				if sp.name == channelName then
+					needIgnore = true
+				end
+		end
+
+		if needIgnore == false then
 			TBLogValues["can use fail"] = "Canneling"
 			return result
 		end
