@@ -43,9 +43,14 @@ local bot = {
 					Type = "spell",
 					Spell = 34433, -- "Исчадие Тьмы
 				},
-        {
+				{
 					Type = "spell",
+					talent = 21718, -- Придание сил
 					Spell = 10060, -- Придание сил
+				},
+				{
+					Type = "spell",
+					Spell = 17, -- Слово силы: Щит
 				},
 			},
 			["Id"] = 3,
@@ -60,6 +65,8 @@ local bot = {
         ["Придание сил"] = 10060,
         ["Исчадие Тьмы"] = 34433,
         ["Слово Тьмы: Смерть"] = 32379,
+				["Слово силы: Щит"] = 17,
+				["Иссушение разума"] = 48045,
 			},
 			["Class"] = "PRIEST",
 			["Buffs"] = {
@@ -75,7 +82,8 @@ local bot = {
     	end
 
     	list:Cast( "Исчадие Тьмы", g.target:CanUse("Исчадие Тьмы"):Enabled("Исчадие Тьмы"):Best() )
-	    list:Cast( "Придание сил", g.player:CanUse("Придание сил"):Enabled("Придание сил"):Best() )
+			list:Cast( "Придание сил", g.player:CanUse("Придание сил"):Enabled("Придание сил"):Best() )
+			list:Cast( "Слово силы: Щит", g.player:CanUse("Слово силы: Щит"):Aura("Слово силы: Щит", "mine", "inverse", "self"):Enabled("Слово силы: Щит"):Best() )
 
       list:Cast( "Извержение Бездны", g.target:CanUse("Извержение Бездны", true):Energy(">", 85):Best() )
       list:Cast( "Извержение Бездны", g.target:CanUse("Стрела бездны", true):Best() )
@@ -84,7 +92,8 @@ local bot = {
       list:Cast( "Взрыв разума", g.target:CanUse("Взрыв разума", true):Best() )
       list:Cast( "Прикосновение вампира", g.target:Moving(false):CanUse("Прикосновение вампира", true):Aura("Прикосновение вампира", "mine", "inverse", {time=4, bound=">"}):LastCast("Прикосновение вампира", false):Best() )
       list:Cast( "Слово Тьмы: Боль", g.target:CanUse("Слово Тьмы: Боль", true):Aura("Слово Тьмы: Боль", "mine", "inverse"):Best() )
-      list:Cast( "Пытка разума", g.target:CanUse("Пытка разума"):Best() )
+			list:Cast( "Пытка разума", g.target:Toggle("AoE"):CanUse("Пытка разума"):Best() )
+		  list:Cast( "Пытка разума", g.target:CanUse("Пытка разума"):Best() )
 
     	return list:Execute()
     end
