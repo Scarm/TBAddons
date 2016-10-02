@@ -14,6 +14,10 @@ function TBKeyValuesFill(values)
 	end
 	--]]
 
+	for k,v in pairs(IndicatorFrame.LoS.Banned or {}) do
+		values[k] = ToString(v)
+	end
+
 	values["fail"] = ToString(TBLogValues["can use fail"])
 
 	values["isnil"] = ToString(TBLogValues["spell is null"])

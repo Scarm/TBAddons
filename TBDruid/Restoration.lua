@@ -212,34 +212,42 @@ function bot:Solo(g, list, modes)
 end
 
 function bot:RaidHeal(g, list, modes)
-	if GetShapeshiftForm() == 4 then
 
-		return list:Execute()
-	end
+	--декурсинг
+	list:Cast( "Природный целитель", g.player:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )
+	list:Cast( "Природный целитель", g.tanks:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )
+	list:Cast( "Природный целитель", g.party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )
 
-		list:Cast( "Жизнецвет", g.mainTank:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", "inverse"):MinHP() )
-		-- танк
-		list:Cast( "Омоложение",
-				g.mainTank:CanUse("Омоложение")
-				:Aura("Омоложение", "mine", "inverse", {time=3, bound=">"})
-				:Aura("Омоложение (зарождение)", "mine", "inverse", {time=3, bound=">"})
-				:HP("<",99)
-				:MinHP() )
-		list:Cast( "Омоложение",
-				g.mainTank:CanUse("Омоложение")
-				:Aura("Омоложение", "mine", "inverse", {time=3, bound=">"})
-				:HP("<",90)
-				:MinHP() )
-		list:Cast( "Омоложение",
-				g.mainTank:CanUse("Омоложение")
-				:Talent("Зарождение", true)
-				:Aura("Омоложение (зарождение)", "mine", "inverse", {time=3, bound=">"})
-				:HP("<",90)
-				:MinHP() )
+	list:Cast( "Период цветения", g.player:CanUse("Период цветения"):Enabled("Период цветения"):Best() )
+	list:Cast( "Сущность Г'ханира", g.player:CanUse("Сущность Г'ханира"):Enabled("Сущность Г'ханира"):Best() )
+
+	list:Cast( "Быстрое восстановление", g.party:CanUse("Быстрое восстановление"):AuraGroup("full heal"):LastCast("Быстрое восстановление", false):MinHP() )
+	list:Cast( "Восстановление", g.party:CanUse("Восстановление"):AuraGroup("full heal"):LastCast("Восстановление", false):MinHP() )
+	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):AuraGroup("full heal"):MinHP() )
+
+	list:Cast( "Жизнецвет", g.mainTank:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", "inverse"):MinHP() )
+	-- танк
+	list:Cast( "Омоложение",
+			g.mainTank:CanUse("Омоложение")
+			:Aura("Омоложение", "mine", "inverse", {time=3, bound=">"})
+			:Aura("Омоложение (зарождение)", "mine", "inverse", {time=3, bound=">"})
+			:HP("<",99)
+			:MinHP() )
+	list:Cast( "Омоложение",
+			g.mainTank:CanUse("Омоложение")
+			:Aura("Омоложение", "mine", "inverse", {time=3, bound=">"})
+			:HP("<",90)
+			:MinHP() )
+	list:Cast( "Омоложение",
+			g.mainTank:CanUse("Омоложение")
+			:Talent("Зарождение", true)
+			:Aura("Омоложение (зарождение)", "mine", "inverse", {time=3, bound=">"})
+			:HP("<",90)
+			:MinHP() )
 	-- Раскидываем омоложения по пати
 	list:Cast( "Омоложение",
 			g.party:CanUse("Омоложение")
-			:HP("<",90)
+			:HP("<",80)
 			:Aura("Омоложение (зарождение)", "mine", "inverse")
 			:Aura("Омоложение", "mine", "inverse")
 			:MinHP() )
@@ -247,15 +255,16 @@ function bot:RaidHeal(g, list, modes)
 	list:Cast( "Омоложение",
 			g.party:CanUse("Омоложение")
 			:Aura("Омоложение", "mine", "inverse")
-			:HP("<",80)
+			:HP("<",70)
 			:MinHP() )
 
 	list:Cast( "Омоложение",
 			g.party:CanUse("Омоложение")
 			:Talent("Зарождение", true)
 			:Aura("Омоложение (зарождение)", "mine", "inverse")
-			:HP("<",80)
+			:HP("<",70)
 			:MinHP() )
+	return list:Execute()
 end
 
 function bot:PartyHeal(g, list, modes)

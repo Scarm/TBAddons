@@ -12,26 +12,26 @@ function UpdateHotkey(button)
 end
 
 function AdvancedPanelFrame:Init()
-	lastFrame = self	
+	lastFrame = self
 	self.Buttons = {}
-	
+
 	BINDING_HEADER_TBBASE = "Режимы бота"
-	
+
 	for i = 1, self.buttonsCount do
 		local button = CreateFrame("CheckButton","TBAdvancedButton"..i,IndicatorFrame,"TBAdvancedButtonTemplate")
 		self.Buttons[i] = button
-		
+
 		local offset = 5
-		
+
 		button:SetPoint("LEFT", lastFrame,"RIGHT", offset, 0)
 		button.hotkey = _G[button:GetName().."HotKey"];
 		button.cooldown:SetSwipeColor(0, 0, 0)
 		TBSubscribeEvent(button,"UPDATE_BINDINGS", "UpdateHotkey")
 		lastFrame = button
-		
+
 		setglobal("BINDING_NAME_CLICK TBAdvancedButton"..i..":LeftButton", "Режим "..i)
 		UpdateHotkey(button)
-	end	
+	end
 end
 
 function TBAdvancedButtonTemplate_OnSpellCast(self,...)
@@ -117,7 +117,7 @@ function SpellController:OnClick(button, key)
 			self.checked = 1
 		end
 	end
-	
+
 	if key == "RightButton" then
 		if self.auto then
 			self.auto = nil
@@ -126,8 +126,8 @@ function SpellController:OnClick(button, key)
 			self.auto = 1
 			AutoCastShine_AutoCastStart(button.Shine)
 		end
-	end	
-	
+	end
+
 	button:SetChecked(self.checked == 1)
 end
 function SpellController:OnUpdateCooldown(button)
@@ -150,10 +150,16 @@ end
 
 function SpellController:Create(info)
 	if info.Type == "spell" then
-		
+
 		if info.talent then
 			local enabled = select(4,GetTalentInfoByID(info.talent,1))
-			if enabled then	
+			if enabled then
+				setmetatable(info, {__index = SpellController})
+				return info
+			end
+		elseif info.no_talent then
+			local enabled = select(4,GetTalentInfoByID(info.no_talent,1))
+			if not enabled then
 				setmetatable(info, {__index = SpellController})
 				return info
 			end
@@ -182,12 +188,12 @@ function AdvancedPanelFrame:AssignSpec(spec)
 
 	if spec then
 		self:Show()
-		
+
 		local idx = 1
 		local pos = 1
 		local buttons = spec.Buttons or {}
 		while buttons[idx] do
-			
+
 			if idx <= self.buttonsCount then
 				button = self.Buttons[pos]
 				local value = buttons[idx]
@@ -198,19 +204,19 @@ function AdvancedPanelFrame:AssignSpec(spec)
 				end
 			else
 				print("Слишком много кнопок!")
-			end		
-			
+			end
+
 			idx = idx + 1
 		end
-		
+
 	else
 		self:Hide()
-	end	
+	end
 end
 
 function AdvancedPanelFrame:Modes()
 	local result = {}
-	
+
 	for i = 1, self.buttonsCount do
 		local button = self.Buttons[i]
 		if button.controller then
@@ -219,4 +225,3 @@ function AdvancedPanelFrame:Modes()
 	end
 	return result
 end
-
