@@ -298,6 +298,9 @@ function bot:PartyHeal(g, list, modes)
 
 	list:Cast( "Жизнецвет", g.mainTank:CanUse("Жизнецвет"):Aura("Жизнецвет", "mine", "inverse"):MinHP() )
 	-- С танком все плохо, хилить без хотов никак не получится
+
+	list:Cast( "Железная кора", g.mainTank:CanUse("Железная кора"):HP("<",60):MinHP() )
+
 	list:Cast( "Омоложение",
 			g.mainTank:CanUse("Омоложение")
 			:Aura("Омоложение", "mine", "inverse", {time=3, bound=">"})
@@ -351,8 +354,7 @@ function bot:PartyHeal(g, list, modes)
 			:Aura("Восстановление", "mine", "inverse")
 			:LastCast("Восстановление", false)
 			:MinHP() )
-	list:Cast( "Быстрое восстановление", g.mainTank:CanUse("Быстрое восстановление"):HP("<",60):MinHP() )
-	list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение"):HP("<",60):MinHP() )
+	list:Cast( "Быстрое восстановление", g.party:CanUse("Быстрое восстановление"):HP("<",50):MinHP() )
 	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",50):MinHP() )
 	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",60):LastCast("Целительное прикосновение", false):MinHP() )
 
@@ -387,18 +389,18 @@ function bot:PartyHeal(g, list, modes)
 	list:Cast( "Омоложение",
 			g.party:CanUse("Омоложение")
 			:Aura("Омоложение", "mine", "inverse")
-			:HP("<",70)
+			:HP("<",75)
 			:MinHP() )
 
 	list:Cast( "Омоложение",
 			g.party:CanUse("Омоложение")
 			:Talent("Зарождение", true)
 			:Aura("Омоложение (зарождение)", "mine", "inverse")
-			:HP("<",70)
+			:HP("<",75)
 			:MinHP() )
 
-	--list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",70):MinHP() )
-	--list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",80):LastCast("Целительное прикосновение", false):MinHP() )
+	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",60):MinHP() )
+	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",70):LastCast("Целительное прикосновение", false):MinHP() )
 
 	list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение"):HP("<",70):MinHP() )
 	list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение"):HP("<",80):LastCast("Целительное прикосновение", false):MinHP() )

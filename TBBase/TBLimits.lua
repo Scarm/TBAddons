@@ -1,7 +1,7 @@
 function BaseGroup:HP(bound, hp, isSelf)
 	-- костыль для Велари
 	local maxPerc = select(15, UnitAura("boss1", "Аура презрения")) or 100
-	
+
 	if isSelf then
 		local val = 100 * (UnitHealth("player") / UnitHealthMax("player")) * ( 100 / maxPerc )
 		if (bound == "<" and val <= hp) or (bound == ">" and val >= hp) then
@@ -9,7 +9,7 @@ function BaseGroup:HP(bound, hp, isSelf)
 		end
 		return self:CreateDerived()
 	end
-	
+
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
 		local val = 100 * (UnitHealth(key) / UnitHealthMax(key)) * ( 100 / maxPerc )
@@ -36,25 +36,27 @@ function BaseGroup:Energy(bound, energy)
 	return self:CreateDerived()
 end
 
-function BaseGroup:HolyPower(points)	
+function BaseGroup:HolyPower(points)
 	if UnitPower("player", 9) >= points then
 		return self
 	end
 	return self:CreateDerived()
 end
 
-function BaseGroup:SoulShards(points)	
+function BaseGroup:SoulShards(points)
 	if UnitPower("player", 7) >= points then
 		return self
 	end
 	return self:CreateDerived()
 end
 
-function BaseGroup:ComboPoints(points)
+function BaseGroup:ComboPoints(bound, points)
+	local result = self:CreateDerived()
 	for key,value in pairs(self) do
-		if GetComboPoints("player", key)>=points then
-			return self
+		local cp = GetComboPoints("player", key)
+		if (bound == "<" and cp <= points) or (bound == ">" and cp >= points) then
+			result[key] = value
 		end
 	end
-	return self:CreateDerived()
+	return result
 end
