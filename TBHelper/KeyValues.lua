@@ -8,7 +8,7 @@ function TBKeyValuesFill(values)
 
 
 
-	--[[
+	--[[]]
 	for k,v in pairs(TBLogValues) do
 		values[k] = ToString(v)
 	end
