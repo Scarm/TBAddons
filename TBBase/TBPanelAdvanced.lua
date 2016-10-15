@@ -216,6 +216,8 @@ end
 
 function AdvancedPanelFrame:Modes()
 	local result = {}
+	result.auto = {}
+	result.manual = {}
 
 	for i = 1, self.buttonsCount do
 		local button = self.Buttons[i]

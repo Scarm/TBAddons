@@ -112,6 +112,7 @@ local bot = {
 				return list:Execute()
     	end
 
+			list:Cast( "Извержение Бездны", g.target:CanUse("Стрела бездны", {"Пытка разума", "Иссушение разума"}):Best() )
 
 			list:Cast( "Поток Бездны", g.target:CanUse("Поток Бездны", {"Пытка разума", "Иссушение разума"}):Moving(false):Enabled("Поток Бездны"):Best() )
 			list:Cast( "Поток Бездны", g.target:CanUse("Поток Бездны", {"Пытка разума", "Иссушение разума"}):Moving(false):Toggle("Burst"):Best() )
@@ -129,8 +130,6 @@ local bot = {
 			list:Cast( "Слово Тьмы: Боль", g.target:CanUse("Слово Тьмы: Боль", {"Пытка разума", "Иссушение разума"}):Aura("Слово Тьмы: Боль", "mine", "inverse", {time=6, bound=">"}):Toggle("Burst"):Energy(">", 100):Best() )
 			list:Cast( "Извержение Бездны", g.target:CanUse("Извержение Бездны", {"Пытка разума", "Иссушение разума"}):Moving(false):Enabled("Извержение Бездны"):Energy(">", 100):Best() )
 			list:Cast( "Извержение Бездны", g.target:CanUse("Извержение Бездны", {"Пытка разума", "Иссушение разума"}):Moving(false):Toggle("Burst"):Energy(">", 100):Best() )
-
-			list:Cast( "Извержение Бездны", g.target:CanUse("Стрела бездны", {"Пытка разума", "Иссушение разума"}):Best() )
 
 			list:Cast( "Слово Тьмы: Смерть", g.target:CanUse("Слово Тьмы: Смерть", {"Пытка разума", "Иссушение разума"}):Best() )
 			list:Cast( "Слово Тьмы: Смерть", g.target:CanUse("Слово Тьмы: Смерть- 2", {"Пытка разума", "Иссушение разума"}):Best() )

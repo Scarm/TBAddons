@@ -214,23 +214,26 @@ function TBSpecInfoUpdateList()
 	local _,height = TBSpecInfoList:GetFont()
 	local text = ""
 	local strings = 0
-	for name,spellId in pairs(TBSpecInfo.spec.Spells) do
-		if text~="" then
-			text = text.."\n"
+	if TBSpecInfo.spec then
+		for name,spellId in pairs(TBSpecInfo.spec.Spells) do
+			if text~="" then
+				text = text.."\n"
+			end
+			text = text..(GetSpellLink(spellId) or "nil").."("..spellId..")"
+			strings = strings + 1
 		end
-		text = text..(GetSpellLink(spellId) or "nil").."("..spellId..")"
-		strings = strings + 1
-	end
+	
 
-	text = text.."\n"
+		text = text.."\n"
 
-	for name,spellId in pairs(TBSpecInfo.spec.Buffs) do
-		if text~="" then
-			text = text.."\n"
+		for name,spellId in pairs(TBSpecInfo.spec.Buffs) do
+			if text~="" then
+				text = text.."\n"
+			end
+			text = text..GetSpellLink(spellId).."("..spellId..")"
+			strings = strings + 1
 		end
-		text = text..GetSpellLink(spellId).."("..spellId..")"
-		strings = strings + 1
-	end
+end
 
 	TBSpecInfoList:SetHeight(strings * height)
 	TBSpecInfoList:SetText(text)

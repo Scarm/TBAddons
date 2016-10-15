@@ -34,6 +34,10 @@ local bot = {
 					Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
 					Name = "AoE",
 				},
+				[3] = {
+					Type = "spell",
+					Spell = 209202, -- Око Тира
+				},
 			},
 			["Id"] = 2,
 			["Spells"] = {
@@ -48,6 +52,7 @@ local bot = {
 				["Щит мстителя"] = 31935,
 				["Свет защитника"] = 184092,
 				["Благословенный молот"] = 204019,
+				["Око Тира"] = 209202,
 			},
 			["Class"] = "PALADIN",
 			["Buffs"] = {
@@ -70,7 +75,8 @@ function bot:OnUpdate(g, list, modes)
 	end
 
 	list:Cast( "Укор", g.target:CanUse("Укор"):CanInterrupt():Best() )
-  list:Cast( "Освящение", g.player:CanUse("Освящение"):Toggle("AoE"):Best() )
+	list:Cast( "Око Тира", g.target:CanUse("Око Тира"):InSpellRange("Молот правосудия"):Enabled("Око Тира"):Best() )
+  list:Cast( "Освящение", g.player:CanUse("Освящение"):Condition(g.target:InSpellRange("Молот правосудия"):Any()):Toggle("AoE"):Best() )
 
   list:Cast("Щит праведника", g.target:CanUse("Щит праведника"):Charges("Щит праведника", 3, 0.5):Best() )
   list:Cast("Щит праведника", g.target:CanUse("Щит праведника"):Charges("Щит праведника", 2, 0.5):HP("<", 60, "self"):Aura("Щит праведника", "mine", "self", "inverse"):Best() )
@@ -79,7 +85,7 @@ function bot:OnUpdate(g, list, modes)
 
   list:Cast( "Щит мстителя", g.target:CanUse("Щит мстителя"):Best() )
   list:Cast( "Правосудие", g.target:CanUse("Правосудие"):Best() )
-  list:Cast( "Благословенный молот", g.target:CanUse("Благословенный молот"):Best() )
+  list:Cast( "Благословенный молот", g.target:CanUse("Благословенный молот"):Condition(g.target:InSpellRange("Молот правосудия"):Any()):Best() )
   list:Cast( "Молот праведника", g.target:CanUse("Молот праведника"):Best() )
 
 	return list:Execute()
