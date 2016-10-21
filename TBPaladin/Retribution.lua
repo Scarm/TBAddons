@@ -81,23 +81,38 @@ function bot:OnUpdate(g, list, modes)
 
   list:Cast( "Правосудие", g.target:CanUse("Правосудие"):Best() )
 
+  list:Cast( "Испепеляющий след", g.target:CanUse("Испепеляющий след"):InSpellRange("Вердикт храмовника"):Best() )
+
   list:Cast( "Торжество", g.player:CanUse("Торжество"):Enabled("Торжество"):HolyPower(5):HP("<", 70, "self"):Best() )
   list:Cast( "Торжество", g.player:CanUse("Торжество"):Enabled("Торжество"):Aura("Божественный замысел", "mine", "self", {time=2, bound="<"}):HP("<", 70, "self"):Best() )
   list:Cast( "Торжество", g.player:CanUse("Торжество"):Enabled("Торжество"):Aura("Правосудие", "mine", {time=2, bound="<"}):HP("<", 70, "self"):Best() )
 
-  list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Toggle("AoE"):HolyPower(5):Best() )
+	list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Toggle("AoE"):HolyPower(5):Best() )
+	list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):CanUse("Клинок Справедливости"):Toggle("AoE"):HolyPower(4):Best() )
+	list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):CanUse("Клинок гнева"):Toggle("AoE"):HolyPower(4):Best() )
+	list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):CanUse("Божественный молот"):Toggle("AoE"):HolyPower(4):Best() )
   list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Toggle("AoE"):Aura("Божественный замысел", "mine", "self", {time=2, bound="<"}):Best() )
   list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Toggle("AoE"):Aura("Правосудие", "mine", {time=2, bound="<"}):Best() )
 
-  list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):HolyPower(5):Best() )
+	list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):HolyPower(5):Best() )
+	list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):CanUse("Клинок Справедливости"):HolyPower(4):Best() )
+	list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):CanUse("Клинок гнева"):HolyPower(4):Best() )
+	list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):CanUse("Божественный молот"):HolyPower(4):Best() )
   list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):Aura("Божественный замысел", "mine", "self", {time=2, bound="<"}):Best() )
   list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):Aura("Правосудие", "mine", {time=2, bound="<"}):Best() )
 
-  list:Cast( "Вердикт храмовника", g.target:CanUse("Вердикт храмовника"):HolyPower(5):Best() )
+	list:Cast( "Вердикт храмовника", g.target:CanUse("Вердикт храмовника"):HolyPower(5):Best() )
+	list:Cast( "Вердикт храмовника", g.target:CanUse("Клинок Справедливости"):CanUse("Вердикт храмовника"):HolyPower(4):Best() )
+	list:Cast( "Вердикт храмовника", g.target:CanUse("Клинок гнева"):CanUse("Вердикт храмовника"):HolyPower(4):Best() )
+	list:Cast( "Вердикт храмовника", g.target:CanUse("Божественный молот"):CanUse("Вердикт храмовника"):HolyPower(4):Best() )
   list:Cast( "Вердикт храмовника", g.target:CanUse("Вердикт храмовника"):Aura("Божественный замысел", "mine", "self", {time=2, bound="<"}):Best() )
   list:Cast( "Вердикт храмовника", g.target:CanUse("Вердикт храмовника"):Aura("Правосудие", "mine", {time=2, bound="<"}):Best() )
 
-  list:Cast( "Испепеляющий след", g.target:CanUse("Испепеляющий след"):InSpellRange("Вердикт храмовника"):Best() )
+
+
+  list:Cast( "Клинок Справедливости", g.target:CanUse("Клинок Справедливости"):Best() )
+  list:Cast( "Клинок гнева", g.target:CanUse("Клинок гнева"):Best() )
+  list:Cast( "Божественный молот", g.player:CanUse("Божественный молот"):Condition(g.target:InSpellRange("Вердикт храмовника"):Any()):Best() )
 
   list:Cast( "Фанатизм", g.target:CanUse("Фанатизм"):Charges("Фанатизм", 2, 1.5):Best() )
   list:Cast( "Удар воина Света", g.target:CanUse("Удар воина Света"):Charges("Удар воина Света", 2, 1.5):Best() )
@@ -105,10 +120,6 @@ function bot:OnUpdate(g, list, modes)
   list:Cast( "Торжество", g.player:CanUse("Торжество"):Enabled("Торжество"):HP("<", 70, "self"):Best() )
   list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):Best() )
   list:Cast( "Вердикт храмовника", g.target:CanUse("Вердикт храмовника"):Best() )
-
-  list:Cast( "Клинок Справедливости", g.target:CanUse("Клинок Справедливости"):Best() )
-  list:Cast( "Клинок гнева", g.target:CanUse("Клинок гнева"):Best() )
-  list:Cast( "Божественный молот", g.player:CanUse("Божественный молот"):Condition(g.target:InSpellRange("Вердикт храмовника"):Any()):Best() )
 
   list:Cast( "Фанатизм", g.target:CanUse("Фанатизм"):Best() )
   list:Cast( "Удар воина Света", g.target:CanUse("Удар воина Света"):Best() )

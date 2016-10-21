@@ -78,9 +78,10 @@ function bot:OnUpdate(g, list, modes)
 
   list:Cast( "Намордник", g.target:CanUse("Намордник"):CanInterrupt():Best() )
   list:Cast( "Ярость орла", g.player:CanUse("Ярость орла"):Condition(g.target:InSpellRange("Удар ящера"):Any()):Aura("Ярость мангуста", "mine", "self", {time=1.5, bound="<"}):Best() )
-  list:Cast( "Взрывная ловушка", g.target:CanUse("Взрывная ловушка"):Toggle("AoE"):InSpellRange("Удар ящера"):Best() )
+	list:Cast( "Стая воронов", g.target:CanUse("Стая воронов"):Best() )
+	list:Cast( "Взрывная ловушка", g.target:CanUse("Взрывная ловушка"):Toggle("AoE"):InSpellRange("Удар ящера"):Best() )
   list:Cast( "Граната пламени дракона", g.target:CanUse("Граната пламени дракона"):Toggle("Burst"):Best() )
-
+	list:Cast( "Взрывная ловушка", g.target:CanUse("Взрывная ловушка"):InSpellRange("Удар ящера"):Best() )
 
   list:Cast( "Удар ящера", g.target:CanUse("Удар ящера"):Aura("Тактика Мок'Натала", "mine", "self", {time=2, bound="<"}):Best() )
 
@@ -89,8 +90,8 @@ function bot:OnUpdate(g, list, modes)
   list:Cast( "Обходной удар", g.target:CanUse("Обходной удар"):Best() )
   list:Cast( "Укус мангуста", g.target:CanUse("Укус мангуста"):Aura("Ярость мангуста", "mine", "self", {time=0.5, bound=">"}):Best() )
 
-  list:Cast( "Взрывная ловушка", g.target:CanUse("Взрывная ловушка"):InSpellRange("Удар ящера"):Best() )
-  list:Cast( "Стая воронов", g.target:CanUse("Стая воронов"):Best() )
+
+
 
   list:Cast( "Режущий удар", g.target:CanUse("Режущий удар"):Aura("Режущий удар", "mine", "inverse", {time=3, bound=">"}):Best() )
 

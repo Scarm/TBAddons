@@ -329,6 +329,8 @@ function bot:PartyHeal(g, list, modes)
 	list:Cast( "Быстрое восстановление", g.mainTank:CanUse("Быстрое восстановление"):Aura("Щит Кенария", "mine", "inverse"):HP("<",50):MinHP() )
 	list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение"):HP("<",50):MinHP() )
 
+	list:Cast( "Буйный рост", g.party:CanUse("Буйный рост"):Toggle("Burst"):MinHP() )
+
 	-- С ДД все плохо
 	list:Cast( "Омоложение",
 			g.party:CanUse("Омоложение")
@@ -354,8 +356,8 @@ function bot:PartyHeal(g, list, modes)
 			:Aura("Восстановление", "mine", "inverse")
 			:LastCast("Восстановление", false)
 			:MinHP() )
-	list:Cast( "Быстрое восстановление", g.party:CanUse("Быстрое восстановление"):HP("<",50):MinHP() )
-	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",50):MinHP() )
+	list:Cast( "Быстрое восстановление", g.party:CanUse("Быстрое восстановление"):HP("<",55):MinHP() )
+	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",55):MinHP() )
 	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",60):LastCast("Целительное прикосновение", false):MinHP() )
 
 	-- Теперь все не так плохо, обрабатываем среднюю тяжесть
@@ -399,12 +401,33 @@ function bot:PartyHeal(g, list, modes)
 			:HP("<",75)
 			:MinHP() )
 
+
 	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",60):MinHP() )
 	list:Cast( "Целительное прикосновение", g.party:CanUse("Целительное прикосновение"):HP("<",70):LastCast("Целительное прикосновение", false):MinHP() )
 
 	list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение"):HP("<",70):MinHP() )
 	list:Cast( "Целительное прикосновение", g.mainTank:CanUse("Целительное прикосновение"):HP("<",80):LastCast("Целительное прикосновение", false):MinHP() )
 
+	-- Раскидываем омоложения по пати
+	list:Cast( "Омоложение",
+			g.party:CanUse("Омоложение")
+			:Aura("Омоложение (зарождение)", "mine", "inverse")
+			:Aura("Омоложение", "mine", "inverse")
+			:Toggle("Burst")
+			:MinHP() )
+
+	list:Cast( "Омоложение",
+			g.party:CanUse("Омоложение")
+			:Aura("Омоложение", "mine", "inverse")
+			:Toggle("Burst")
+			:MinHP() )
+
+	list:Cast( "Омоложение",
+			g.party:CanUse("Омоложение")
+			:Talent("Зарождение", true)
+			:Aura("Омоложение (зарождение)", "mine", "inverse")
+			:Toggle("Burst")
+			:MinHP() )
 	----------------
 
 	list:Cast( "Звездный поток", g.mainTank:CanUse("Звездный поток"):Toggle("Dmg"):Mana(">", 90):Moving(false):Best() )
