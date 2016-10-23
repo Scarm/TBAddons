@@ -7,27 +7,27 @@ function TBCommitCombat()
 	end
 
 	TBHelperCollection = TBHelperCollection or {}
-		
+
 	-- если не найден босс - записываем все в один комбат зоны
 	 if TBCollectionFrame.tmp.Debuffs and TBCollectionFrame.tmp.Targets then
 		 TBCollectionFrame.tmp.BossName = TBCollectionFrame.tmp.BossName or GetRealZoneText()
 	 end
 	--если нашлось хоть одно имя босса - значит это стоит записать
 	if TBCollectionFrame.tmp.BossName then
-		print("Начали запись результатов боя")
-		
+		--print("Начали запись результатов боя")
+
 		-- создаем нужные таблицы
 		TBHelperCollection[GetRealZoneText()] = TBHelperCollection[GetRealZoneText()] or {}
 		local zone = TBHelperCollection[GetRealZoneText()]
-		
+
 		zone[TBCollectionFrame.tmp.BossName]  = zone[TBCollectionFrame.tmp.BossName] or {}
 		local boss = zone[TBCollectionFrame.tmp.BossName]
-		
+
 		boss["debuffs"] = boss["debuffs"] or {}
-		boss["targets"] = boss["targets"] or {}		
+		boss["targets"] = boss["targets"] or {}
 		local debuffs = boss["debuffs"]
 		local targets = boss["targets"]
-		
+
 		-- заполняем из временного хранилища значения, которых нет в главном хранилище
 		for k,v in pairs(TBCollectionFrame.tmp.Debuffs) do
 			debuffs[k] = debuffs[k] or v
@@ -35,19 +35,19 @@ function TBCommitCombat()
 		for k,v in pairs(TBCollectionFrame.tmp.Targets) do
 			targets[k] = targets[k] or v
 		end
-		
+
 		-- повторно сюда не заходим
 		TBCollectionFrame.tmp.BossName = nil
 		TBCollectionFrame.tmp.Debuffs = nil
 		TBCollectionFrame.tmp.Targets = nil
-	end		
+	end
 end
 
 function TBScanDebuffs(self, event, target)
-	local party = TBGroups().party	
+	local party = TBGroups().party
 	-- Начинаем запись только если кто то в группе вступил в бой
 	if party:AffectingCombat(true):Any() then
-		
+
 		TBCollectionFrame.tmp.Debuffs = TBCollectionFrame.tmp.Debuffs or {}
 		TBCollectionFrame.tmp.Targets = TBCollectionFrame.tmp.Targets or {}
 		if TBCollectionFrame.tmp.BossName == nil and UnitName("boss1") then
@@ -59,33 +59,33 @@ function TBScanDebuffs(self, event, target)
 				if id and TBCollectionFrame.tmp.Debuffs[id] == nil then
 					TBCollectionFrame.tmp.Debuffs[id] = {}
 					local v = TBCollectionFrame.tmp.Debuffs[id]
-					v.name, 
-					v.rank, 
-					v.icon, 
-					v.count,  
-					v.dispelType,  
-					v.duration,  
-					v.expires,  
-					v.caster,  
-					v.isStealable,  
-					v.shouldConsolidate,  
-					v.spellID,  
-					v.canApplyAura,  
-					v.isBossDebuff,  
-					v.value1,  
-					v.value2,  
+					v.name,
+					v.rank,
+					v.icon,
+					v.count,
+					v.dispelType,
+					v.duration,
+					v.expires,
+					v.caster,
+					v.isStealable,
+					v.shouldConsolidate,
+					v.spellID,
+					v.canApplyAura,
+					v.isBossDebuff,
+					v.value1,
+					v.value2,
 					v.value3 = UnitAura(target,i,"HARMFUL")
 
-					print("debuff logged: ", id)
+					--print("debuff logged: ", id)
 				end
 			end
 		end
-		
+
 		if event=="UNIT_TARGET" and  UnitCanAttack("player", target.."target") then
 			local name = UnitName(target.."target")
 			if name and TBCollectionFrame.tmp.Targets[name] == nil then
 				TBCollectionFrame.tmp.Targets[name] = 0
-				print("target logged: ", name)
+				--print("target logged: ", name)
 			end
 		end
 
@@ -102,7 +102,7 @@ function TBInitDropDowns()
 	   TBCollectionFrame.SelectedBoss = nil
 	   TBShowDebuffList()
 	end
-	
+
 	local function initZoneSelection(self, level)
 		if TBHelperCollection then
 			for k,v in pairs(TBHelperCollection) do
@@ -111,35 +111,35 @@ function TBInitDropDowns()
 				info.value = v
 				info.func = OnZoneClick
 				UIDropDownMenu_AddButton(info, level)
-			end	
+			end
 		end
 	end
-	
+
 	UIDropDownMenu_Initialize(TBZoneSelection, initZoneSelection)
 	UIDropDownMenu_SetWidth(TBZoneSelection, 150)
 	UIDropDownMenu_SetButtonWidth(TBZoneSelection, 50)
 	UIDropDownMenu_JustifyText(TBZoneSelection, "LEFT")
 	TBZoneSelection:Show()
-	
+
 	local function OnBossClick(self)
 	   UIDropDownMenu_SetSelectedName(TBBossSelection, self:GetText())
 	   --print(TBBossSelection.selectedName)
 	   TBCollectionFrame.SelectedBoss = TBHelperCollection[TBZoneSelection.selectedName][TBBossSelection.selectedName]
 	   TBShowDebuffList()
 	end
-	
+
 	local function initBossSelection(self, level)
-		if TBHelperCollection and TBHelperCollection[TBZoneSelection.selectedName] then 
+		if TBHelperCollection and TBHelperCollection[TBZoneSelection.selectedName] then
 			for k,v in pairs(TBHelperCollection[TBZoneSelection.selectedName]) do
 				info = UIDropDownMenu_CreateInfo()
 				info.text = k
 				info.value = v
 				info.func = OnBossClick
 				UIDropDownMenu_AddButton(info, level)
-			end	
+			end
 		end
 	end
-	
+
 	UIDropDownMenu_Initialize(TBBossSelection, initBossSelection)
 	UIDropDownMenu_SetWidth(TBBossSelection, 150)
 	UIDropDownMenu_SetButtonWidth(TBBossSelection, 50)
@@ -160,9 +160,9 @@ end
 function TBGetDebuffButton()
 	if TBCollectionFrame.first then
 		--если попали сюда - значит хотя бы одна кнопка создана
-		
+
 		if TBCollectionFrame.last == nil then
-			--список уже был создан, но очищен. Нужно получить самый первый элемент 
+			--список уже был создан, но очищен. Нужно получить самый первый элемент
 			TBCollectionFrame.last = TBCollectionFrame.first
 
 		else
@@ -193,7 +193,7 @@ function TBShowDebuffList()
 	--TBAttributes["incoming damage"] = TBAttributes["incoming damage"] or {}
 	--TBAttributes["absorb heal"] = TBAttributes["absorb heal"] or {}
 	--TBAttributes["not decurse"] = TBAttributes["not decurse"] or {}
-	
+
 
 	local function SetVisibility(actionButton)
 		if actionButton.filter == TBCollectionFrame.filter then
@@ -208,20 +208,20 @@ function TBShowDebuffList()
 		TBClearDebuff(TBCollectionFrame.first)
 		TBCollectionFrame.last = nil
 	end
-	
+
 	if TBCollectionFrame.SelectedBoss then
 		TBHelperIgnores = TBHelperIgnores or {}
 		TBHelperIgnores.debuffs = TBHelperIgnores.debuffs or {}
-	
+
 		local debuffs = TBCollectionFrame.SelectedBoss.debuffs
-		
+
 		--помечаем все спеллы из списка полного игнора
 		for id, data in pairs(debuffs) do
 			if TBHelperIgnores.debuffs[id] then
 				data.filter = "full ignore"
 			end
 		end
-		
+
 		for id, data in pairs(debuffs) do
 			if data.filter == TBCollectionFrame.filter then
 				local button = TBGetDebuffButton()
@@ -229,40 +229,20 @@ function TBShowDebuffList()
 				button.data = data
 				button.icon:SetTexture(button.data.icon)
 				button:Show()
-				
+
 				SetVisibility(button.addKey)
-				SetVisibility(button.ignoreKey)	
-				
+				SetVisibility(button.ignoreKey)
+
 				SetVisibility(button.returnKey1)
 				SetVisibility(button.dotKey)
 				SetVisibility(button.absorbKey)
 				SetVisibility(button.decurseKey)
 				SetVisibility(button.fullHealKey)
-				
-				
-				SetVisibility(button.returnKey2)				
-				SetVisibility(button.fullIgnoreKey)				
+
+
+				SetVisibility(button.returnKey2)
+				SetVisibility(button.fullIgnoreKey)
 			end
 		end
-	end		
+	end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

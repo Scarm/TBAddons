@@ -1,16 +1,55 @@
 ﻿local bot = {
+		["Talents"] = {
+					["Управление гневом"] = 21204,
+					["Удар громовержца"] = 15759,
+					["В гущу боя"] = 22398,
+					["Ультиматум"] = 22489,
+					["Ударная волна"] = 15760,
+					["Месть"] = 22396,
+					["Вестник войны"] = 15774,
+					["Лютая месть"] = 22392,
+					["Верная победа"] = 19676,
+					["Испытание полководца"] = 22630,
+					["Предельный шаг"] = 22627,
+					["Вдохновляющее присутствие"] = 22629,
+					["Обновленная ярость"] = 22378,
+					["Неукротимость"] = 22362,
+					["Охрана"] = 22789,
+					["Опустошитель"] = 22801,
+					["Аватара"] = 19138,
+					["Жесткий отпор"] = 22406,
+					["Ни шагу назад"] = 22631,
+					["Трескучий гром"] = 22488,
+					["Луженая глотка"] = 22401,
+				},
 			["Name"] = "Защита",
 			["Buttons"] = {
-				[1] = {
+				{
 					Type = "trigger",
 					Icon = "Interface\\Icons\\ABILITY_SEAL",
 					Name = "Stop",
 				},
-				[2] = {
+				{
 					Type = "trigger",
 					Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
 					Name = "AoE",
 				},
+				{
+					Type = "spell",
+					Spell = 46968, -- Ударная волна
+					talent = 15760, --Ударная волна
+				},
+				{
+					 Type = "spell",
+					 Spell = 203524, -- Ярость Нелтариона
+				},
+				{
+					Type = "trigger",
+					Icon = 1377132,
+					Name = "Def",
+				},
+
+
 			},
 			["Id"] = 3,
 			["Spells"] = {
@@ -30,6 +69,8 @@
 				["Блок щитом"] = 2565,
 				["Удар грома"] = 6343,
 				["Героический бросок"] = 57755,
+				["Ударная волна"] = 46968,
+				["Ярость Нелтариона"] = 203524,
 			},
 			["Class"] = "WARRIOR",
 			["Buffs"] = {
@@ -50,47 +91,50 @@
 		}
 
 function bot:OnUpdate(g, list, modes)
-	if IsMounted() then return end	
-	if modes.toggle.Stop then 
+	if IsMounted() then return end
+	if modes.toggle.Stop then
 		return
 	end
-	
+
 	list:Cast( "Зуботычина", g.target:CanUse("Зуботычина"):CanInterrupt():Best() )
-	
-	if g.player:AffectingCombat(true):MinHP() then	
+
+	list:Cast( "Ударная волна", g.player:CanUse("Ударная волна"):Enabled("Ударная волна"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )
+
+	list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):CanUse("Ярость Нелтариона"):Enabled("Ярость Нелтариона"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )
+	list:Cast( "Ярость Нелтариона", g.player:CanUse("Ярость Нелтариона"):Enabled("Ярость Нелтариона"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )
+
+	if g.player:AffectingCombat(true):MinHP() then
 		list:Cast( "Сосредоточенная ярость", g.player:CanUse("Сосредоточенная ярость"):Aura("Ультиматум", "mine", "self"):Best() )
 		list:Cast( "Сосредоточенная ярость", g.player:CanUse("Сосредоточенная ярость"):Aura("Отмщение: сосредоточенная ярость", "mine", "self"):Best() )
 
 		list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):Condition(g.target:CanUse("Мощный удар щитом"):Any()):Aura("Блок щитом", "mine", "self", "inverse"):Best() )
 		list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):Charges("Блок щитом", 2):Aura("Блок щитом", "mine", "self", "inverse"):Best() )
-		list:Cast( "Удар грома", g.target:CanUse("Удар грома"):Toggle("AoE"):InSpellRange("Сокрушение"):Best() )
-		
+
 		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):Energy(">", 80):Best() )
 		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):Aura("Стойкость к боли", "mine", "self", {time=1, bound="<"}):Best() )
-		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):Aura("Месть: стойкость к боли", "mine", "self", {time=1, bound="<"}):Best() )		
+		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):Aura("Месть: стойкость к боли", "mine", "self", {time=1, bound="<"}):Best() )
 		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):HP("<", 50, "self"):Best() )
 		list:Cast( "Деморализующий крик", g.target:CanUse("Деморализующий крик"):InSpellRange("Сокрушение"):HP("<", 50, "self"):Best() )
-		
-		list:Cast( "Верная победа", g.target:CanUse("Верная победа"):HP("<", 70, "self"):Best() )
-		list:Cast( "Верная победа", g.target:CanUse("Верная победа"):HP("<", 20):Best() )
-		list:Cast( "Победный раж", g.target:CanUse("Победный раж"):HP("<", 70, "self"):Best() )
 	end
-	
-	
-	
+
+	list:Cast( "Верная победа", g.target:CanUse("Верная победа"):HP("<", 70, "self"):Best() )
+	list:Cast( "Верная победа", g.target:CanUse("Верная победа"):HP("<", 20):Best() )
+	list:Cast( "Победный раж", g.target:CanUse("Победный раж"):HP("<", 70, "self"):Best() )
+
+	list:Cast( "Удар грома", g.target:CanUse("Удар грома"):Toggle("AoE"):InSpellRange("Сокрушение"):Best() )
 	list:Cast( "Мощный удар щитом", g.target:CanUse("Мощный удар щитом"):Best() )
 	list:Cast( "Реванш", g.player:CanUse("Реванш"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )
-	
+
 	list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
 	list:Cast( "Героический бросок", g.target:CanUse("Героический бросок"):Best() )
 
-	
+
 	return list:Execute()
 end
 
-		
-TBRegister(bot)		
-		
+
+TBRegister(bot)
+
 --[[
 local bot = {
 			["Name"] = "Защита",
@@ -114,7 +158,7 @@ local bot = {
 					["ToolTip"] = "On",
 					["Icon"] = "Interface\\Icons\\ABILITY_WARRIOR_SHOCKWAVE",
 					["GroupId"] = "ShockWave",
-				}, -- [4]				
+				}, -- [4]
 			},
 			["Id"] = 3,
 			["Spells"] = {
@@ -151,17 +195,17 @@ local bot = {
 			},
 			["Class"] = "WARRIOR",
 		}
-		
-		
+
+
 function bot:OnUpdate(g, list, modes)
-	
-	if IsMounted() then return end	
-	if modes.Run == "Off" then 
-		return 
+
+	if IsMounted() then return end
+	if modes.Run == "Off" then
+		return
 	end
-	
+
 	list:Cast( "Зуботычина", g.target:CanUse("Зуботычина"):CanInterrupt():Best() )
-	
+
 	if g.target:CanUse("Мощный удар щитом"):Any() then
 		list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):Aura("Оборонительная стойка", "mine", "self"):Aura("Блок щитом", "mine", "self", "inverse"):MinHP() )
 	end
@@ -169,36 +213,36 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Непроницаемый щит", g.player:CanUse("Непроницаемый щит"):Energy(">", 60):HP("<", 75, "self"):Aura("Оборонительная стойка", "mine", "self"):Aura("Непроницаемый щит", "mine", "self", "inverse"):MinHP() )
 	list:Cast( "Непроницаемый щит", g.player:CanUse("Непроницаемый щит"):HP("<", 50, "self"):Aura("Оборонительная стойка", "mine", "self"):Aura("Непроницаемый щит", "mine", "self", "inverse"):MinHP() )
 	list:Cast( "Безудержное восстановление", g.player:CanUse("Безудержное восстановление"):HP("<", 50, "self"):Aura("Безудержное восстановление", "mine", "self", "inverse"):MinHP() )
-	
+
 	if modes.ShockWave == "On" then
 		list:Cast( "Ударная волна", g.player:CanUse("Ударная волна"):Best() )
 	end
-	
-	
+
+
 	if modes.Burst == "On" then
-		list:Cast( "Вихрь клинков", g.player:CanUse("Вихрь клинков"):Best() )	
+		list:Cast( "Вихрь клинков", g.player:CanUse("Вихрь клинков"):Best() )
 	end
-	
+
 	if modes.AoE == "On" then
 		list:Cast( "Удар грома", g.target:InSpellRange("Сокрушение"):CanUse("Удар грома"):LastCast("Рывок",false,"total"):Best() )
-		
+
 		list:Cast( "Мощный удар щитом", g.target:CanUse("Мощный удар щитом"):Best() )
 		list:Cast( "Реванш", g.target:CanUse("Реванш"):Best() )
 		list:Cast( "Удар героя", g.target:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )
-		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )	
+		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
 	else
 		list:Cast( "Мощный удар щитом", g.target:CanUse("Мощный удар щитом"):Best() )
 		list:Cast( "Реванш", g.target:CanUse("Реванш"):Best() )
 		list:Cast( "Удар героя", g.target:CanUse("Удар героя"):Aura("Ультиматум", "mine", "self"):Best() )
-		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )	
+		list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
 	end
-	
-	list:Cast( "Героический бросок", g.target:CanUse("Героический бросок"):Best() )
-	
-		
-	return list:Execute()
-end	
 
-		
+	list:Cast( "Героический бросок", g.target:CanUse("Героический бросок"):Best() )
+
+
+	return list:Execute()
+end
+
+
 TBRegister(bot)
---]]	
+--]]

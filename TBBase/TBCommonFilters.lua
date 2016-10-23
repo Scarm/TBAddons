@@ -13,7 +13,7 @@ function BaseGroup:Toggle(mode)
 			return self:CreateDerived()
 		end
 	end
-	
+
 	return nil
 end
 
@@ -24,14 +24,14 @@ function BaseGroup:Enabled(key, activationType)
 			if BaseGroupHelper.modes[activationType] == nil then
 				return nil
 			end
-			
+
 			if BaseGroupHelper.modes[activationType][spellID] then
 				return self
 			else
 				return self:CreateDerived()
 			end
 		else
-			-- Любой вид активации			
+			-- Любой вид активации
 			if BaseGroupHelper.modes.auto[spellID] or BaseGroupHelper.modes.manual[spellID] then
 				return self
 			else
@@ -39,70 +39,64 @@ function BaseGroup:Enabled(key, activationType)
 			end
 		end
 	end
-	
+
 	return nil
 end
 
 function BaseGroup:Talent(key, value)
 	local talentID = IndicatorFrame.Spec.Talents[key]
 	local enabled = select(4,GetTalentInfoByID(talentID,1))
-	
+
 	if value == nil then
 		value = true
 	end
-	
+
 	if (enabled and value) or (not enabled and not value) then
 		return self
 	end
-	
+
 	return self:CreateDerived()
 end
 
 -- Проверяем, что до восстановления спелла осталось value сек
-function BaseGroup:SpellCooldown(key, value, bound)
+function BaseGroup:SpellCooldown(key, bound, value)
 	local spellID = IndicatorFrame.Spec.Spells[key]
 	local startTime, duration = GetSpellCooldown(spellID)
-		
-	local left = startTime + duration - GetTime()
-	
-	if bound == "lt" then
-		if value <= left then
-			return self
-		end
-		return self:CreateDerived()
+
+	local left = 0
+	if startTime > 0 then
+		left = startTime + duration - GetTime()
 	end
-	
-	if bound == "gt" then
-		if value >= left then
-			return self
-		end
-		return self:CreateDerived()
+
+	if (bound == "<" and left <= value) or (bound == ">" and left >= value) then
+		return self
 	end
+	return self:CreateDerived()
 end
 
 function BaseGroup:InSpellRange(key, inverse)
 	local spell = TBGetSpell(key)
 	local result = self:CreateDerived()
-	
+
 	for k,v in pairs(self) do
 		if (IsSpellInRange(spell.idx, spell.book, k) == 1) == (inverse == nil) then
 			result[k] = v
 		end
 	end
-	
+
 	return result
 end
 --[[
 function BaseGroup:ZeroThread()
 	local result = self:CreateDerived()
-	
+
 	for k,v in pairs(self) do
 		local threadValue = select(5,UnitDetailedThreatSituation("player", k)) or 0
 		if threadValue == 0 then
 			result[k] = v
 		end
 	end
-	
+
 	return result
 end
 
@@ -113,13 +107,13 @@ function BaseGroup:HasBossDebuff()
 		for i=1,40,1 do
 			local name = UnitAura(key,i,"HARMFUL")
 			local id = select(11, UnitAura(key,i,"HARMFUL"))
-			
+
 			if id and name and TBDebuffList[id] == name then
 				result[key] = value
 			end
-		end	
+		end
 	end
-	
+
 	return result
 end
 --]]
@@ -130,16 +124,16 @@ local result = self:CreateDerived()
 		for i=1,40,1 do
 			local name = UnitAura(key,i,"HARMFUL")
 			local id = select(11, UnitAura(key,i,"HARMFUL"))
-			
+
 			if id and name then
 				if TBAttributes[id] and TBAttributes[id][group] then
 					result[key] = value
 				end
 			end
-		end	
+		end
 	end
-	
-	return result	
+
+	return result
 end
 
 function BaseGroup:Moving(value)
@@ -150,17 +144,17 @@ function BaseGroup:Moving(value)
 	if IndicatorFrame.LastMoving == nil then
 		IndicatorFrame.LastMoving = GetTime()
 	end
-	
+
 	local isMoving = GetTime() < IndicatorFrame.LastMoving + 0.1
-	
+
 	if value == nil then
 		return nil
 	end
-	
+
 	if (isMoving and value) or (not isMoving and not value) then
 		return self
 	end
-	
+
 	return self:CreateDerived()
 end
 
@@ -170,7 +164,7 @@ function BaseGroup:CanInterrupt(key)
 		local ni = select(9,UnitCastingInfo(key))
 		return et and (GetTime() + 0.5 > et / 1000) and not ni
 	end
-	
+
 	local function IsChannel(key)
 		local ni = select(8,UnitChannelInfo(key))
 		local name = UnitChannelInfo(key)
@@ -183,15 +177,15 @@ function BaseGroup:CanInterrupt(key)
 			result[key] = value
 		end
 	end
-	
-	return result	
+
+	return result
 end
 
 function BaseGroup:NeedDecurse(...)
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
 		local needDecurse = nil
-		
+
 		local debuffNum = 1
 		local needContinue = 1
 		-- проходим по всем дебаффам, пока они не кончатся, или не найдем хоть что то для диспела
@@ -204,7 +198,7 @@ function BaseGroup:NeedDecurse(...)
 					if dispelType == select(i, ...) then
 						needDecurse = 1
 						needContinue = nil
-					end			
+					end
 				end
 			else
 				--дебаффы закончились
@@ -217,7 +211,7 @@ function BaseGroup:NeedDecurse(...)
 			result[key] = value
 		end
 	end
-	
+
 	return result
 end
 
@@ -225,64 +219,64 @@ end
 
 function BaseGroup:Charges(key, charges, dt)
 	local spellID = IndicatorFrame.Spec.Spells[key]
-	
+
 	local ch, maxCh, start, duration = GetSpellCharges(spellID)
 	dt = dt or 0
-	
+
 	if ch and ch < maxCh and ch > 0 then
 		if GetTime() > start + duration - dt then
 			ch = ch + 1
 		end
 	end
-	
+
 	if ch and charges and ch >= charges then
 		return self
 	end
-	
+
 	return self:CreateDerived()
 end
 
 function BaseGroup:CanAttack()
 	local result = self:CreateDerived()
-	
+
 	for key,value in pairs(self) do
 		if UnitCanAttack("player", key) then
 			result[key] = value
 		end
 	end
-	
-	return result	
+
+	return result
 end
 
 function BaseGroup:CanAssist()
 	local result = self:CreateDerived()
-	
+
 	for key,value in pairs(self) do
 		if UnitCanAssist("player", key) then
 			result[key] = value
 		end
 	end
-	
-	return result	
+
+	return result
 end
 
 function BaseGroup:AffectingCombat(val)
 	if val == nil then
 		return nil
 	end
-	
+
 	local result = self:CreateDerived()
-	
+
 	for key,value in pairs(self) do
 		if UnitAffectingCombat(key) == val then
 			result[key] = value
 		end
 	end
-	
-	return result	
+
+	return result
 end
 
-BaseGroupHelper.AcceptableTargets = 
+BaseGroupHelper.AcceptableTargets =
 	{
 		["Тренировочный манекен покорителя подземелий"] = 1
 	}
@@ -295,7 +289,7 @@ function BaseGroup:Acceptable(party)
 			end
 		end
 	end
-	
+
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
 		if UnitAffectingCombat(key) and InnerAcceptable(key, party) then
@@ -308,8 +302,8 @@ function BaseGroup:Acceptable(party)
 			result[key] = value
 		end
 	end
-	
-	return result	
+
+	return result
 end
 
 
@@ -319,7 +313,7 @@ end
 function distance(a,b)
 	local x1,y1 = UnitPosition(a)
 	local x2,y2 = UnitPosition(b)
-	
+
 	if x1 and x2 then
 		local dx = x2 - x1
 		local dy = y2 - y1
@@ -345,10 +339,10 @@ function BaseGroup:BastForAoE(limit,range)
 	local result = nil
 	local bestC = 0
 	local bestD = 0
-	
+
 	for key,value in pairs(self) do
 		local c, d = distToParty(key, self, range)
-		
+
 		if c > bestC then
 			result = value
 			bestC = c
@@ -357,10 +351,10 @@ function BaseGroup:BastForAoE(limit,range)
 		if c == bestC and d < bestD then
 			result = value
 			bestC = c
-			bestD = d		
-		end		
-	end 
-	
+			bestD = d
+		end
+	end
+
 	if bestC >= limit then
 		return result
 	end

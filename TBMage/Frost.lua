@@ -1,169 +1,107 @@
 local bot = {
-			["Name"] = "Лед",
-			["Buttons"] = {
-				[1] = {
-					Type = "trigger",
-					Icon = "Interface\\Icons\\ABILITY_SEAL",
-					Name = "Stop",
-				},
-				[2] = {
-					Type = "trigger",
-					Icon = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
-					Name = "Burst",
-				},
+			["Talents"] = {
+				["Одинокая зима"] = 22460,
+				["Пробирающий холод"] = 22463,
+				["Раскалывающийся лед"] = 22469,
+				["Кольцо обледенения"] = 22452,
+				["Плавучая льдина"] = 22446,
+				["Буря комет"] = 21634,
+				["Нестабильная магия"] = 22449,
+				["Морозный луч"] = 22457,
+				["Холодная хватка"] = 16025,
+				["Зеркальное изображение"] = 22444,
+				["Кольцо мороза"] = 22448,
+				["Арктическая буря"] = 22473,
+				["Ледяной заслон"] = 22471,
+				["Ледовый шип"] = 22309,
+				["Колдовской поток"] = 22447,
+				["Руна мощи"] = 22445,
+				["Мерцание"] = 22442,
+				["Ледяная бомба"] = 22454,
+				["Морозное касание"] = 22466,
+				["Ледяная Бездна"] = 21632,
+				["Прижигание"] = 22443,
 			},
-			["Id"] = 3,
-			["Spells"] = {
-			},
-			["Class"] = "MAGE",
-			["Buffs"] = {
-			},
-		}
-		
-function bot:OnUpdate(g, list, modes)
-	if IsMounted() then return end	
-	if modes.toggle.Stop then 
-		return
-	end
-	
-	return list:Execute()
-end
-
-		
-TBRegister(bot)
---[[
-local bot = {
 			["Name"] = "Лед",
 			["Buttons"] = {
 				{
-					["ToolTip"] = "Off",
+					["Type"] = "trigger",
 					["Icon"] = "Interface\\Icons\\ABILITY_SEAL",
-					["GroupId"] = "Run",
+					["Name"] = "Stop",
 				}, -- [1]
 				{
-					["ToolTip"] = "On",
+					["Type"] = "trigger",
 					["Icon"] = "Interface\\Icons\\Ability_Warrior_Bladestorm",
-					["GroupId"] = "AoE",
+					["Name"] = "AoE",
 				}, -- [2]
 				{
+					["Type"] = "trigger",
 					["Icon"] = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
-					["ToolTip"] = "On",
-					["GroupId"] = "Burst",
+					["Name"] = "Burst",
 				}, -- [3]
-				{
-					["Icon"] = "Interface\\Icons\\SPELL_ICE_LAMENT",
-					["ToolTip"] = "On",
-					["GroupId"] = "Heal",
-					["default"] = 1
-				}, -- [4]	
-				{
-					["Icon"] = "Interface\\Icons\\ABILITY_MAGE_FROSTJAW",
-					["ToolTip"] = "On",
-					["GroupId"] = "FrostLaw",
-				}, -- [5]				
-			
 			},
 			["Id"] = 3,
 			["Spells"] = {
-				["Конус холода"] = 120,
-				["Ледяное копье"] = 30455,
-				["Антимагия"] = 2139,
-				["Ледяная бомба"] = 112948,
-				["Берсерк"] = 26297,
-				["Ледяной шар"] = 84714,
-				["Ледяная стрела"] = 116,
-				["Стрела ледяного огня"] = 44614,
-				["Ледяная хватка"] = 102051,
-				["Кольцо льда"] = 122,
-				["Холод"] = 33395,
-				["Стылая кровь"] = 12472,
 				["Ледяная преграда"] = 11426,
-				["Буря комет"] = 153595,
+				["Ледяное копье"] = 30455,
 				["Кольцо обледенения"] = 157997,
+				["Буря комет"] = 153595,
+				["Морозное касание"] = 205030,
+				["Ледяная бомба"] = 112948,
+				["Конус холода"] = 120,
+				["Снежная буря"] = 190356,
+				["Морозный луч"] = 205021,
+				["Антимагия"] = 2139,
+				["Зеркальное изображение"] = 55342,
+				["Кольцо льда"] = 122,
+				["Мерцание"] = 212653,
+				["Скачок"] = 1953,
+				["Ледяной шар"] = 84714,
+				["Стылая кровь"] = 12472,
+				["Руна мощи"] = 116011,
+				["Шквал"] = 44614,
+				["Плавучая льдина"] = 108839,
+				["Ледяная глыба"] = 45438,
+				["Ледовый шип"] = 199786,
+				["Ледяная стрела"] = 116,
 			},
 			["Buffs"] = {
-				["Ледяные пальцы"] = 44544,
-				["Колдовской поток"] = 116267,
+				["Заморозка мозгов"] = 190446,
+				["Окоченение"] = 205708,
+				["Гипотермия"] = 41425,
+				["Знак рока"] = 184073,
+				["Кристаллы льда"] = 205473,
+				["Критический удар"] = 165832,
+				["Шквал_"] = 228358,
 				["Сильная струя воды"] = 135029,
-				["Заморозка мозгов"] = 57761,
+				["Морозный луч"] = 208166,
+				["Шквал"] = 228354,
+				["Ледяная стрела"] = 59638,
+				["Ледовый шип"] = 228600,
+				["Колдовской поток"] = 116267,
+				["Руна мощи"] = 116014,
+				["Ледовый шип!"] = 199844,
+				["Ледяные пальцы"] = 44544,
+				["Пробирающий холод"] = 205766,
+				["Морозный луч_"] = 208141,
+				["Защитник Стражей Хиджала"] = 93341,
 			},
 			["Class"] = "MAGE",
 		}
 
 function bot:OnUpdate(g, list, modes)
-
-	if IsMounted() then return end	
-	if modes.Run == "Off" then 
-		return 
-	end
-	
-	if GetUnitName("focus") == nil or UnitIsDead("focus") then
-		if IsInRaid() or IsInGroup() then
-			list:Focus(g.targets:CanAttack():Acceptable(g.party):Best())
-		else
-			list:Focus(g.target:CanAttack():Best())
-			list:Focus(g.targets:CanAttack():Acceptable(g.party):Best())
-		end
-	end
-	
-	if GetUnitName("playerpet") == nil then
-			list:Cast( "Призыв элементаля воды", g.player:CanUse("Призыв элементаля воды"):Best() )
-	end
-	
-	list:Cast( "Антимагия", g.target:CanUse("Антимагия"):CanInterrupt():Best() )
-	
-	if modes.FrostLaw == "On" then
-		list:Cast( "Ледяная хватка", g.focus:CanUse("Ледяная хватка"):Best() )
-	end
-	
-	if modes.Heal == "On" then
-		list:Cast( "Ледяная преграда", g.player:CanUse("Ледяная преграда"):Aura("Ледяная преграда", "mine", "self", "inverse"):Best() )
-	end	
-	
-	if modes.Burst == "On" then
-		list:Cast( "Ледяной шар", g.player:CanUse("Ледяной шар"):Best() )
-		list:Cast( "Берсерк", g.player:CanUse("Берсерк"):Best() )
-		list:Cast( "Стылая кровь", g.player:CanUse("Стылая кровь"):Best() )
-
+	if IsMounted() then return end
+	if modes.toggle.Stop then
+		return
 	end
 
-	if modes.AoE == "On" then
-		list:Cast( "Конус холода", g.focus:CanUse("Конус холода"):Best() )
-		list:Cast( "Кольцо льда", g.focus:CanUse("Кольцо льда"):Best() )
-		list:Cast( "Ледяное копье", g.targets:CanUse("Ледяное копье"):Aura("Кольцо льда", "mine"):Best() )
-	end
-	
-	list:Cast( "Ледяное копье", g.focus:CanUse("Ледяное копье"):Aura("Кольцо льда", "mine"):Best() )
-	list:Cast( "Ледяное копье", g.focus:CanUse("Ледяное копье"):Aura("Ледяная хватка", "mine"):Best() )
-	list:Cast( "Ледяное копье", g.focus:CanUse("Ледяное копье"):Aura("Кольцо обледенения", "mine"):Best() )
-	
-	list:Cast( "Буря комет", g.focus:CanUse("Буря комет"):Aura("Колдовской поток", "mine", "self", {stacks=4}):Best() )
-	list:Cast( "Буря комет", g.focus:CanUse("Буря комет"):Aura("Колдовской поток", "mine", "self", "inverse"):Best() )
 
-	--тут что то не так
-	--list:Cast( "Ледяная бомба", g.focus:CanUse("Ледяная бомба"):Aura("Ледяные пальцы", "mine", "self"):Best() )
-	list:Cast( "Кольцо обледенения", g.focus:CanUse("Кольцо обледенения"):Charges("Кольцо обледенения", 2):Best() )
-	
-	list:Cast( "Стрела ледяного огня", g.focus:CanUse("Стрела ледяного огня"):Aura("Заморозка мозгов", "mine", "self", {stacks=2}):Best() )
-	list:Cast( "Ледяное копье", g.focus:CanUse("Ледяное копье"):Aura("Ледяные пальцы", "mine", "self", {stacks=2}):Best() )
 
-	list:Cast( "Кольцо обледенения", g.focus:CanUse("Кольцо обледенения"):Aura("Колдовской поток", "mine", "self", {stacks=4}):Best() )
-	
-	list:Cast( "Стрела ледяного огня", g.focus:CanUse("Стрела ледяного огня"):Aura("Заморозка мозгов", "mine", "self", {left=5}):Best() )
-	list:Cast( "Ледяное копье", g.focus:CanUse("Ледяное копье"):Aura("Ледяные пальцы", "mine", "self", {left=5}):Best() )
-	
-	list:Cast( "Стрела ледяного огня", g.focus:CanUse("Стрела ледяного огня"):Aura("Заморозка мозгов", "mine", "self"):Aura("Колдовской поток", "mine", "self", {stacks=4}):Best() )
-	list:Cast( "Ледяное копье", g.focus:CanUse("Ледяное копье"):Aura("Ледяные пальцы", "mine", "self"):Aura("Колдовской поток", "mine", "self", {stacks=4}):Best() )
+  list:Cast( "Антимагия", g.target:CanUse("Антимагия"):CanInterrupt():Best() )
 
-	list:Cast( "Ледяная стрела", g.focus:CanUse("Ледяная стрела"):Moving(false):Best() )
-	
-	list:Cast( "Стрела ледяного огня", g.focus:CanUse("Стрела ледяного огня"):Aura("Заморозка мозгов", "mine", "self"):Best() )
-	list:Cast( "Ледяное копье", g.focus:CanUse("Ледяное копье"):Aura("Ледяные пальцы", "mine", "self"):Best() )
-	
 
 	return list:Execute()
 end
 
-		
+
 TBRegister(bot)
---]]

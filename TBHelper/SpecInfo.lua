@@ -129,7 +129,7 @@ function TBSpecInfoAddSpell(self,event,unitID,spell,rank,lineID,spellID)
 	local buffs = TBSpecInfo.spec.Buffs
 	local spells = TBSpecInfo.spec.Spells
 
-	print(event,unitID,spell,rank,lineID,spellID)
+	--print(event,unitID,spell,rank,lineID,spellID)
 
 	if TBCorrectSpells[spellID] then
 		if spells[spell] == nil then
@@ -222,7 +222,7 @@ function TBSpecInfoUpdateList()
 			text = text..(GetSpellLink(spellId) or "nil").."("..spellId..")"
 			strings = strings + 1
 		end
-	
+
 
 		text = text.."\n"
 
