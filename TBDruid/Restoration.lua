@@ -102,7 +102,12 @@ function bot:OnUpdate(g, list, modes)
 	local inRaid = IsInRaid()
 	local inParty = IsInGroup()
 
+
 	if not (inRaid or inParty) then
+
+		if modes.toggle.Preheal then
+			return self:PreHeal(g, list, modes)
+		end
 		return self:Solo(g, list, modes)
 	end
 
@@ -118,7 +123,7 @@ function bot:OnUpdate(g, list, modes)
 			end
 		end
 	else
-		if modes.Preheal then
+		if modes.toggle.Preheal then
 			return self:PreHeal(g, list, modes)
 		end
 	end
@@ -288,7 +293,7 @@ function bot:PartyHeal(g, list, modes)
 	list:Cast( "Природный целитель", g.tanks:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )
 	list:Cast( "Природный целитель", g.party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )
 
-	list:Cast( "Период цветения", g.player:CanUse("Период цветения"):Enabled("Период цветения"):Best() )
+	list:Cast( "Период цветения", g.mainTank:CanUse("Период цветения"):Enabled("Период цветения"):Best() )
 	list:Cast( "Сущность Г'ханира", g.player:CanUse("Сущность Г'ханира"):Enabled("Сущность Г'ханира"):Best() )
 
 	list:Cast( "Быстрое восстановление", g.party:CanUse("Быстрое восстановление"):AuraGroup("full heal"):LastCast("Быстрое восстановление", false):MinHP() )
@@ -361,6 +366,29 @@ function bot:PartyHeal(g, list, modes)
 	list:Cast( "Быстрое восстановление", g.player:CanUse("Быстрое восстановление"):HP("<",60):MinHP() )
 	list:Cast( "Целительное прикосновение", g.player:CanUse("Целительное прикосновение"):HP("<",60):MinHP() )
 	list:Cast( "Целительное прикосновение", g.player:CanUse("Целительное прикосновение"):HP("<",70):LastCast("Целительное прикосновение", false):MinHP() )
+
+	--Burst
+	list:Cast( "Омоложение",
+			g.party:CanUse("Омоложение")
+			:Aura("Омоложение", "mine", "inverse")
+			:Toggle("Burst")
+			:MinHP() )
+
+	list:Cast( "Омоложение",
+			g.party:CanUse("Омоложение")
+			:Talent("Зарождение", true)
+			:Aura("Омоложение (зарождение)", "mine", "inverse")
+			:Toggle("Burst")
+			:MinHP() )
+
+	list:Cast( "Восстановление",
+			g.party:CanUse("Восстановление")
+			:Moving(false)
+			:Aura("Восстановление", "mine", "inverse")
+			:LastCast("Восстановление", false)
+			:Toggle("Burst")
+			:MinHP() )
+
 
 	-- С ДД все плохо
 	list:Cast( "Омоложение",
@@ -448,18 +476,7 @@ function bot:PartyHeal(g, list, modes)
 
 
 
-	list:Cast( "Омоложение",
-			g.party:CanUse("Омоложение")
-			:Aura("Омоложение", "mine", "inverse")
-			:Toggle("Burst")
-			:MinHP() )
 
-	list:Cast( "Омоложение",
-			g.party:CanUse("Омоложение")
-			:Talent("Зарождение", true)
-			:Aura("Омоложение (зарождение)", "mine", "inverse")
-			:Toggle("Burst")
-			:MinHP() )
 	----------------
 
 	list:Cast( "Звездный поток", g.mainTank:CanUse("Звездный поток"):Toggle("Dmg"):Mana(">", 90):Moving(false):Best() )
@@ -475,7 +492,15 @@ end
 
 
 function bot:PreHeal(g, list, modes)
+	list:Cast( "Омоложение",
+			g.player:CanUse("Омоложение")
+			:Aura("Омоложение", "mine", "inverse")
+			:Aura("Омоложение (зарождение)", "mine", "inverse")
+			:MinHP() )
 
+	list:Cast( "Период цветения", g.target:CanUse("Период цветения"):Enabled("Период цветения"):Best() )
+
+	return list:Execute()
 end
 
 

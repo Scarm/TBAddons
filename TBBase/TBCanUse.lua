@@ -1,4 +1,4 @@
-function BaseGroup:CheckTarget(target, idx, book, caster)
+function BaseGroup:CheckTarget(target, idx, book, caster, ignoreHarm)
 	if UnitIsDead(target) then
 		return nil
 	end
@@ -29,20 +29,25 @@ function BaseGroup:CheckTarget(target, idx, book, caster)
 	TBLogValues["UnitCanAssist"] = UnitCanAssist(caster, target) or "nil"
 	TBLogValues["UnitCanAttack"] = UnitCanAttack(caster, target) or "nil"
 
-	if UnitCanAttack(caster, target) and IsHarmfulSpell(idx, book) == true then
-		TBLogValues["can use success"] = "IsHarmfulSpell"
-		return 1
-	end
+	if ignoreHarm == nil then
+
+		if UnitCanAttack(caster, target) and IsHarmfulSpell(idx, book) == true then
+			TBLogValues["can use success"] = "IsHarmfulSpell"
+			return 1
+		end
 
 
-	if UnitCanAssist(caster, target) and IsHelpfulSpell(idx, book) == true then
-		TBLogValues["can use success"] = "IsHelpfulSpell"
-		return 1
-	end
+		if UnitCanAssist(caster, target) and IsHelpfulSpell(idx, book) == true then
+			TBLogValues["can use success"] = "IsHelpfulSpell"
+			return 1
+		end
 
-	-- Спелл можно кидать и в своих и в чужих, тогда разрешаем кидать, ответственность на составителе бота
-	if IsHarmfulSpell(idx, book) == false and IsHelpfulSpell(idx, book) == false then
-		TBLogValues["can use success"] = "IsHelpfulSpell&IsHarmfulSpell"
+		-- Спелл можно кидать и в своих и в чужих, тогда разрешаем кидать, ответственность на составителе бота
+		if IsHarmfulSpell(idx, book) == false and IsHelpfulSpell(idx, book) == false then
+			TBLogValues["can use success"] = "IsHelpfulSpell&IsHarmfulSpell"
+			return 1
+		end
+	else
 		return 1
 	end
 
@@ -78,7 +83,7 @@ TBSkipIsUsableSpellCkeck =
 }
 
 
-function BaseGroup:CanUse(key, ignoredChannels)
+function BaseGroup:CanUse(key, ignoredChannels, ignoreHarm)
 
 	local result = self:CreateDerived()
     local caster = "player"
@@ -148,6 +153,9 @@ function BaseGroup:CanUse(key, ignoredChannels)
 		local needIgnore = false
 		for k,v in pairs(ignoredChannels or {}) do
 				local sp = TBGetSpell(v)
+				if sp == nil then
+					print(v)
+				end
 				if sp.name == channelName then
 					needIgnore = true
 				end
@@ -160,7 +168,7 @@ function BaseGroup:CanUse(key, ignoredChannels)
 	end
 
 	for key,value in pairs(self) do
-		if self:CheckTarget(key, spell.idx, spell.book, caster) then
+		if self:CheckTarget(key, spell.idx, spell.book, caster, ignoreHarm) then
 			result[key] = value
 		end
 	end

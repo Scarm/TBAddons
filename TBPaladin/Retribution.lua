@@ -90,7 +90,7 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):CanUse("Божественный молот"):Toggle("AoE"):HolyPower(4):Best() )
   list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Toggle("AoE"):Aura("Божественный замысел", "mine", "self", {time=2, bound="<"}):Best() )
   list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Toggle("AoE"):Aura("Правосудие", "mine", {time=2, bound="<"}):Best() )
-	list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):CanUse("Испепеляющий след"):Best() )
+	list:Cast( "Божественная буря", g.target:CanUse("Божественная буря"):Toggle("AoE"):CanUse("Испепеляющий след"):Best() )
 
 	list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):HolyPower(5):Best() )
 	list:Cast( "Смертный приговор", g.target:CanUse("Смертный приговор"):CanUse("Клинок Справедливости"):HolyPower(4):Best() )

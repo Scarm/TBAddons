@@ -77,6 +77,9 @@ function TBAssignBot(self)
 		for key, id in pairs(IndicatorFrame.Spec.Spells) do
 			TBRegisterSpell(GetSpellInfo(id),id)
 		end
+		for key, text in pairs(IndicatorFrame.Spec.Macro or {}) do
+			TBRegisterMacro(key, text)
+		end
 	end
 end
 

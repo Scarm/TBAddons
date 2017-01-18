@@ -76,7 +76,7 @@ function bot:OnUpdate(g, list, modes)
 
 	list:Cast( "Укор", g.target:CanUse("Укор"):CanInterrupt():Best() )
 	list:Cast( "Око Тира", g.target:CanUse("Око Тира"):InSpellRange("Молот правосудия"):Enabled("Око Тира"):Best() )
-  list:Cast( "Освящение", g.player:CanUse("Освящение"):Condition(g.target:InSpellRange("Молот правосудия"):Any()):Toggle("AoE"):Best() )
+  list:Cast( "Освящение", g.player:CanUse("Освящение"):Moving(false):Condition(g.target:InSpellRange("Молот правосудия"):Any()):Toggle("AoE"):Best() )
 
   list:Cast("Щит праведника", g.target:CanUse("Щит праведника"):Charges("Щит праведника", 3, 0.5):Best() )
   list:Cast("Щит праведника", g.target:CanUse("Щит праведника"):Charges("Щит праведника", 2, 0.5):HP("<", 60, "self"):Aura("Щит праведника", "mine", "self", "inverse"):Best() )

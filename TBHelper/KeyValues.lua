@@ -22,7 +22,7 @@ function TBKeyValuesFill(values)
 
 	values["isnil"] = ToString(TBLogValues["spell is null"])
 
-	values["cp"] = ToString(GetComboPoints("player"))
+	values["overlay"] = ToString(IsSpellOverlayed(6572))
 	--values["UnitThreatSituation"] = ToString(UnitThreatSituation("player","target"))
 
 	--values["LastSpell"] = ToString(BaseGroupHelper.LastCast.LastSpell)

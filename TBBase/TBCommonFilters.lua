@@ -5,6 +5,17 @@ function BaseGroup:Condition(value)
 	return self:CreateDerived()
 end
 
+function BaseGroup:Count(value)
+	local c = 0
+	for key,value in pairs(self) do
+		c = c + 1
+	end
+	if c >= value then
+		return self
+	end
+	return self:CreateDerived()
+end
+
 function BaseGroup:Toggle(mode)
 	if BaseGroupHelper.modes then
 		if BaseGroupHelper.modes.toggle[mode] then
@@ -69,6 +80,15 @@ function BaseGroup:SpellCooldown(key, bound, value)
 	end
 
 	if (bound == "<" and left <= value) or (bound == ">" and left >= value) then
+		return self
+	end
+	return self:CreateDerived()
+end
+
+function BaseGroup:SpellOverlayed(key)
+	local spellID = IndicatorFrame.Spec.Spells[key]
+
+	if IsSpellOverlayed(spellID) then
 		return self
 	end
 	return self:CreateDerived()
@@ -158,11 +178,35 @@ function BaseGroup:Moving(value)
 	return self:CreateDerived()
 end
 
-function BaseGroup:CanInterrupt(key)
-	local function IsCast(key)
+function BaseGroup:CanInterrupt(part)
+	part = part or "last"
+
+	local function IsCast(key, part)
+		local st = select(5,UnitCastingInfo(key))
 		local et = select(6,UnitCastingInfo(key))
 		local ni = select(9,UnitCastingInfo(key))
-		return et and (GetTime() + 0.5 > et / 1000) and not ni
+
+
+		if not et then
+			return false
+		end
+		if ni then
+			return false
+		end
+		if (GetTime() + 0.2 > et / 1000) then
+			return false
+		end
+		local mid = (st + et) / 2
+
+		if part == "last" then
+			return GetTime() + 0.7 > et / 1000
+		end
+		if part == "first" then
+			return true
+		end
+		if part == "mid" then
+			return GetTime() > mid / 1000
+		end
 	end
 
 	local function IsChannel(key)
@@ -173,7 +217,7 @@ function BaseGroup:CanInterrupt(key)
 
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do
-		if IsCast(key) or IsChannel(key) then
+		if IsCast(key, part) or IsChannel(key) then
 			result[key] = value
 		end
 	end
@@ -235,6 +279,8 @@ function BaseGroup:Charges(key, charges, dt)
 
 	return self:CreateDerived()
 end
+
+
 
 function BaseGroup:CanAttack()
 	local result = self:CreateDerived()

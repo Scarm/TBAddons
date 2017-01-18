@@ -62,7 +62,6 @@
 				["Победный раж"] = 34428,
 				["Стойкость к боли"] = 190456,
 				["Перехват"] = 198304,
-				["Сосредоточенная ярость"] = 204488,
 				["Провокация"] = 355,
 				["Боевой крик"] = 1719,
 				["Деморализующий крик"] = 1160,
@@ -87,6 +86,7 @@
 				["Вестник войны"] = 7922,
 				["Отмщение: сосредоточенная ярость"] = 202573,
 				["Месть: стойкость к боли"] = 202574,
+				["Чешуя дракона"] = 203581,
 			},
 		}
 
@@ -104,8 +104,6 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Ярость Нелтариона", g.player:CanUse("Ярость Нелтариона"):Enabled("Ярость Нелтариона"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )
 
 	if g.player:AffectingCombat(true):MinHP() then
-		list:Cast( "Сосредоточенная ярость", g.player:CanUse("Сосредоточенная ярость"):Aura("Ультиматум", "mine", "self"):Best() )
-		list:Cast( "Сосредоточенная ярость", g.player:CanUse("Сосредоточенная ярость"):Aura("Отмщение: сосредоточенная ярость", "mine", "self"):Best() )
 
 		list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):Condition(g.target:CanUse("Мощный удар щитом"):Any()):Aura("Блок щитом", "mine", "self", "inverse"):Best() )
 		list:Cast( "Блок щитом", g.player:CanUse("Блок щитом"):Charges("Блок щитом", 2):Aura("Блок щитом", "mine", "self", "inverse"):Best() )
@@ -113,6 +111,7 @@ function bot:OnUpdate(g, list, modes)
 		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):Energy(">", 80):Best() )
 		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):Aura("Стойкость к боли", "mine", "self", {time=1, bound="<"}):Best() )
 		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):Aura("Месть: стойкость к боли", "mine", "self", {time=1, bound="<"}):Best() )
+		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):Aura("Чешуя дракона", "mine", "self", {time=1, bound="<"}):Best() )
 		list:Cast( "Стойкость к боли", g.player:CanUse("Стойкость к боли"):HP("<", 50, "self"):Best() )
 		list:Cast( "Деморализующий крик", g.target:CanUse("Деморализующий крик"):InSpellRange("Сокрушение"):HP("<", 50, "self"):Best() )
 	end
@@ -123,7 +122,7 @@ function bot:OnUpdate(g, list, modes)
 
 	list:Cast( "Удар грома", g.target:CanUse("Удар грома"):Toggle("AoE"):InSpellRange("Сокрушение"):Best() )
 	list:Cast( "Мощный удар щитом", g.target:CanUse("Мощный удар щитом"):Best() )
-	list:Cast( "Реванш", g.player:CanUse("Реванш"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )
+	list:Cast( "Реванш", g.player:CanUse("Реванш"):SpellOverlayed("Реванш"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )
 
 	list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
 	list:Cast( "Героический бросок", g.target:CanUse("Героический бросок"):Best() )
