@@ -36,6 +36,12 @@ local bot = {
 				["Вихрь углей"] = 198929,
 				["Метеор"] = 153561,
 				["Пылающая преграда"] = 235313,
+				["Антимагия"] = 2139,
+				["Пламя феникса"] = 194466,
+				["Огненный столб"] = 2120,
+				["Метеор"] = 153561,
+				["Живая бомба"] = 44457,
+				["Возгорание"] = 190319,
 			},
 			["Buffs"] = {
 				["Руна мощи"] = 116014,
@@ -67,6 +73,10 @@ local bot = {
 					Spell = 235313, -- Пылающая преграда
 				},
 			},
+			["Macro"] = {
+				["selfFS"] = "/cast [@player] Огненный столб",
+				["selfMet"] = "/cast [@player] Метеор",
+			},
 		}
 
 function bot:OnUpdate(g, list, modes)
@@ -78,9 +88,21 @@ function bot:OnUpdate(g, list, modes)
   list:Cast( "Антимагия", g.target:CanUse("Антимагия"):CanInterrupt("first"):Best() )
 	list:Cast( "Пылающая преграда", g.player:CanUse("Пылающая преграда"):Enabled("Пылающая преграда"):Aura("Пылающая преграда", "mine", "self", "inverse"):Best() )
 
-	list:Cast( "Огненная глыба", g.target:CanUse("Огненная глыба"):Aura("Полоса везения", "mine", "self"):Best() )
-	list:Cast( "Огненный взрыв", g.target:CanUse("Огненный взрыв"):Aura("Разогрев", "mine", "self"):Best() )
+	list:Cast( "Руна мощи", g.player:CanUse("Руна мощи"):Aura("Полоса везения", "mine", "self"):Toggle("Burst"):Best() )
+	list:Cast( "Возгорание", g.player:CanUse("Возгорание"):Aura("Руна мощи", "mine", "self"):Toggle("Burst"):Best() )
 
+
+	list:Cast( "selfFS", g.target:CanUse("Огненный столб"):Aura("Полоса везения", "mine", "self"):Toggle("AoE"):Best() )
+	list:Cast( "selfMet", g.target:CanUse("Метеор"):Toggle("AoE"):Best() )
+	list:Cast( "Дыхание дракона", g.target:CanUse("Дыхание дракона"):Toggle("AoE"):Best() )
+
+	list:Cast( "Огненная глыба", g.target:CanUse("Огненная глыба"):Aura("Полоса везения", "mine", "self"):Best() )
+	list:Cast( "Живая бомба", g.target:CanUse("Живая бомба"):Best() )
+
+	list:Cast( "Пламя феникса", g.target:CanUse("Пламя феникса"):Charges("Пламя феникса", 3, 5):Aura("Разогрев", "mine", "self"):LastCast("Пламя феникса", false):LastCast("Огненный взрыв", false):Best() )
+	list:Cast( "Огненный взрыв", g.target:CanUse("Огненный взрыв"):Aura("Разогрев", "mine", "self"):LastCast("Пламя феникса", false):LastCast("Огненный взрыв", false):Best() )
+
+	list:Cast( "Пламя феникса", g.target:CanUse("Пламя феникса"):LastCast("Пламя феникса", false):Best() )
 	list:Cast( "Огненный шар", g.target:CanUse("Огненный шар"):Best() )
 
 	return list:Execute()
