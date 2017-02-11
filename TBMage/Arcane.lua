@@ -34,6 +34,7 @@ local bot = {
 				["Призматический барьер"] = 235450,
 				["Зеркальное изображение"] = 55342,
 				["Величие разума"] = 205025,
+				["Чародейский взрыв"] = 1449,
 			},
 			["Buffs"] = {
 				["Защитник Стражей Хиджала"] = 93341,
@@ -80,10 +81,25 @@ local bot = {
 			end
 
 
-		  list:Cast( "Антимагия", g.target:CanUse("Антимагия"):CanInterrupt("first"):Best() )
+			list:Cast( "Антимагия", g.target:CanUse("Антимагия"):CanInterrupt("first"):Best() )
+			list:Cast( "Призматический барьер", g.player:CanUse("Призматический барьер"):Enabled("Призматический барьер"):Aura("Призматический барьер", "mine", "self", "inverse"):Best() )
 
+			list:Cast( "Чародейские стрелы", g.target:CanUse("Чародейские стрелы"):Mana("<", 90):ArcaneCharges(2):Best() )
+			list:Cast( "Чародейские стрелы", g.target:CanUse("Чародейские стрелы"):Mana("<", 90):ArcaneCharges(1):LastCast("Чародейская вспышка", true):Best() )
 
+			list:Cast( "Чародейские стрелы", g.target:CanUse("Чародейские стрелы"):Mana("<", 90):ArcaneCharges(3):Best() )
+			list:Cast( "Чародейские стрелы", g.target:CanUse("Чародейские стрелы"):Mana("<", 90):ArcaneCharges(2):LastCast("Чародейская вспышка", true):Best() )
 
+			list:Cast( "Чародейский обстрел", g.target:CanUse("Чародейский обстрел"):Mana("<", 90):ArcaneCharges(2):Best() )
+			list:Cast( "Чародейский обстрел", g.target:CanUse("Чародейский обстрел"):Mana("<", 90):ArcaneCharges(1):LastCast("Чародейская вспышка", true):Best() )
+
+			list:Cast( "Чародейский обстрел", g.target:CanUse("Чародейский обстрел"):ArcaneCharges(3):Best() )
+			list:Cast( "Чародейский обстрел", g.target:CanUse("Чародейский обстрел"):ArcaneCharges(2):LastCast("Чародейская вспышка", true):Best() )
+
+			--list:Cast( "Чародейский обстрел", g.target:CanUse("Чародейский обстрел"):Mana("<", 90):ArcaneCharges(3):Best() )
+
+			list:Cast( "Чародейский взрыв", g.target:CanUse("Чародейский взрыв"):Toggle("AoE"):Best() )
+			list:Cast( "Чародейская вспышка", g.target:CanUse("Чародейская вспышка"):Best() )
 			return list:Execute()
 		end
 

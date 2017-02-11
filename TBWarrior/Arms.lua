@@ -63,6 +63,7 @@
 				["Вихрь"] = 1680,
 				["Казнь"] = 163201,
 				["Победный раж"] = 34428,
+				["Аватара"] = 19138,
 			},
 			["Buffs"] = {
 				["Рывок"] = 105771,
@@ -74,6 +75,9 @@
 				["Превосходство!"] = 60503,
 			},
 			["Class"] = "WARRIOR",
+			["Macro"] = {
+				["selfRavager"] = "/cast [@player] Опустошитель",
+			},
 		}
 
 function bot:OnUpdate(g, list, modes)
@@ -87,7 +91,8 @@ function bot:OnUpdate(g, list, modes)
 
 	list:Cast( "Ударная волна", g.player:CanUse("Ударная волна"):Enabled("Ударная волна"):Condition(g.target:InSpellRange("Мощный удар"):Any()):Best() )
 
-	list:Cast( "Опустошитель", g.target:CanUse("Опустошитель"):Toggle("Burst"):Best() )
+	list:Cast( "Аватара", g.player:CanUse("Аватара"):Toggle("Burst"):Best() )
+	list:Cast( "selfRavager", g.target:CanUse("Опустошитель"):Toggle("Burst"):Best() )
 	list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):Talent("Опустошитель"):SpellCooldown("Опустошитель", ">", 55):Toggle("Burst"):Best() )
 	list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):Talent("Опустошитель", false):Toggle("Burst"):Best() )
 	list:Cast( "Миротворец", g.target:CanUse("Миротворец"):Toggle("Burst"):Best() )

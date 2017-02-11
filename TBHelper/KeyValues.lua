@@ -8,7 +8,7 @@ function TBKeyValuesFill(values)
 
 
 
-	--[[]]
+	--[[
 	for k,v in pairs(TBLogValues) do
 		values[k] = ToString(v)
 	end
@@ -17,6 +17,7 @@ function TBKeyValuesFill(values)
 	--for k,v in pairs(IndicatorFrame.LoS.Banned or {}) do
 	--	values[k] = ToString(v)
 	--end
+--	values["chagres"] = UnitPower("player", SPELL_POWER_ARCANE_CHARGES)
 
 	values["fail"] = ToString(TBLogValues["can use fail"])
 

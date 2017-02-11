@@ -43,6 +43,21 @@ function BaseGroup:HolyPower(points)
 	return self:CreateDerived()
 end
 
+function BaseGroup:ArcaneCharges(points)
+	if UnitPower("player", SPELL_POWER_ARCANE_CHARGES) >= points then
+		return self
+	end
+	return self:CreateDerived()
+end
+
+function BaseGroup:Maelstrom(bound, points)
+	local e =  UnitPower("player", SPELL_POWER_MAELSTROM)
+	if (bound == "<" and e <= points) or (bound == ">" and e >= points) then
+		return self
+	end
+	return self:CreateDerived()
+end
+
 function BaseGroup:SoulShards(points)
 	if UnitPower("player", 7) >= points then
 		return self

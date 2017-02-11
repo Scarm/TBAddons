@@ -160,9 +160,9 @@ function bot:PartyHeal(g, list, modes)
 	list:Cast( "Исцеление", g.party:CanUse("Исцеление"):Moving(false):HP("<",70):MinHP() )
 	list:Cast( "Исцеление", g.mainTank:CanUse("Исцеление"):Moving(false):HP("<",85):MinHP() )
 
-	list:Cast( "Священный огонь", g.mainTank:CanUse("Священный огонь"):Best() )
-	list:Cast( "Слово Света: Наказание", g.mainTank:CanUse("Слово Света: Наказание"):Best() )
-	list:Cast( "Кара", g.mainTank:CanUse("Кара"):Moving(false):Best() )
+	--list:Cast( "Священный огонь", g.mainTank:CanUse("Священный огонь"):Best() )
+	--list:Cast( "Слово Света: Наказание", g.mainTank:CanUse("Слово Света: Наказание"):Best() )
+	--list:Cast( "Кара", g.mainTank:CanUse("Кара"):Moving(false):Best() )
 	list:Cast( "Обновление", g.party:CanUse("Обновление"):Aura("Обновление", "mine", "inverse"):HP("<",90):MinHP() )
 
 	return list:Execute()
