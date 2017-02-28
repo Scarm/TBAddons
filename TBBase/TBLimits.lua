@@ -58,6 +58,15 @@ function BaseGroup:Maelstrom(bound, points)
 	return self:CreateDerived()
 end
 
+
+function BaseGroup:Shards(bound, points)
+	local e =  UnitPower("player", SPELL_POWER_SOUL_SHARDS)
+	if (bound == "<" and e <= points) or (bound == ">" and e >= points) then
+		return self
+	end
+	return self:CreateDerived()
+end
+
 function BaseGroup:SoulShards(points)
 	if UnitPower("player", 7) >= points then
 		return self
