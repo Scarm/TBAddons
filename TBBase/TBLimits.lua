@@ -74,6 +74,14 @@ function BaseGroup:SoulShards(points)
 	return self:CreateDerived()
 end
 
+
+function BaseGroup:Pain(points)
+	if UnitPower("player", SPELL_POWER_PAIN) >= points then
+		return self
+	end
+	return self:CreateDerived()
+end
+
 function BaseGroup:ComboPoints(bound, points)
 	local result = self:CreateDerived()
 	for key,value in pairs(self) do

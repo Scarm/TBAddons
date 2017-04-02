@@ -247,6 +247,7 @@ function TBLoSData(self, event,...)
 end
 
 function TBLoSdetect(self, event,...)
+--[[
 	if (select(2,...) == "SPELL_CAST_FAILED")
 	and (select(5,...) == UnitName("player"))
 	and (select(15,...) == SPELL_FAILED_LINE_OF_SIGHT)
@@ -254,6 +255,7 @@ function TBLoSdetect(self, event,...)
 		print(SPELL_FAILED_LINE_OF_SIGHT)
 		print(...)
 	end
+	--]]
 	if (select(2,...) == "SPELL_CAST_FAILED")
 	and (select(5,...) == UnitName("player"))
 	and (select(15,...) == SPELL_FAILED_LINE_OF_SIGHT)

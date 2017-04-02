@@ -1,6 +1,11 @@
 BaseGroupHelper.LastCast = {}
 BaseGroupHelper.LastCast.Targets = {}
 
+local LastCastExeptions =
+	{
+		[216459] = 1,
+	}
+
 function BaseGroup:LastCast(key, isLast, total)
 	BaseGroupHelper.LastCast.LastSpellTime = BaseGroupHelper.LastCast.LastSpellTime or 0
 
@@ -36,13 +41,17 @@ end
 
 
 function TBLastCastUpdate(self, event,...)
-	print(event,">>>>",...)
-	local unitId,nm,lineId,spellId = select(1,...)
+	--print(event,">>>>",...)
+	local unitId,spellname,_,lineId,spellId = select(1,...)
 	-- Если колдовали мы
 	if unitId=="player" then
+
+		if LastCastExeptions[spellId] then
+			return
+		end
 		-- И спелл, за которым надо следить
 		BaseGroupHelper.LastCast.LastSpell = spellId
-		BaseGroupHelper.LastCast.LastTarget = BaseGroupHelper.LastCast.Targets[select(4,...)]
+		BaseGroupHelper.LastCast.LastTarget = BaseGroupHelper.LastCast.Targets[lineId]
 
 		local et = select(6,UnitCastingInfo("player")) or select(6, UnitChannelInfo("player"))
 		if et then
@@ -54,7 +63,7 @@ function TBLastCastUpdate(self, event,...)
 end
 
 function TBLastCastUpdateFailed(self, event,...)
-	print(event,">>>>",...)
+	--print(event,">>>>",...)
 	local unitId,_,_,lineId,spellId = select(1,...)
 	if unitId=="player" then
 		BaseGroupHelper.LastCast.LastSpell = nil
@@ -62,10 +71,12 @@ function TBLastCastUpdateFailed(self, event,...)
 end
 
 function TBLastCastData(self, event,...)
-	print(event,">>>>",...)
+	local name = select(4,...)
+  local idx = select(5,...)
+	--print("name = ",name, ", idx = ", idx )
 	--Заполняем инфрмацию для LastCast
 	if (select(1,...) == "player") then
-		BaseGroupHelper.LastCast.Targets[ select(5,...) ] = select(4,...)
+		BaseGroupHelper.LastCast.Targets[ idx ] = name
 	end
 end
 

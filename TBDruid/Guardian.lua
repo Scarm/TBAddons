@@ -69,14 +69,14 @@
 		}
 
 function bot:OnUpdate(g, list, modes)
-	if IsMounted() then return end	
-	if modes.toggle.Stop then 
+	if IsMounted() then return end
+	if modes.toggle.Stop then
 		return
 	end
-	
+
 	list:Cast( "Лобовая атака", g.target:CanUse("Лобовая атака"):CanInterrupt():Best() )
-	
-	if g.player:AffectingCombat(true):MinHP() then	
+
+	if g.player:AffectingCombat(true):MinHP() then
 		list:Cast( "Железный мех", g.player:CanUse("Железный мех"):Energy(">", 80):Best() )
 		list:Cast( "Неистовое восстановление", g.player:CanUse("Неистовое восстановление"):Charges("Неистовое восстановление",2,1):HP("<", 90, "self"):Best() )
 		list:Cast( "Неистовое восстановление", g.player:CanUse("Неистовое восстановление"):Charges("Неистовое восстановление",2,5):HP("<", 80, "self"):Best() )
@@ -89,10 +89,10 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Взбучка", g.target:CanUse("Взбучка"):InSpellRange("Увечье"):Best() )
 	list:Cast( "Лунный огонь", g.target:CanUse("Лунный огонь"):Aura("Лунный огонь", "mine", "inverse"):Best() )
 	list:Cast( "Размах", g.target:CanUse("Размах"):InSpellRange("Увечье"):Best() )
-	
-	
+
+
 	return list:Execute()
 end
 
-		
-TBRegister(bot)		
+
+TBRegister(bot)

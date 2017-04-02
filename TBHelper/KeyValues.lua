@@ -19,14 +19,19 @@ function TBKeyValuesFill(values)
 	--end
 --	values["chagres"] = UnitPower("player", SPELL_POWER_ARCANE_CHARGES)
 
-	values["fail"] = ToString(TBLogValues["can use fail"])
+	--values["fail"] = ToString(TBLogValues["can use fail"])
 
-	values["isnil"] = ToString(TBLogValues["spell is null"])
+	--values["isnil"] = ToString(TBLogValues["spell is null"])
 
-	values["overlay"] = ToString(IsSpellOverlayed(6572))
+	--values["overlay"] = ToString(IsSpellOverlayed(6572))
+
+
+
 	--values["UnitThreatSituation"] = ToString(UnitThreatSituation("player","target"))
-
-	--values["LastSpell"] = ToString(BaseGroupHelper.LastCast.LastSpell)
+	if GetTime() > BaseGroupHelper.LastCast.LastSpellTime then
+		BaseGroupHelper.LastCast.LastSpell = nil
+	end
+	values["LastSpell"] = ToString(BaseGroupHelper.LastCast.LastSpell)
 
 	--values["Частица"] = ToString(gr.party:Aura("Частица Света", "mine"):MinHP())
 

@@ -104,11 +104,14 @@ function BaseGroup:CanUse(key, ignoredChannels, ignoreHarm)
         return result
     end
 
+--[[
 	local lag = 50
 	local delay = (GetCVar("maxSpellStartRecoveryOffset") - lag)/ 1000.0
 	if delay < 0 then
 		delay = 0
 	end
+--]]
+	local delay = 0
 
 	-- Как я понимаю - затык по спеллу
 	local startTimeLoC, durationLoC = GetSpellLossOfControlCooldown(spell.spellID)

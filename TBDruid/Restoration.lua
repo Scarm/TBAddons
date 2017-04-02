@@ -223,7 +223,7 @@ function bot:RaidHeal(g, list, modes)
 	list:Cast( "Природный целитель", g.tanks:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )
 	list:Cast( "Природный целитель", g.party:CanUse("Природный целитель"):NeedDecurse("Curse","Magic","Poison"):MinHP() )
 
-	list:Cast( "Период цветения", g.player:CanUse("Период цветения"):Enabled("Период цветения"):Best() )
+	list:Cast( "Период цветения", g.mainTank:CanUse("Период цветения"):Enabled("Период цветения"):Best() )
 	list:Cast( "Сущность Г'ханира", g.player:CanUse("Сущность Г'ханира"):Enabled("Сущность Г'ханира"):Best() )
 
 	list:Cast( "Быстрое восстановление", g.party:CanUse("Быстрое восстановление"):AuraGroup("full heal"):LastCast("Быстрое восстановление", false):MinHP() )

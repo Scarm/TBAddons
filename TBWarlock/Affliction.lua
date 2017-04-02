@@ -75,6 +75,7 @@ function bot:OnUpdate(g, list, modes)
 		return
 	end
 
+	list:Cast( "Похищение души", g.target:CanUse("Похищение души"):Moving(false):HP("<", 50, "self"):Best() )
   list:Cast( "Жизнеотвод", g.player:CanUse("Жизнеотвод"):Condition(g.target:CanUse("Порча"):Best()):Talent("Усиленный жизнеотвод"):Aura("Усиленный жизнеотвод", "mine", "inverse", {time=3, bound=">"}):Best() )
 	list:Cast( "Урожай душ", g.player:CanUse("Урожай душ"):Aura("Жнец Мертвого Ветра", "mine", "self","inverse"):Aura("Замученные души", "mine", "self"):Toggle("Burst"):Best() )
 	list:Cast( "Семя порчи", g.target:CanUse("Семя порчи"):Aura("Семя порчи", "mine","inverse"):LastCast("Семя порчи", false):Toggle("AoE"):Moving(false):Best() )
@@ -82,8 +83,8 @@ function bot:OnUpdate(g, list, modes)
   list:Cast( "Блуждающий дух", g.target:CanUse("Блуждающий дух"):Moving(false):Aura("Блуждающий дух", "mine", "inverse", {time=3, bound=">"}):Best() )
   list:Cast( "Порча", g.target:CanUse("Порча"):Aura("Порча", "mine", "inverse", {time=3, bound=">"}):Best() )
   list:Cast( "Похищение души", g.target:CanUse("Похищение души"):Moving(false):HP("<", 80, "self"):Best() )
-	list:Cast( "Нестабильное колдовство", g.target:CanUse("Нестабильное колдовство"):Shards(">",5):Moving(false):Best() )
-	list:Cast( "Нестабильное колдовство", g.target:CanUse("Нестабильное колдовство"):Shards(">",4):LastCast("Нестабильное колдовство", false,"total"):Moving(false):Best() )
+	list:Cast( "Нестабильное колдовство", g.target:CanUse("Нестабильное колдовство"):Shards(">",4):Moving(false):Best() )
+	list:Cast( "Нестабильное колдовство", g.target:CanUse("Нестабильное колдовство"):Shards(">",3):LastCast("Нестабильное колдовство", false,"total"):Moving(false):Best() )
   list:Cast( "Жизнеотвод", g.player:CanUse("Жизнеотвод"):Condition(g.target:CanUse("Порча"):Best()):Mana("<",70):Best() )
   list:Cast( "Похищение души", g.target:CanUse("Похищение души"):Moving(false):Best() )
 

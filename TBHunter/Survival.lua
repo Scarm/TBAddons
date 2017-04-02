@@ -81,7 +81,7 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Стая воронов", g.target:CanUse("Стая воронов"):Best() )
 	list:Cast( "Взрывная ловушка", g.target:CanUse("Взрывная ловушка"):Toggle("AoE"):InSpellRange("Удар ящера"):Best() )
   list:Cast( "Граната пламени дракона", g.target:CanUse("Граната пламени дракона"):Toggle("Burst"):Best() )
-	list:Cast( "Взрывная ловушка", g.target:CanUse("Взрывная ловушка"):InSpellRange("Удар ящера"):Best() )
+	--list:Cast( "Взрывная ловушка", g.target:CanUse("Взрывная ловушка"):InSpellRange("Удар ящера"):Best() )
 
   list:Cast( "Удар ящера", g.target:CanUse("Удар ящера"):Aura("Тактика Мок'Натала", "mine", "self", {time=2, bound="<"}):Best() )
 
