@@ -12,7 +12,7 @@ function TBKeyValuesFill(values)
 	for k,v in pairs(TBLogValues) do
 		values[k] = ToString(v)
 	end
-	--]]
+--]]
 
 	--for k,v in pairs(IndicatorFrame.LoS.Banned or {}) do
 	--	values[k] = ToString(v)

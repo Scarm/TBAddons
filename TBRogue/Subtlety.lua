@@ -25,10 +25,10 @@ local bot = {
 			["Name"] = "Скрытность",
 			["Id"] = 3,
 			["Spells"] = {
+
 				["Алый фиал"] = 185311,
 				["Ночной клинок"] = 195452,
 				["Удар Тьмы"] = 185438,
-				["Окутывающая тень"] = 206237,
 				["Метка смерти"] = 137619,
 				["Потрошение"] = 196819,
 				["Клинок мрака"] = 200758,
@@ -79,7 +79,6 @@ function bot:OnUpdate(g, list, modes)
 
 	list:Cast( "Танец теней", g.player:CanUse("Танец теней"):AffectingCombat(true):Energy(">",75):Aura("Символы смерти", "mine", "inverse","self", {time=5, bound=">"}):Best() )
 
-  list:Cast( "Окутывающая тень", g.player:CanUse("Окутывающая тень"):Aura("Окутывающая тень", "mine", "inverse", "self"):Condition(g.target:ComboPoints(">", 5):Best()):Best() )
   list:Cast( "Ночной клинок", g.target:CanUse("Ночной клинок"):ComboPoints(">", 5):Aura("Ночной клинок", "mine", "inverse"):Best() )
   list:Cast( "Потрошение", g.target:CanUse("Потрошение"):ComboPoints(">", 9):Best() )
 

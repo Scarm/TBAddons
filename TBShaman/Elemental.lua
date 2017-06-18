@@ -81,14 +81,14 @@ function bot:OnUpdate(g, list, modes)
 	end
 
 
-  list:Cast( "Пронизывающий ветер", g.target:CanUse("Пронизывающий ветер"):CanInterrupt():Best() )
+  list:Cast( "Пронизывающий ветер", g.target:CanUse("Пронизывающий ветер"):CanInterrupt("first"):Best() )
 
 	if g.player:AffectingCombat(true):MinHP() then
 		list:Cast( "Повелитель тотемов", g.target:CanUse("Повелитель тотемов"):Aura("Тотем огнезола", "mine", "inverse","self"):Best() )
 	end
 
-	list:Cast( "Ледяная ярость", g.target:CanUse("Ледяная ярость"):Best() )
   list:Cast( "Огненный шок", g.target:CanUse("Огненный шок"):Aura("Огненный шок", "mine", "inverse", {time=3, bound=">"}):Best() )
+	list:Cast( "Ледяная ярость", g.target:CanUse("Ледяная ярость"):Best() )
 
 	list:Cast( "Земной шок", g.target:CanUse("Земной шок"):CanUse("Выброс лавы"):Maelstrom(">", 88):Best() )
 	list:Cast( "Земной шок", g.target:CanUse("Земной шок"):Maelstrom(">", 92):Best() )
