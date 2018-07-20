@@ -1,7 +1,0 @@
-﻿## Interface: 50400
-## Title: TB Warlock 
-## Dependencies: TBBase
-
-Demonology.lua
-Destruction.lua
-Affliction.lua

@@ -99,44 +99,13 @@ function BaseGroup:InSpellRange(key, inverse)
 	local result = self:CreateDerived()
 
 	for k,v in pairs(self) do
-		if (IsSpellInRange(spell.idx, spell.book, k) == 1) == (inverse == nil) then
+		if (IsSpellInRange(GetSpellInfo(spell.baseSpell), k) == 1) == (inverse == nil) then
 			result[k] = v
 		end
 	end
 
 	return result
 end
---[[
-function BaseGroup:ZeroThread()
-	local result = self:CreateDerived()
-
-	for k,v in pairs(self) do
-		local threadValue = select(5,UnitDetailedThreatSituation("player", k)) or 0
-		if threadValue == 0 then
-			result[k] = v
-		end
-	end
-
-	return result
-end
-
-
-function BaseGroup:HasBossDebuff()
-	local result = self:CreateDerived()
-	for key,value in pairs(self) do
-		for i=1,40,1 do
-			local name = UnitAura(key,i,"HARMFUL")
-			local id = select(11, UnitAura(key,i,"HARMFUL"))
-
-			if id and name and TBDebuffList[id] == name then
-				result[key] = value
-			end
-		end
-	end
-
-	return result
-end
---]]
 
 function BaseGroup:AuraGroup(group)
 local result = self:CreateDerived()
@@ -182,9 +151,9 @@ function BaseGroup:CanInterrupt(part)
 	part = part or "last"
 
 	local function IsCast(key, part)
-		local st = select(5,UnitCastingInfo(key))
-		local et = select(6,UnitCastingInfo(key))
-		local ni = select(9,UnitCastingInfo(key))
+		local st = select(4,UnitCastingInfo(key))
+		local et = select(5,UnitCastingInfo(key))
+		local ni = select(8,UnitCastingInfo(key))
 
 
 		if not et then
@@ -210,7 +179,7 @@ function BaseGroup:CanInterrupt(part)
 	end
 
 	local function IsChannel(key)
-		local ni = select(8,UnitChannelInfo(key))
+		local ni = select(7,UnitChannelInfo(key))
 		local name = UnitChannelInfo(key)
 		return name and not ni
 	end
@@ -353,55 +322,21 @@ function BaseGroup:Acceptable(party)
 end
 
 
-
-
-
-function distance(a,b)
-	local x1,y1 = UnitPosition(a)
-	local x2,y2 = UnitPosition(b)
-
-	if x1 and x2 then
-		local dx = x2 - x1
-		local dy = y2 - y1
-		return math.sqrt(dx*dx + dy*dy)
-	end
-	return nil
-end
-
-function distToParty(unit, party, range)
-	local res = 0
-	local totalDist = 0
-	for key,value in pairs(party) do
-		local d = distance(unit, key)
-		if d and d < range then
-			res = res + 1
-			totalDist = totalDist + d
-		end
-	end
-	return res, totalDist
-end
-
-function BaseGroup:BastForAoE(limit,range)
-	local result = nil
-	local bestC = 0
-	local bestD = 0
-
-	for key,value in pairs(self) do
-		local c, d = distToParty(key, self, range)
-
-		if c > bestC then
-			result = value
-			bestC = c
-			bestD = d
-		end
-		if c == bestC and d < bestD then
-			result = value
-			bestC = c
-			bestD = d
+function BaseGroup:CommonBuff(key)
+	local buffs = IndicatorFrame.CommonBuffs or {}
+	local group = nil
+	for gr, list in pairs(buffs) do
+		for k,v in pairs(list) do
+			if k==key then
+				group = list
+			end
 		end
 	end
 
-	if bestC >= limit then
-		return result
+	local auras = {}
+	for k,v in pairs(group) do
+		table.insert(auras, k)
 	end
+
+	return self:Aura(auras, "inverse")
 end

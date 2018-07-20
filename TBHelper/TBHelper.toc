@@ -1,8 +1,8 @@
 ﻿## Interface: 60000
-## Title: TBHelper 
+## Title: TBHelper
 ## Dependencies: TBBase
-## SavedVariablesPerCharacter: TBHelperData, TBHelperTrash
-## SavedVariables: TBHelperIgnores, TBHelperCollection, TBSpecInfoData
+## SavedVariablesPerCharacter: TBHelperData, TBHelperTrash, TBSpecInfoData
+## SavedVariables: TBHelperIgnores, TBHelperCollection
 
 
 Frames.xml

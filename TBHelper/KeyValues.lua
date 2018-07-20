@@ -5,8 +5,8 @@ function TBKeyValuesFill(values)
 	local gr = TBGroups()
 
 	values["LastCommand"] = IndicatorFrame.LastCommand
-
-
+	values["LastCommandTime"] = string.format("%.1f", GetTime() - (IndicatorFrame.LastCommandTime or GetTime()))
+	values["CommandDelay"] = ToString(IndicatorFrame.LastCommandDiffStr)
 
 	--[[
 	for k,v in pairs(TBLogValues) do
@@ -20,29 +20,38 @@ function TBKeyValuesFill(values)
 --	values["chagres"] = UnitPower("player", SPELL_POWER_ARCANE_CHARGES)
 
 	--values["fail"] = ToString(TBLogValues["can use fail"])
+	--values["spell name"] = ToString(TBLogValues["spell name"])
+	--values["can use success"] = ToString(TBLogValues["can use success"])
+	--values["TargetType"] = ToString(TBLogValues["TargetType"])
+	--values["IsUsableSpell"] = ToString(TBLogValues["IsUsableSpell"])
+
+	--values["IsHarmfulSpell"] = ToString(TBLogValues["IsHarmfulSpell"])
+	--values["IsHelpfulSpell"] = ToString(TBLogValues["IsHelpfulSpell"])
+	--values["UnitCanAssist"] = ToString(TBLogValues["UnitCanAssist"])
+	--values["UnitCanAttack"] = ToString(TBLogValues["UnitCanAttack"])
 
 	--values["isnil"] = ToString(TBLogValues["spell is null"])
 
 	--values["overlay"] = ToString(IsSpellOverlayed(6572))
 
-
+	--values["aura"] = ToString(TBLogValues["aura"])
 
 	--values["UnitThreatSituation"] = ToString(UnitThreatSituation("player","target"))
-	if GetTime() > BaseGroupHelper.LastCast.LastSpellTime then
+	if BaseGroupHelper.LastCast.LastSpellTime and GetTime() > BaseGroupHelper.LastCast.LastSpellTime then
 		BaseGroupHelper.LastCast.LastSpell = nil
 	end
 	values["LastSpell"] = ToString(BaseGroupHelper.LastCast.LastSpell)
 
 	--values["Частица"] = ToString(gr.party:Aura("Частица Света", "mine"):MinHP())
 
-	--[[
+
 	for i = 1,GetNumSavedInstances(),1 do
 		local nm,_,_,diff,locked = GetSavedInstanceInfo(i)
 		if diff == 23 and not locked then
 			values[nm] = ToString(diff).."("..ToString(locked)..")"
 		end
 	end
-	--]]
+
 	--[[
 	for i= 1,6,1 do
 		local start, duration, runeReady = GetRuneCooldown(i)
@@ -55,11 +64,10 @@ function TBKeyValuesFill(values)
 	end
 	--]]
 
-	GetShapeshiftForm()
-	values["ShapeshiftForm"] = ToString(GetShapeshiftForm())
-	values["in raid"] = ToString(IsInRaid())
-	values["in party"] = ToString(IsInGroup())
-	values["mode"] = ToString(TBLogValues.mode)
+	--values["ShapeshiftForm"] = ToString(GetShapeshiftForm())
+	--values["in raid"] = ToString(IsInRaid())
+	--values["in party"] = ToString(IsInGroup())
+	--values["mode"] = ToString(TBLogValues.mode)
 
 	--[[
 	for i=1,40,1 do

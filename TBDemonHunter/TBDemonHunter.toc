@@ -1,6 +1,0 @@
-## Interface: 70000
-## Title: TB DemonHunter
-## Dependencies: TBBase
-
-Havoc.lua
-Vengeance.lua

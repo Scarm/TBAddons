@@ -1,12 +1,12 @@
-function BaseGroup:CheckTarget(target, idx, book, caster, ignoreHarm)
+function BaseGroup:CheckTarget(target, spellID, caster, ignoreHarm)
 	if UnitIsDead(target) then
 		return nil
 	end
 
-	TBLogValues["SpellHasRange"] = SpellHasRange(idx, book) or "nil"
-	TBLogValues["IsSpellInRange"] = IsSpellInRange(idx, book, target) or "nil"
+	TBLogValues["SpellHasRange"] = SpellHasRange(spellID) or "nil"
+	TBLogValues["IsSpellInRange"] = IsSpellInRange(GetSpellInfo(spellID), target) or "nil"
 
-	if IsSpellInRange(idx, book, target) == 0 then
+	if IsSpellInRange(GetSpellInfo(spellID), target) == 0 then
 		TBLogValues["can use fail"] = "IsSpellInRange"
 		return nil
 	end
@@ -24,26 +24,33 @@ function BaseGroup:CheckTarget(target, idx, book, caster, ignoreHarm)
 		return nil
 	end
 
-	TBLogValues["IsHarmfulSpell"] = IsHarmfulSpell(idx, book) or "nil"
-	TBLogValues["IsHelpfulSpell"] = IsHelpfulSpell(idx, book) or "nil"
+	TBLogValues["IsHarmfulSpell"] = IsHarmfulSpell(GetSpellInfo(spellID)) or "nil"
+	TBLogValues["IsHelpfulSpell"] = IsHelpfulSpell(GetSpellInfo(spellID)) or "nil"
 	TBLogValues["UnitCanAssist"] = UnitCanAssist(caster, target) or "nil"
 	TBLogValues["UnitCanAttack"] = UnitCanAttack(caster, target) or "nil"
 
 	if ignoreHarm == nil then
 
-		if UnitCanAttack(caster, target) and IsHarmfulSpell(idx, book) == true then
-			TBLogValues["can use success"] = "IsHarmfulSpell"
-			return 1
+		if UnitCanAttack(caster, target) then
+			TBLogValues["TargetType"] = "UnitCanAttack"
+			if IsHarmfulSpell(GetSpellInfo(spellID)) then
+				TBLogValues["can use success"] = "IsHarmfulSpell"
+				return 1
+			end
 		end
 
 
-		if UnitCanAssist(caster, target) and IsHelpfulSpell(idx, book) == true then
-			TBLogValues["can use success"] = "IsHelpfulSpell"
-			return 1
+		if UnitCanAssist(caster, target) then
+			TBLogValues["TargetType"] = "UnitCanAssist"
+			if IsHelpfulSpell(GetSpellInfo(spellID)) then
+				TBLogValues["can use success"] = "IsHelpfulSpell"
+				return 1
+			end
 		end
 
 		-- Спелл можно кидать и в своих и в чужих, тогда разрешаем кидать, ответственность на составителе бота
-		if IsHarmfulSpell(idx, book) == false and IsHelpfulSpell(idx, book) == false then
+		if not IsHarmfulSpell(GetSpellInfo(spellID)) and not IsHelpfulSpell(GetSpellInfo(spellID)) then
+			TBLogValues["TargetType"] = "Any"
 			TBLogValues["can use success"] = "IsHelpfulSpell&IsHarmfulSpell"
 			return 1
 		end
@@ -61,19 +68,12 @@ function TBGetSpell(key)
 	if spellID == nil then
 		return nil
 	end
-	local _,_,offset = GetSpellTabInfo(3)
 
-    for index = 1, offset, 1 do
-		local id = select(7,GetSpellInfo(index, "spell"))
-		if id == spellID then
-			local result = {}
-			result.spellID = spellID
-			result.idx = index
-			result.book = "spell"
-			result.name = GetSpellInfo(index, "spell")
-			return result
-		end
-	end
+	local base = FindBaseSpellByID(spellID)
+	local result = {}
+	result.spellID = spellID
+	result.baseSpell = base
+	return result
 end
 
 TBSkipIsUsableSpellCkeck =
@@ -96,21 +96,26 @@ function BaseGroup:CanUse(key, ignoredChannels, ignoreHarm)
 		return result
 	end
 
-	TBLogValues["spell name"] = key
+	TBLogValues["spell name"] = key .. "(" .. spell.spellID .. "/" .. spell.baseSpell .. ")"
 	TBLogValues["can use fail"] = nil
-
+	TBLogValues["can use success"] = nil
+	TBLogValues["TargetType"] = nil
+	TBLogValues["IsUsableSpell"] = nil
     if UnitIsDead(caster) then
 		TBLogValues["can use fail"] = "UnitIsDead(caster)"
         return result
     end
 
---[[
-	local lag = 50
-	local delay = (GetCVar("maxSpellStartRecoveryOffset") - lag)/ 1000.0
-	if delay < 0 then
-		delay = 0
+	if IsSpellKnown(spell.baseSpell)==false then
+		TBLogValues["can use fail"] = "IsSpellKnown(key)"
+		return result
 	end
---]]
+
+	if FindSpellOverrideByID(spell.spellID) ~= spell.spellID then
+		TBLogValues["can use fail"] = "FindSpellOverrideByID "..FindSpellOverrideByID(spell.spellID).." "..spell.spellID
+		return result
+	end
+
 	local delay = 0
 
 	-- Как я понимаю - затык по спеллу
@@ -122,7 +127,7 @@ function BaseGroup:CanUse(key, ignoredChannels, ignoreHarm)
     end
 
 	-- КД спелла
-	local startTime, duration = GetSpellCooldown(spell.idx, spell.book)
+	local startTime, duration = GetSpellCooldown(spell.spellID)
 	local endTime = startTime + duration
 	if GetTime() < endTime - delay then
 		TBLogValues["can use fail"] = "GetSpellCooldown"
@@ -137,20 +142,22 @@ function BaseGroup:CanUse(key, ignoredChannels, ignoreHarm)
 	end
 
 	if skip == false then
-		if IsUsableSpell(spell.idx, spell.book) == false then
+		if IsUsableSpell(spell.spellID) == false then
 			TBLogValues["can use fail"] = "IsUsableSpell"
 			return result
+		else
+			TBLogValues["IsUsableSpell"] = "true"
 		end
 	end
 
-  local et = select(6,UnitCastingInfo(caster))
+  local et = select(5,UnitCastingInfo(caster))
   if et and GetTime() < (et / 1000.0) - delay  then
 	TBLogValues["can use fail"] = "Casting"
       return result
   end
 
 
-	local et = select(6, UnitChannelInfo(caster))
+	local et = select(5, UnitChannelInfo(caster))
 	local channelName = UnitChannelInfo(caster)
 	if et and GetTime() < (et / 1000) - delay then
 		local needIgnore = false
@@ -165,13 +172,14 @@ function BaseGroup:CanUse(key, ignoredChannels, ignoreHarm)
 		end
 
 		if needIgnore == false then
-			TBLogValues["can use fail"] = "Canneling"
+			TBLogValues["can use fail"] = "Channeling"
 			return result
 		end
 	end
 
 	for key,value in pairs(self) do
-		if self:CheckTarget(key, spell.idx, spell.book, caster, ignoreHarm) then
+		--if self:CheckTarget(key, spell.baseSpell, caster, ignoreHarm) then
+		if self:CheckTarget(key, spell.spellID, caster, ignoreHarm) then
 			result[key] = value
 		end
 	end

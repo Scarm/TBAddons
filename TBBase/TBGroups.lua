@@ -25,7 +25,7 @@ function BaseGroup:NeedFullHeal()
 			result[key] = value
 		end
 	end
-	
+
 	return result
 end
 
@@ -42,7 +42,7 @@ function BaseGroup:Best()
 			return value
 		end
 	end
-	
+
 	local minHP = 101
 	local unit = nil
 	for key,value in pairs(self) do
@@ -76,6 +76,20 @@ function BaseGroup:MinHP(focusFirst)
 	return unit
 end
 
+function BaseGroup:MaxHP()
+	local maxHP = 0
+	local unit = nil
+	for key,value in pairs(self) do
+		--local hp = 100 * (UnitHealth(key) + (UnitGetIncomingHeals(key) or 0)) / UnitHealthMax(key)
+		local hp = 100 * UnitHealth(key) / UnitHealthMax(key)
+		if hp > maxHP then
+			maxHP = hp
+			unit = value
+		end
+	end
+	return unit
+end
+
 function BaseGroup:Any()
 	for key,value in pairs(self) do
 		return 1
@@ -90,15 +104,15 @@ function TankIncomingDamage(key)
 	if key == nil then
 		return nil
 	end
-	
+
 	for i=1,40,1 do
 		local id = select(11, UnitAura(key,i))
-		
-		if id == 158300 then 
+
+		if id == 158300 then
 			return select(17,UnitAura(key,i))
 		end
 	end
-	
+
 	return nil
 end
 
@@ -110,7 +124,7 @@ function TBGroups()
 			}
 		return result
 	end
-  
+
 	function Assisting(target, cond)
 		local result = {
 				action = "assist",
@@ -119,8 +133,8 @@ function TBGroups()
 			}
 		return result
 	end
-  
- 
+
+
 	local player = BaseGroup:CreateDerived()
 	local focus = BaseGroup:CreateDerived()
 	local party = BaseGroup:CreateDerived()
@@ -128,7 +142,7 @@ function TBGroups()
 	local target = BaseGroup:CreateDerived()
 	local tanks = BaseGroup:CreateDerived()
 	local mainTank = BaseGroup:CreateDerived()
-  
+
 	-----
 	player["player"] = Targetting("player")
 	-----
@@ -142,7 +156,7 @@ function TBGroups()
 	else
 		party["player"] = Targetting("player")
 		if IsInGroup() then
-			for i = 1,GetNumGroupMembers() - 1 do 
+			for i = 1,GetNumGroupMembers() - 1 do
 				party["party"..i] = Targetting("party"..i)
 			end
 		end
@@ -153,51 +167,51 @@ function TBGroups()
 	for k,v in pairs(party) do
 		targets[k.."target"] = Assisting(k.."target", v)
 		targets[k] = Targetting(k)
-	end 
-	
+	end
+
 	local incDmg = TankIncomingDamage(TBBestTankKey) or 0
 	if incDmg == 0 then
 		TBBestTankKey = nil
 	end
-	
+
 	for k,v in pairs(party) do
 		local dmg = TankIncomingDamage(k)
 		if dmg and UnitAura(k,"Стойка гладиатора")==nil then
 			tanks[k] = Targetting(k)
-		
+
 			if dmg > incDmg * 1.2 then
 				TBBestTankKey = k
 			end
 		end
 
 	end
-	
+
 	if UnitName("focus") then
 		-- Если есть цель в фокусе - значит она назначена главной целью
 		TBBestTankKey = "focus"
-		
+
 		local needAddFocus = true
 		for k,v in pairs(tanks) do
 			if UnitIsUnit(k,"focus") or UnitIsUnit(k,"focustarget") then
 				needAddFocus = nil
 			end
 		end
-		
+
 		if needAddFocus then
 			tanks["focus"]  = Targetting("focus")
 			tanks["focustarget"] = Assisting("focustarget", tanks["focus"])
 		end
 	end
-	
-	if TBBestTankKey then	
+
+	if TBBestTankKey then
 		mainTank[TBBestTankKey] = Targetting(TBBestTankKey)
-		mainTank[TBBestTankKey.."target"] = Assisting(TBBestTankKey.."target", mainTank[TBBestTankKey])
+		--mainTank[TBBestTankKey.."target"] = Assisting(TBBestTankKey.."target", mainTank[TBBestTankKey])
 	end
-	
+
 	if HealersCount == 0 then
 		HealersCount = 1
 	end
-	
+
 	-----
 	target["target"] = Targetting("target")
 	-----

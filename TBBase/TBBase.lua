@@ -31,6 +31,11 @@ function TBRegister(bot)
 
 	--print("Регистрируем бота для Class = ", bot.Class," и спека = ",bot.Id)
 	IndicatorFrame.Bots[bot.Class][bot.Id] = bot
+
+	IndicatorFrame.CommonBuffs = IndicatorFrame.CommonBuffs or {}
+	if bot.AddCommonBuff then
+		bot:AddCommonBuff(IndicatorFrame.CommonBuffs)
+	end
 end
 
 
@@ -49,6 +54,7 @@ function TBGetSpec()
 	local name,class = UnitClass("player")
     print("Загружаются боты для класса",name)
 
+	IndicatorFrame.Bots = IndicatorFrame.Bots or {}
     if IndicatorFrame.Bots[class] == nil then
         print("Не обнаружено ботов для этого класса")
         return
@@ -80,7 +86,17 @@ function TBAssignBot(self)
 		for key, text in pairs(IndicatorFrame.Spec.Macro or {}) do
 			TBRegisterMacro(key, text)
 		end
+		TBRegisterMacro("stop", "/stopcasting")
 	end
+
+	IndicatorFrame.CommonBuffs = IndicatorFrame.CommonBuffs or {}
+	IndicatorFrame.PlainBuffs = {}
+	for gr, list in pairs(IndicatorFrame.CommonBuffs) do
+		for k,v in pairs(list) do
+			IndicatorFrame.PlainBuffs[k] = v
+		end
+	end
+
 end
 
 
@@ -220,22 +236,35 @@ function TBMacroCommands()
 end
 
 function TBOnUpdate()
+
+	local cmd = nil
 	if IndicatorFrame.Spec then
-
 		BaseGroupHelper.modes = AdvancedPanelFrame:Modes()
-		local cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), BaseGroupHelper.modes) or TBMacroCommands()
-		if cmd then
-			IndicatorFrame.LastCommand = cmd
-		end
-		TBCommand(cmd)
-	else
-		local cmd = TBMacroCommands()
-		if cmd then
-			IndicatorFrame.LastCommand = cmd
-		end
-		TBCommand(cmd)
-
+		cmd = IndicatorFrame.Spec:OnUpdate(TBGroups(), TBList(), BaseGroupHelper.modes)
 	end
+	cmd = cmd or TBMacroCommands()
+	local resetTimer = false
+	if cmd then
+		if IndicatorFrame.LastCommand~=cmd then
+			resetTimer = true
+		end
+		IndicatorFrame.LastCommand = cmd
+	else
+		resetTimer = true
+	end
+
+	if resetTimer == true then
+		local diff = GetTime() - (IndicatorFrame.LastCommandTime or GetTime())
+		IndicatorFrame.LastCommandTime = GetTime()
+
+		IndicatorFrame.LastCommandDiff = IndicatorFrame.LastCommandDiff or 0
+		if diff > IndicatorFrame.LastCommandDiff and IndicatorFrame.LastCommand then
+			IndicatorFrame.LastCommandDiff = diff
+			IndicatorFrame.LastCommandDiffStr = string.format("%.2f", diff).. "(".. IndicatorFrame.LastCommand ..")"
+		end
+	end
+
+	TBCommand(cmd)
 end
 
 function TBLoSData(self, event,...)

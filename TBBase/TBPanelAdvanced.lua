@@ -106,6 +106,62 @@ function TriggerController:Assign(button)
 	button:RegisterForClicks("LeftButtonUp")
 end
 
+-- Контроллер для мультирежимных кнопок
+SelectorController = {}
+setmetatable(SelectorController, {__index = Controller})
+function SelectorController:OnClick(button, key)
+	self:NextState()
+	button.icon:SetTexture(self.icon)
+	button:SetChecked(false)
+end
+function SelectorController:OnUpdateCooldown(button) end
+function SelectorController:OnSpellCast(button,event,unit,spell,xxx,lineID,spellID) end
+
+function SelectorController:State(data) -- заполнить информацию о себе
+	data.selector = data.selector or {}
+	data.selector[self.Name] = self.value
+end
+
+function SelectorController:Create(info)
+	if info.Type == "selector" then
+		setmetatable(info, {__index = SelectorController})
+		return info
+	end
+end
+
+function SelectorController:Assign(button)
+	button.controller = self
+	button:Show()
+	self:NextState()
+	button.icon:SetTexture(self.icon)
+	button.AutoCastable:Hide()
+	button:RegisterForClicks("LeftButtonUp")
+end
+
+function SelectorController:NextState()
+	--print("idx", self.idx)
+	--self.idx = self.idx or -1
+	--self.idx = (self.idx + 1) % (#self.Values)
+
+	if self.idx then
+		self.idx = (self.idx + 1) % (#self.Values)
+	else
+		--print("first init")
+		self.idx = 0
+		while self.Values[self.idx+1] and not self.Values[self.idx+1].default do
+			--print("skip",self.idx)
+			self.idx = self.idx + 1
+		end
+		self.idx = self.idx % (#self.Values)
+	end
+
+	--print("idx_", self.idx)
+	self.value = self.Values[self.idx+1].Value
+	--print("value", self.value)
+	self.icon =  self.Values[self.idx+1].Icon
+	--print("icon", self.icon)
+end
+
 -- Контроллер для спелов
 SpellController = {}
 setmetatable(SpellController, {__index = Controller})
@@ -134,7 +190,7 @@ function SpellController:OnUpdateCooldown(button)
 	local start, duration, enable = GetSpellCooldown(self.Spell)
 	CooldownFrame_Set(button.cooldown, start, duration, enable)
 end
-function SpellController:OnSpellCast(button,event,unit,spell,xxx,lineID,spellID)
+function SpellController:OnSpellCast(button,event,caster, spellUid, spellID)
 	if spellID == self.Spell then
 		self.checked = nil
 		button:SetChecked(self.checked == 1)
@@ -197,7 +253,7 @@ function AdvancedPanelFrame:AssignSpec(spec)
 			if idx <= self.buttonsCount then
 				button = self.Buttons[pos]
 				local value = buttons[idx]
-				local controller = TriggerController:Create(value) or SpellController:Create(value)
+				local controller = TriggerController:Create(value) or SpellController:Create(value) or SelectorController:Create(value)
 				if controller then
 					controller:Assign(button)
 					pos = pos + 1

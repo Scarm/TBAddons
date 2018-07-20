@@ -1,7 +1,0 @@
-﻿## Interface: 60000
-## Title: TB Mage 
-## Dependencies: TBBase
-
-Fire.lua
-Frost.lua
-Arcane.lua

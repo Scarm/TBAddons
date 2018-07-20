@@ -1,6 +1,5 @@
 function BaseGroup:HP(bound, hp, isSelf)
-	-- костыль для Велари
-	local maxPerc = select(15, UnitAura("boss1", "Аура презрения")) or 100
+	local maxPerc =  100
 
 	if isSelf then
 		local val = 100 * (UnitHealth("player") / UnitHealthMax("player")) * ( 100 / maxPerc )

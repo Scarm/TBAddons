@@ -1,7 +1,0 @@
-﻿## Interface: 60000
-## Title: TB Priest 
-## Dependencies: TBBase
-
-Shadow.lua
-Discipline.lua
-Holy.lua

@@ -44,6 +44,10 @@
 					Spell = 46968, -- Ударная волна
 					talent = 22373, --Ударная волна
 				},
+				{
+					Type = "spell",
+					Spell = 100, -- Рывок
+				},
 			},
 			["Id"] = 1,
 			["Spells"] = {
@@ -64,6 +68,7 @@
 				["Казнь"] = 163201,
 				["Победный раж"] = 34428,
 				["Аватара"] = 19138,
+				["Зуботычина"] = 6552,
 			},
 			["Buffs"] = {
 				["Рывок"] = 105771,
@@ -86,7 +91,7 @@ function bot:OnUpdate(g, list, modes)
 		return
 	end
 
-
+	list:Cast( "Зуботычина", g.target:CanUse("Зуботычина"):CanInterrupt("first"):Best() )
 
 
 	list:Cast( "Ударная волна", g.player:CanUse("Ударная волна"):Enabled("Ударная волна"):Condition(g.target:InSpellRange("Мощный удар"):Any()):Best() )
@@ -103,25 +108,20 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Удар колосса", g.target:CanUse("Удар колосса"):Aura("Удар колосса", "mine", "inverse"):Best() )
 	list:Cast( "Удар громовержца", g.target:CanUse("Удар громовержца"):Best() )
 
+	list:Cast( "Рывок", g.target:CanUse("Рывок"):Enabled("Рывок"):Best() )
 
 	if modes.toggle.AoE then
-		list:Cast( "Вихрь", g.player:CanUse("Вихрь"):Toggle("AoE"):Condition(g.target:InSpellRange("Мощный удар"):Any()):Energy(">", 70):Best() )
+		--list:Cast( "Вихрь", g.player:CanUse("Вихрь"):Toggle("AoE"):Condition(g.target:InSpellRange("Мощный удар"):Any()):Energy(">", 70):Best() )
 
 		list:Cast( "Рассекающий удар", g.target:CanUse("Рассекающий удар"):Condition(g.target:InSpellRange("Мощный удар"):Any()):Toggle("AoE"):Best() )
-		list:Cast( "Вихрь", g.player:CanUse("Вихрь"):Condition(g.target:InSpellRange("Мощный удар"):Any()):Aura("Рассекающий удар", "mine", "self"):Toggle("AoE"):Best() )
-	else
-		list:Cast( "Победный раж", g.target:CanUse("Победный раж"):HP("<", 70, "self"):Best() )
-		list:Cast( "Смертельный удар", g.target:Talent("Смертельный прием"):CanUse("Смертельный удар"):Charges("Смертельный удар", 2, 1.5):Best() )
-		list:Cast( "Превосходство", g.target:CanUse("Превосходство"):Aura("Превосходство!", "mine", "self", {time=5, bound="<"}):Best() )
-		list:Cast( "Казнь", g.target:CanUse("Казнь"):Aura("Удар колосса", "mine"):Energy(">", 70):Best() )
-		list:Cast( "Мощный удар", g.target:CanUse("Мощный удар"):Energy(">", 70):Best() )
-
-		list:Cast( "Превосходство", g.target:CanUse("Превосходство"):Best() )
-		list:Cast( "Казнь", g.target:CanUse("Казнь"):Aura("Удар колосса", "mine"):Energy(">", 40):Best() )
-		list:Cast( "Смертельный удар", g.target:CanUse("Смертельный удар"):Aura("Удар колосса", "mine"):Best() )
-		list:Cast( "Казнь", g.target:CanUse("Казнь"):Aura("Удар колосса", "mine"):Best() )
-		list:Cast( "Мощный удар", g.target:CanUse("Мощный удар"):Aura("Удар колосса", "mine"):Best() )
+		--list:Cast( "Вихрь", g.player:CanUse("Вихрь"):Condition(g.target:InSpellRange("Мощный удар"):Any()):Aura("Рассекающий удар", "mine", "self"):Toggle("AoE"):Best() )
 	end
+		list:Cast( "Победный раж", g.target:CanUse("Победный раж"):HP("<", 70, "self"):Best() )
+		list:Cast( "Превосходство", g.target:CanUse("Превосходство"):Best() )
+		list:Cast( "Смертельный удар", g.target:CanUse("Смертельный удар"):Best() )
+		list:Cast( "Казнь", g.target:CanUse("Казнь"):Best() )
+		list:Cast( "Мощный удар", g.target:CanUse("Мощный удар"):Energy(">", 40):Best() )
+
 
 	return list:Execute()
 end

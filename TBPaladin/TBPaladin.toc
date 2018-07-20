@@ -1,7 +1,0 @@
-﻿## Interface: 60000
-## Title: TB Paladin 
-## Dependencies: TBBase
-
-Retribution.lua
-Protection.lua
-Holy.lua

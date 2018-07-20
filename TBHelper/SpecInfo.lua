@@ -12,8 +12,8 @@ function TBSpecInfoSet()
 	local classInfo = TBSpecInfoData[class]
 
 	for specId = 1, GetNumSpecializations(), 1 do
-		local id, name, description, icon, background, role = GetSpecializationInfo(specId)
-
+		local id, name, description, icon, role = GetSpecializationInfo(specId)
+		--print(GetSpecializationInfo(specId))
 		if classInfo[name] == nil then
 			print("Создаем пустую болванку для "..class.."("..name..")" )
 			classInfo[name] = {}
@@ -40,6 +40,7 @@ function TBSpecInfoSet()
 			--INTERFACE\\ICONS\\INV_Misc_Bone_HumanSkull_02.blp
 			--Interface\\ICONS\\INV_Misc_Bone_Skull_02.blp
 			--Interface\\ICONS\\INV_Misc_EngGizmos_27.blp
+			--print(role)
 			if role == "DAMAGER" then
 				-- дефолтные заглушки кнопочек
 				spec.Buttons =
@@ -65,7 +66,41 @@ function TBSpecInfoSet()
 				-- дефолтные заглушки кнопочек
 				spec.Buttons =
 					{
-
+						[1] = {
+							Type = "trigger",
+							Icon = "Interface\\Icons\\ABILITY_SEAL",
+							Name = "Stop",
+						},
+						[2] = {
+							Type = "trigger",
+							Icon = "Interface\\Icons\\Ability_Warrior_Bladestorm",
+							Name = "AoE",
+						},
+						[3] = {
+							Type = "trigger",
+							Icon = 1377132,
+							Name = "Def",
+						},
+						[4] = {
+							Type = "selector",
+							Name = "Interrupt",
+							Values =
+							{
+								{
+									Value = "first",
+									Icon = 876914,
+								},
+								{
+									Value = "mid",
+									Icon = 876916,
+								},
+								{
+									Value = "last",
+									Icon = 876915,
+									default = 1,
+								},
+							},
+						},
 					}
 			end
 			if role == "HEALER" then
@@ -96,6 +131,9 @@ function TBSpecInfoSet()
 	local id, name = GetSpecializationInfo(GetSpecialization())
 
 	TBSpecInfo.spec = TBSpecInfoData[class][name]
+	TBSpecInfo.spec.Buffs = TBSpecInfo.spec.Buffs or {}
+	TBSpecInfo.spec.Spells = TBSpecInfo.spec.Spells or {}
+	--print("TBSpecInfoSet")
 	TBSpecInfoUpdateList()
 	TBCreateCorrectSpellList()
 end
@@ -122,15 +160,16 @@ function TBSpecInfoClear()
 	TBSpecInfoSet()
 end
 
-function TBSpecInfoAddSpell(self,event,unitID,spell,rank,lineID,spellID)
+function TBSpecInfoAddSpell(self,event,caster, uid, spellID)
 	if not (IsLoggedIn() and TBSpecInfo:IsShown()) then
 		return
 	end
+	--print("Add spell", caster, uid, spellID)
 	local buffs = TBSpecInfo.spec.Buffs
 	local spells = TBSpecInfo.spec.Spells
 
 	--print(event,unitID,spell,rank,lineID,spellID)
-
+	local spell = GetSpellInfo(spellID)
 	if TBCorrectSpells[spellID] then
 		if spells[spell] == nil then
 			spells[spell] = spellID
@@ -144,14 +183,19 @@ function TBSpecInfoAddAura(self, event, target)
 	if not (IsLoggedIn() and TBSpecInfo:IsShown()) then
 		return
 	end
+	--print("Add aura")
+
 	local buffs = TBSpecInfo.spec.Buffs
 	local spells = TBSpecInfo.spec.Spells
 
 	for i=1,40,1 do
 		local name = UnitAura(target,i,"PLAYER")
-		local id = select(11, UnitAura(target,i,"PLAYER"))
+		local id = select(10, UnitAura(target,i,"PLAYER"))
 
 		if name then
+			--print(UnitAura(target,i,"PLAYER"))
+			--print(name, id)
+			--print(name,id,type(id) )
 			-- если такого баффа нет в списке спеллов, тогда его можно занести в список баффов
 			if spells[name] ~= id then
 				-- Если такого баффа не было - записываем его
@@ -179,10 +223,11 @@ function TBSpecInfoAddAura(self, event, target)
 	end
 	for i=1,40,1 do
 		local name = UnitAura(target,i,"HARMFUL|PLAYER")
-		local id = select(11, UnitAura(target,i,"HARMFUL|PLAYER"))
+		local id = select(10, UnitAura(target,i,"HARMFUL|PLAYER"))
 
 		if name then
 			-- если такого баффа нет в списке спеллов, тогда его можно занести в список баффов
+			--print(name, id)
 			if spells[name] ~= id then
 				-- Если такого баффа не было - записываем его
 				if buffs[name] == nil then
@@ -206,6 +251,7 @@ function TBSpecInfoAddAura(self, event, target)
 			end
 		end
 	end
+
 	TBSpecInfoUpdateList()
 end
 
@@ -214,6 +260,7 @@ function TBSpecInfoUpdateList()
 	local _,height = TBSpecInfoList:GetFont()
 	local text = ""
 	local strings = 0
+
 	if TBSpecInfo.spec then
 		for name,spellId in pairs(TBSpecInfo.spec.Spells) do
 			if text~="" then
@@ -225,15 +272,17 @@ function TBSpecInfoUpdateList()
 
 
 		text = text.."\n"
-
 		for name,spellId in pairs(TBSpecInfo.spec.Buffs) do
+			--print("buffs", name, spellId)
 			if text~="" then
 				text = text.."\n"
 			end
 			text = text..GetSpellLink(spellId).."("..spellId..")"
 			strings = strings + 1
 		end
-end
+
+	end
+
 
 	TBSpecInfoList:SetHeight(strings * height)
 	TBSpecInfoList:SetText(text)

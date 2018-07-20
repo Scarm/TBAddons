@@ -13,7 +13,8 @@ function TBCommitCombat()
 		 TBCollectionFrame.tmp.BossName = TBCollectionFrame.tmp.BossName or GetRealZoneText()
 	 end
 	--если нашлось хоть одно имя босса - значит это стоит записать
-	if TBCollectionFrame.tmp.BossName then
+	local inInstance = IsInInstance()
+	if TBCollectionFrame.tmp.BossName and inInstance then
 		--print("Начали запись результатов боя")
 
 		-- создаем нужные таблицы
