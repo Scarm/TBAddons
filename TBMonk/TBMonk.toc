@@ -1,0 +1,7 @@
+## Interface: 60000
+## Title: TB Monk 
+## Dependencies: TBBase
+
+Windwalker.lua
+Brewmaster.lua
+Mistweaver.lua

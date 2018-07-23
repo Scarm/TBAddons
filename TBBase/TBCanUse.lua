@@ -112,7 +112,12 @@ function BaseGroup:CanUse(key, ignoredChannels, ignoreHarm)
 	end
 
 	if FindSpellOverrideByID(spell.spellID) ~= spell.spellID then
-		TBLogValues["can use fail"] = "FindSpellOverrideByID "..FindSpellOverrideByID(spell.spellID).." "..spell.spellID
+		TBLogValues["can use fail"] = "FindSpellOverrideByID (spellID)"..FindSpellOverrideByID(spell.spellID).." "..spell.spellID
+		return result
+	end
+
+	if FindSpellOverrideByID(spell.baseSpell) ~= spell.spellID then
+		TBLogValues["can use fail"] = "FindSpellOverrideByID (baseSpell)"..FindSpellOverrideByID(spell.spellID).." "..spell.spellID
 		return result
 	end
 
@@ -178,8 +183,8 @@ function BaseGroup:CanUse(key, ignoredChannels, ignoreHarm)
 	end
 
 	for key,value in pairs(self) do
-		--if self:CheckTarget(key, spell.baseSpell, caster, ignoreHarm) then
-		if self:CheckTarget(key, spell.spellID, caster, ignoreHarm) then
+		if self:CheckTarget(key, spell.baseSpell, caster, ignoreHarm) then
+		--if self:CheckTarget(key, spell.spellID, caster, ignoreHarm) then
 			result[key] = value
 		end
 	end

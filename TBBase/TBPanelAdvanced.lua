@@ -104,6 +104,7 @@ function TriggerController:Assign(button)
 	button.icon:SetTexture(self.Icon)
 	button.AutoCastable:Hide()
 	button:RegisterForClicks("LeftButtonUp")
+	button:SetChecked(self.checked == 1)
 end
 
 -- Контроллер для мультирежимных кнопок

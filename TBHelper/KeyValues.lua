@@ -19,16 +19,24 @@ function TBKeyValuesFill(values)
 	--end
 --	values["chagres"] = UnitPower("player", SPELL_POWER_ARCANE_CHARGES)
 
-	--values["fail"] = ToString(TBLogValues["can use fail"])
-	--values["spell name"] = ToString(TBLogValues["spell name"])
-	--values["can use success"] = ToString(TBLogValues["can use success"])
-	--values["TargetType"] = ToString(TBLogValues["TargetType"])
-	--values["IsUsableSpell"] = ToString(TBLogValues["IsUsableSpell"])
+	-- [[
+	values["fail"] = ToString(TBLogValues["can use fail"])
+	values["spell name"] = ToString(TBLogValues["spell name"])
+	values["can use success"] = ToString(TBLogValues["can use success"])
+	values["TargetType"] = ToString(TBLogValues["TargetType"])
+	values["IsUsableSpell"] = ToString(TBLogValues["IsUsableSpell"])
 
-	--values["IsHarmfulSpell"] = ToString(TBLogValues["IsHarmfulSpell"])
-	--values["IsHelpfulSpell"] = ToString(TBLogValues["IsHelpfulSpell"])
-	--values["UnitCanAssist"] = ToString(TBLogValues["UnitCanAssist"])
-	--values["UnitCanAttack"] = ToString(TBLogValues["UnitCanAttack"])
+	values["IsHarmfulSpell"] = ToString(TBLogValues["IsHarmfulSpell"])
+	values["IsHelpfulSpell"] = ToString(TBLogValues["IsHelpfulSpell"])
+	values["UnitCanAssist"] = ToString(TBLogValues["UnitCanAssist"])
+	values["UnitCanAttack"] = ToString(TBLogValues["UnitCanAttack"])
+	--]]
+
+	-- [[
+	values["stacks count"] = TBLogValues["stacks count"]
+	values["stacks condition"] = TBLogValues["stacks condition"]
+	values["stacks bound"] = TBLogValues["stacks bound"]
+	--]]
 
 	--values["isnil"] = ToString(TBLogValues["spell is null"])
 

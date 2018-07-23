@@ -204,7 +204,7 @@ function BaseGroup:NeedDecurse(...)
 		-- проходим по всем дебаффам, пока они не кончатся, или не найдем хоть что то для диспела
 		while needContinue do
 			local types = select("#", ...)
-			n,_,_,_,dispelType = UnitAura(key, debuffNum, "HARMFUL")
+			n,_,_,dispelType = UnitAura(key, debuffNum, "HARMFUL")
 			if n then
 				-- какой то дебафф есть, проверим, можно ли его диспеллить
 				for i = 1,types,1 do

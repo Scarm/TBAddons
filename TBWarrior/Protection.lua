@@ -139,7 +139,7 @@ function bot:OnUpdate(g, list, modes)
 	list:Cast( "Сокрушение", g.target:CanUse("Сокрушение"):Best() )
 	list:Cast( "Героический бросок", g.target:CanUse("Героический бросок"):Best() )
 
-	--list:Cast( "Боевой крик", g.party:CanUse("Боевой крик"):CommonBuff("Боевой крик"):Best() )
+	list:Cast( "Боевой крик", g.party:CanUse("Боевой крик"):CommonBuff("Боевой крик"):Best() )
 	--[[
 	list:Cast( "Боевой крик", g.player:CanUse("Боевой крик"):CanUse("Ярость Нелтариона"):Enabled("Ярость Нелтариона"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )
 	list:Cast( "Ярость Нелтариона", g.player:CanUse("Ярость Нелтариона"):Enabled("Ярость Нелтариона"):Condition(g.target:InSpellRange("Сокрушение"):Any()):Best() )

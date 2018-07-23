@@ -28,7 +28,7 @@ function TBSpecInfoSet()
 
 			for col = 1,3,1 do
 				for row = 1,7,1 do
-					local id,nm = GetTalentInfo(row, col, 1)
+					local id,nm = GetTalentInfoBySpecialization(specId, row, col)
 					spec.Talents[nm] = id
 				end
 			end
@@ -59,6 +59,31 @@ function TBSpecInfoSet()
 							Type = "trigger",
 							Icon = "Interface\\ICONS\\Inv_Misc_SummerFest_BrazierRed.blp",
 							Name = "Burst",
+						},
+						[4] = {
+							Type = "selector",
+							Name = "Interrupt",
+							Values =
+							{
+								{
+									Value = "first",
+									Icon = 876914,
+								},
+								{
+									Value = "mid",
+									Icon = 876916,
+								},
+								{
+									Value = "last",
+									Icon = 876915,
+									default = 1,
+								},
+							},
+						},
+						[5] = {
+							Type = "trigger",
+							Icon = 135915,
+							Name = "Heal",
 						},
 					}
 			end
